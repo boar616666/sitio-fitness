@@ -1,0 +1,119 @@
+/* Estilos para el header */
+.header {
+    background-color: #007bff;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .header ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+  }
+  
+  .header a {
+    color: white;
+    text-decoration: none;
+  }
+  
+  /* Botón de inicio de sesión */
+  .login-button {
+    background-color: #004080; /* Azul más oscuro */
+    color: white;
+    padding: 8px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: bold;
+  }
+  
+  .login-button:hover {
+    background-color: #00bfff; /* Azul celeste */
+    color: white;
+  }
+  
+  /* Estilos para el login */
+  .login-container {
+    width: 300px;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: white;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    text-align: center;
+  }
+  
+  .login-container h2 {
+    margin-bottom: 15px;
+  }
+  
+  .login-container form div {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  
+  .login-container label {
+    display: block;
+    font-weight: bold;
+  }
+  
+  .login-container input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  /* Botón del formulario de login */
+  .login-container button {
+    width: 100%;
+    padding: 10px;
+    background-color: #004080; /* Azul más oscuro */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .login-container button:hover {
+    background-color: #00bfff; /* Azul celeste */
+  }
+  
+  .toggle-link {
+    color: #007bff;
+    cursor: pointer;
+  }
+  
+  .toggle-link:hover {
+    text-decoration: underline;
+  }
+
+  /* Estilos para el breadcrumb */
+.breadcrumbs {
+  font-size: 14px;
+  margin-bottom: 15px;
+}
+
+.breadcrumbs a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.breadcrumbs a:hover {
+  text-decoration: underline;
+}
+
+/* Contenedor de páginas */
+.content-container {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+}
+
+  
