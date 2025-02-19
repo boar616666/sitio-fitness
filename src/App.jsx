@@ -18,7 +18,8 @@ function App() {
           <Route path="/blog" element={<Blog />} />
           <Route path="/citas" element={<Citas />} />
           <Route path="/login" element={<Login />} />
-          <Route path="/videos" element={<Videos/>} /> 
+          <Route path="/videos" element={<Videos/>} />
+          <Route path="/error" element={<ErrorPage/>}/> 
          
         </Routes>
       </main>

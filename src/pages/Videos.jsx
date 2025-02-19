@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { useHistory } from "react-router-dom"; // Para redirigir a la página de error
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom"; // ✅ Reemplaza useHistory por useNavigate
 import Breadcrumbs from "../components/Breadcrumbs";
 import "../styles/global.css";
 
 const Videos = () => {
   // Estado para el texto de búsqueda y los videos
   const [searchQuery, setSearchQuery] = useState("");
-  const [videos, setVideos] = useState([
+  const [videos] = useState([
     { id: 1, title: "Ejercicio para abdomen" },
     { id: 2, title: "Rutina de pesas" },
     { id: 3, title: "Cardio en casa" }
   ]);
 
-  const history = useHistory();
+  const navigate = useNavigate(); // ✅ Usar useNavigate
 
   // Función para manejar el cambio en el input de búsqueda
   const handleSearchChange = (e) => {
@@ -24,10 +24,12 @@ const Videos = () => {
     video.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Si no hay resultados, redirigir a la página de error
-  if (searchQuery && filteredVideos.length === 0) {
-    history.push("/error"); // Redirige a la página de error
-  }
+  // ✅ Evitar redirigir en cada render (se usa useEffect)
+  useEffect(() => {
+    if (searchQuery && filteredVideos.length === 0) {
+      navigate("/error"); // ✅ Redirige solo si no hay resultados
+    }
+  }, [searchQuery, filteredVideos, navigate]);
 
   return (
     <div className="content-container">
