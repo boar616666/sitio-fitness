@@ -10,6 +10,7 @@ function Header() {
           <li><Link to="/">Inicio</Link></li>
           <li><Link to="/blog">Blog</Link></li>
           <li><Link to="/citas">Agendar Citas</Link></li>
+          <li><Link to="/videos">Videos</Link></li>
         </ul>
       </nav>
       <Link to="/login" className="login-button">Iniciar Sesión</Link>

@@ -1,97 +1,119 @@
+/* Paleta de colores */
+:root {
+  --primary-color: #800020; /* Rojo vino */
+  --secondary-color: #424242; /* Gris oscuro */
+  --background-color: #f5f5f5; /* Gris claro */
+  --text-color: #333; /* Gris oscuro para texto */
+  --button-hover: #5a0014; /* Rojo vino más oscuro para hover */
+}
+
 /* Estilos para el header */
 .header {
-    background-color: #007bff;
-    color: white;
-    padding: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .header ul {
-    list-style: none;
-    display: flex;
-    gap: 15px;
-  }
-  
-  .header a {
-    color: white;
-    text-decoration: none;
-  }
-  
-  /* Botón de inicio de sesión */
-  .login-button {
-    background-color: #004080; /* Azul más oscuro */
-    color: white;
-    padding: 8px 15px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-weight: bold;
-  }
-  
-  .login-button:hover {
-    background-color: #00bfff; /* Azul celeste */
-    color: white;
-  }
-  
-  /* Estilos para el login */
-  .login-container {
-    width: 300px;
-    margin: 50px auto;
-    padding: 20px;
-    background-color: white;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    border-radius: 5px;
-    text-align: center;
-  }
-  
-  .login-container h2 {
-    margin-bottom: 15px;
-  }
-  
-  .login-container form div {
-    margin-bottom: 10px;
-    text-align: left;
-  }
-  
-  .login-container label {
-    display: block;
-    font-weight: bold;
-  }
-  
-  .login-container input {
-    width: 100%;
-    padding: 8px;
-    margin-top: 5px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-  }
-  
-  /* Botón del formulario de login */
-  .login-container button {
-    width: 100%;
-    padding: 10px;
-    background-color: #004080; /* Azul más oscuro */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-  }
-  
-  .login-container button:hover {
-    background-color: #00bfff; /* Azul celeste */
-  }
-  
-  .toggle-link {
-    color: #007bff;
-    cursor: pointer;
-  }
-  
-  .toggle-link:hover {
-    text-decoration: underline;
-  }
+  background-color: var(--primary-color);
+  color: white;
+  padding: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-radius: 15px; /* Bordes redondeados */
+  margin: 10px; /* Margen para que se vea mejor */
+  padding: 15px 20px; /* Espaciado interno */
+}
 
-  /* Estilos para el breadcrumb */
+.header ul {
+  list-style: none;
+  display: flex;
+  gap: 15px;
+}
+
+.header a {
+  color: white;
+  text-decoration: none;
+}
+
+/* Botón de inicio de sesión */
+.login-button {
+  background-color: var(--secondary-color); /* Gris oscuro */
+  color: white;
+  padding: 8px 15px;
+  border-radius: 5px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-button:hover {
+  background-color: var(--button-hover); /* Rojo vino más oscuro */
+  color: white;
+}
+
+/* Estilos para el login */
+.login-container {
+  width: 300px;
+  margin: 50px auto;
+  padding: 20px;
+  background-color: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  text-align: center;
+}
+
+.login-container h2 {
+  margin-bottom: 15px;
+}
+
+.login-container form div {
+  margin-bottom: 10px;
+  text-align: left;
+}
+
+.login-container label {
+  display: block;
+  font-weight: bold;
+}
+
+.home {
+  background-color: gray;
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+}
+
+
+
+.login-container input {
+  width: 100%;
+  padding: 8px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+/* Botón del formulario de login */
+.login-container button {
+  width: 100%;
+  padding: 10px;
+  background-color: var(--primary-color); /* Rojo vino */
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.login-container button:hover {
+  background-color: var(--button-hover); /* Rojo vino más oscuro */
+}
+
+/* Enlace de alternar entre login/registro */
+.toggle-link {
+  color: var(--primary-color);
+  cursor: pointer;
+}
+
+.toggle-link:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para el breadcrumb */
 .breadcrumbs {
   font-size: 14px;
   margin-bottom: 15px;
@@ -99,7 +121,7 @@
 
 .breadcrumbs a {
   text-decoration: none;
-  color: #007bff;
+  color: var(--primary-color);
 }
 
 .breadcrumbs a:hover {
@@ -116,4 +138,63 @@
   border-radius: 5px;
 }
 
-  
+/* Botón general */
+.button {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: var(--button-hover);
+}
+
+/* Fondo de toda la página */
+body {
+  background-image: url('https://img.freepik.com/psd-gratis/fondo-articulos-fitness_23-2150154416.jpg');
+  background-size: cover; /* Cubre toda la pantalla */
+  background-position: center; /* Centra la imagen */
+  background-attachment: fixed; /* Mantiene la imagen estática */
+  background-repeat: no-repeat; /* Evita que se repita */
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+}
+.footer {
+  color: #ffffff; /* Blanco suave */
+  text-shadow: #ffffff;
+}
+/* global.css */
+
+.search-box {
+  margin: 20px 0;
+}
+
+.search-box input {
+  padding: 10px;
+  font-size: 16px;
+  width: 100%;
+  max-width: 400px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.videos-list {
+  margin-top: 20px;
+}
+
+.video-item {
+  background-color: #f4f4f4;
+  padding: 10px;
+  border-radius: 5px;
+  margin-bottom: 10px;
+}
+
+.error-container {
+  text-align: center;
+  padding: 50px;
+  background-color: #f8d7da;
+  color: #721c24;
+}
