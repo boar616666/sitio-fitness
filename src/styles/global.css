@@ -24,57 +24,114 @@ body {
 .header {
   background-color: var(--primary-color);
   color: white;
-  padding: 10px 15px; /* Padding más pequeño */
+  padding: 10px 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 10px; /* Bordes más redondeados */
-  margin: 5px; /* Margen más pequeño */
-  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+  border-radius: 10px;
+  margin: 5px;
+  flex-wrap: wrap;
 }
 
-.header ul {
-  list-style: none;
+.header-content {
   display: flex;
-  gap: 10px; /* Espacio más pequeño entre elementos */
-  margin: 0;
-  padding: 0;
-  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
 }
 
-.header a {
-  color: white;
-  text-decoration: none;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+.header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Espacio entre el botón y la navbar */
 }
 
 /* Botón de inicio de sesión */
 .login-button {
   background-color: var(--secondary-color);
   color: white;
-  padding: 8px 15px; /* Padding más pequeño */
-  border-radius: 4px; /* Bordes más redondeados */
+  padding: 8px 15px;
+  border-radius: 4px;
   text-decoration: none;
   font-weight: bold;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
-  margin: 5px 0; /* Espacio adicional en móviles */
+  font-size: 14px;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .login-button:hover {
   background-color: var(--button-hover);
-  transform: scale(1.05); /* Efecto de escala al hacer hover */
+  transform: scale(1.05);
 }
 
 .login-button:active {
-  transform: scale(0.95); /* Efecto de clic */
+  transform: scale(0.95);
 }
 
-/* Responsive Design para el botón de inicio de sesión */
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.navbar-links {
+  display: flex;
+  gap: 20px; /* Espacio entre los enlaces */
+}
+
+.navbar-links a {
+  color: white;
+  text-decoration: none;
+  font-size: 1rem;
+  transition: color 0.3s ease;
+}
+
+.navbar-links a:hover {
+  color: #f0a500; /* Cambia el color al pasar el mouse */
+}
+
+.navbar-toggle {
+  display: none;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.navbar-toggle span {
+  width: 25px;
+  height: 3px;
+  background-color: white;
+  margin: 4px 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+/* Estilos para la vista móvil */
 @media (max-width: 768px) {
-  .login-button {
-    padding: 6px 12px; /* Padding más pequeño en móviles */
-    font-size: 12px; /* Tamaño de fuente más pequeño en móviles */
+  .header-right {
+    gap: 10px; /* Reducir el espacio en móviles */
+  }
+
+  .navbar-links {
+    display: none;
+    flex-direction: column;
+    width: 100%;
+    background-color: #333;
+    position: absolute;
+    top: 60px; /* Ajusta según la altura de tu header */
+    left: 0;
+    padding: 1rem;
+  }
+
+  .navbar-links.active {
+    display: flex;
+  }
+
+  .navbar-toggle {
+    display: flex;
   }
 }
 
@@ -360,31 +417,75 @@ body {
   font-size: 14px; /* Tamaño de fuente más pequeño */
   color: #ccc; /* Texto gris claro */
 }
+/* Estilos para el contenedor de detalles del gimnasio */
+.gimnasio-detalle-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  
+  min-height: 100vh;
+}
 
-/* Responsive Design para Gimnasios */
-@media (max-width: 768px) {
-  .gimnasios-container {
-    padding: 1rem; /* Padding más pequeño */
-    margin: 10px; /* Margen más pequeño */
-  }
+/* Estilos para el recuadro de detalles */
+.gimnasio-detalle-box {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  padding: 2rem;
+  max-width: 800px;
+  width: 100%;
+}
 
-  .gimnasios-container h1 {
-    font-size: 20px; /* Tamaño de fuente más pequeño */
-  }
+.gimnasio-detalle-box h1 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
 
-  .gimnasios-container p {
-    font-size: 12px; /* Tamaño de fuente más pequeño */
-  }
+.gimnasio-detalle-box p {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: var(--text-color);
+}
 
-  .gimnasio-card {
-    max-width: 100%; /* Ocupa el ancho completo en móviles */
-  }
+.gimnasio-detalle-box h2 {
+  font-size: 1.5rem;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
 
-  .gimnasio-info h2 {
-    font-size: 16px; /* Tamaño de fuente más pequeño */
-  }
+.gimnasio-detalle-box ul {
+  list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 1rem;
+}
 
-  .gimnasio-info p {
-    font-size: 12px; /* Tamaño de fuente más pequeño */
-  }
+.gimnasio-detalle-box ul li {
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+/* Estilos para las fotos */
+.gimnasio-fotos {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.gimnasio-fotos img {
+  width: 100%;
+  max-width: 300px;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para el footer */
+.gimnasio-footer {
+  margin-top: 2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--secondary-color);
 }

@@ -1,20 +1,17 @@
 import { Link } from "react-router-dom";
 import "../styles/global.css";
+import Navbar from "./Navbar"; // Importa el componente Navbar
 
 function Header() {
   return (
     <header className="header">
-      <nav>
+      <div className="header-content">
         <h1>FitnessPro</h1>
-        <ul>
-          <li><Link to="/">Inicio</Link></li>
-          <li><Link to="/blog">Blog</Link></li>
-          <li><Link to="/citas">Agendar Citas</Link></li>
-          <li><Link to="/videos">Videos</Link></li>
-          <li><Link to="/gimnasios">Gimnasios</Link></li>
-        </ul>
-      </nav>
-      <Link to="/login" className="login-button">Iniciar Sesión</Link>
+        <div className="header-right">
+          <Link to="/login" className="login-button">Iniciar Sesión</Link>
+          <Navbar />
+        </div>
+      </div>
     </header>
   );
 }
