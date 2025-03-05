@@ -7,116 +7,143 @@
   --button-hover: #5a0014; /* Rojo vino más oscuro para hover */
 }
 
-/* Estilos para el header */
+/* Estilos generales */
+body {
+  background-image: url('https://img.freepik.com/psd-gratis/fondo-articulos-fitness_23-2150154416.jpg');
+  background-size: cover; /* Cubre toda la pantalla */
+  background-position: center; /* Centra la imagen */
+  background-attachment: fixed; /* Mantiene la imagen estática */
+  background-repeat: no-repeat; /* Evita que se repita */
+  color: var(--text-color);
+  font-family: Arial, sans-serif;
+  margin: 0;
+  font-size: 14px; /* Tamaño de fuente base más pequeño */
+}
+
+/* Header */
 .header {
   background-color: var(--primary-color);
   color: white;
-  padding: 15px;
+  padding: 10px 15px; /* Padding más pequeño */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 15px; /* Bordes redondeados */
-  margin: 10px; /* Margen para que se vea mejor */
-  padding: 15px 20px; /* Espaciado interno */
+  border-radius: 10px; /* Bordes más redondeados */
+  margin: 5px; /* Margen más pequeño */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
 }
 
 .header ul {
   list-style: none;
   display: flex;
-  gap: 15px;
+  gap: 10px; /* Espacio más pequeño entre elementos */
+  margin: 0;
+  padding: 0;
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
 }
 
 .header a {
   color: white;
   text-decoration: none;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
 
 /* Botón de inicio de sesión */
 .login-button {
-  background-color: var(--secondary-color); /* Gris oscuro */
+  background-color: var(--secondary-color);
   color: white;
-  padding: 8px 15px;
-  border-radius: 5px;
+  padding: 8px 15px; /* Padding más pequeño */
+  border-radius: 4px; /* Bordes más redondeados */
   text-decoration: none;
   font-weight: bold;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  margin: 5px 0; /* Espacio adicional en móviles */
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .login-button:hover {
-  background-color: var(--button-hover); /* Rojo vino más oscuro */
-  color: white;
+  background-color: var(--button-hover);
+  transform: scale(1.05); /* Efecto de escala al hacer hover */
 }
 
-/* Estilos para el login */
+.login-button:active {
+  transform: scale(0.95); /* Efecto de clic */
+}
+
+/* Responsive Design para el botón de inicio de sesión */
+@media (max-width: 768px) {
+  .login-button {
+    padding: 6px 12px; /* Padding más pequeño en móviles */
+    font-size: 12px; /* Tamaño de fuente más pequeño en móviles */
+  }
+}
+
+/* Login Container */
 .login-container {
-  width: 300px;
-  margin: 50px auto;
-  padding: 20px;
+  width: 250px; /* Ancho más pequeño */
+  margin: 30px auto; /* Margen más pequeño */
+  padding: 15px; /* Padding más pequeño */
   background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+  border-radius: 5px; /* Bordes más redondeados */
   text-align: center;
 }
 
 .login-container h2 {
-  margin-bottom: 15px;
+  font-size: 18px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 10px; /* Margen más pequeño */
 }
 
 .login-container form div {
-  margin-bottom: 10px;
+  margin-bottom: 8px; /* Margen más pequeño */
   text-align: left;
 }
 
 .login-container label {
   display: block;
   font-weight: bold;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
-
-.home {
-  background-color: gray;
-  border-radius: 10px;
-  padding: 20px;
-  color: white;
-}
-
-
 
 .login-container input {
   width: 100%;
-  padding: 8px;
-  margin-top: 5px;
+  padding: 6px; /* Padding más pequeño */
+  margin-top: 4px; /* Margen más pequeño */
   border: 1px solid #ccc;
-  border-radius: 5px;
+  border-radius: 4px; /* Bordes más redondeados */
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
 
-/* Botón del formulario de login */
 .login-container button {
   width: 100%;
-  padding: 10px;
-  background-color: var(--primary-color); /* Rojo vino */
+  padding: 8px; /* Padding más pequeño */
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: 4px; /* Bordes más redondeados */
   cursor: pointer;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
 
 .login-container button:hover {
-  background-color: var(--button-hover); /* Rojo vino más oscuro */
+  background-color: var(--button-hover);
 }
 
 /* Enlace de alternar entre login/registro */
 .toggle-link {
   color: var(--primary-color);
   cursor: pointer;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
 
 .toggle-link:hover {
   text-decoration: underline;
 }
 
-/* Estilos para el breadcrumb */
+/* Breadcrumbs */
 .breadcrumbs {
-  font-size: 14px;
-  margin-bottom: 15px;
+  font-size: 12px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 10px; /* Margen más pequeño */
 }
 
 .breadcrumbs a {
@@ -130,71 +157,234 @@
 
 /* Contenedor de páginas */
 .content-container {
-  max-width: 800px;
-  margin: 20px auto;
-  padding: 20px;
+  max-width: 700px; /* Ancho más pequeño */
+  margin: 15px auto; /* Margen más pequeño */
+  padding: 15px; /* Padding más pequeño */
   background-color: white;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-  border-radius: 5px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* Sombra más suave */
+  border-radius: 5px; /* Bordes más redondeados */
 }
 
 /* Botón general */
 .button {
   background-color: var(--primary-color);
   color: white;
-  padding: 10px 15px;
+  padding: 8px 12px; /* Padding más pequeño */
   border: none;
-  border-radius: 5px;
+  border-radius: 4px; /* Bordes más redondeados */
   cursor: pointer;
+  font-size: 14px; /* Tamaño de fuente más pequeño */
 }
 
 .button:hover {
   background-color: var(--button-hover);
 }
 
-/* Fondo de toda la página */
-body {
-  background-image: url('https://img.freepik.com/psd-gratis/fondo-articulos-fitness_23-2150154416.jpg');
-  background-size: cover; /* Cubre toda la pantalla */
-  background-position: center; /* Centra la imagen */
-  background-attachment: fixed; /* Mantiene la imagen estática */
-  background-repeat: no-repeat; /* Evita que se repita */
-  color: var(--text-color);
-  font-family: Arial, sans-serif;
+/* Home */
+.home {
+  background-color: rgb(28, 28, 28);
+  border-radius: 10px; /* Bordes más redondeados */
+  padding: 15px; /* Padding más pequeño */
+  color: white;
 }
-.footer {
-  color: #ffffff; /* Blanco suave */
-  text-shadow: #ffffff;
-}
-/* global.css */
 
+/* Search Box */
 .search-box {
-  margin: 20px 0;
+  margin: 15px 0; /* Margen más pequeño */
 }
 
 .search-box input {
-  padding: 10px;
-  font-size: 16px;
+  padding: 8px; /* Padding más pequeño */
+  font-size: 14px; /* Tamaño de fuente más pequeño */
   width: 100%;
-  max-width: 400px;
-  border-radius: 5px;
+  max-width: 350px; /* Ancho más pequeño */
+  border-radius: 4px; /* Bordes más redondeados */
   border: 1px solid #ccc;
 }
 
+/* Videos List */
 .videos-list {
-  margin-top: 20px;
+  margin-top: 15px; /* Margen más pequeño */
 }
 
 .video-item {
   background-color: #f4f4f4;
-  padding: 10px;
-  border-radius: 5px;
-  margin-bottom: 10px;
+  padding: 8px; /* Padding más pequeño */
+  border-radius: 4px; /* Bordes más redondeados */
+  margin-bottom: 8px; /* Margen más pequeño */
 }
 
+/* Error Container */
 .error-container {
   text-align: center;
-  padding: 50px;
+  padding: 30px; /* Padding más pequeño */
   background-color: #f8d7da;
   color: #721c24;
+}
+
+/* Estilos para la sección de imágenes y textos */
+.image-text-section {
+  display: flex;
+  flex-direction: row; /* Imágenes en línea horizontal */
+  justify-content: space-around; /* Espacio uniforme entre elementos */
+  align-items: flex-start; /* Alinea los elementos en la parte superior */
+  padding: 1.5rem; /* Padding más pequeño */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en pantallas pequeñas */
+}
+
+.image-text-item {
+  display: flex;
+  flex-direction: column; /* Imagen arriba, texto abajo */
+  align-items: center; /* Centra el contenido */
+  margin-bottom: 1.5rem; /* Margen más pequeño */
+  background-color: rgba(0, 0, 0, 0.5); /* Fondo semi-transparente */
+  padding: 15px; /* Padding más pequeño */
+  border-radius: 8px; /* Bordes más redondeados */
+  width: 30%; /* Ancho de cada tarjeta en pantallas grandes */
+  max-width: 250px; /* Ancho máximo más pequeño */
+  cursor: pointer; /* Cambia el cursor al pasar sobre la imagen */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.image-text-item:hover {
+  transform: scale(1.05); /* Efecto de escala al hacer hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra más suave */
+}
+
+.image-text-item img {
+  width: 100%; /* Ocupa el ancho completo del contenedor */
+  height: auto; /* Altura automática para mantener proporción */
+  border-radius: 8px; /* Bordes más redondeados */
+  margin-bottom: 0.8rem; /* Margen más pequeño */
+}
+
+.image-text {
+  max-width: 100%; /* Ocupa el ancho completo del contenedor */
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  color: white; /* Texto en color blanco */
+  text-align: center; /* Centra el texto */
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .header {
+    flex-direction: column; /* Apila los elementos del header en móviles */
+    align-items: flex-start; /* Alinea los elementos a la izquierda */
+  }
+
+  .header ul {
+    flex-direction: column; /* Apila los elementos del menú en móviles */
+    gap: 8px; /* Espacio más pequeño entre elementos */
+  }
+
+  .login-button {
+    width: 100%; /* Ocupa el ancho completo en móviles */
+    text-align: center; /* Centra el texto del botón */
+    padding: 6px 12px; /* Padding más pequeño en móviles */
+    font-size: 12px; /* Tamaño de fuente más pequeño en móviles */
+  }
+
+  .image-text-section {
+    flex-direction: column; /* Apila las tarjetas verticalmente en móviles */
+    align-items: center; /* Centra las tarjetas en móviles */
+  }
+
+  .image-text-item {
+    width: 100%; /* Ocupa el ancho completo en móviles */
+    max-width: none; /* Elimina el ancho máximo en móviles */
+  }
+
+  .image-text {
+    font-size: 12px; /* Tamaño de fuente más pequeño en móviles */
+  }
+}
+
+/* Estilos para la página de Gimnasios */
+.gimnasios-container {
+  padding: 1.5rem; /* Padding más pequeño */
+  text-align: center;
+  background-color: rgba(28, 28, 28, 0.9); /* Fondo oscuro semi-transparente */
+  color: white; /* Texto en blanco */
+  border-radius: 10px; /* Bordes más redondeados */
+  margin: 15px; /* Margen más pequeño */
+}
+
+.gimnasios-container h1 {
+  font-size: 22px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 0.8rem; /* Margen más pequeño */
+}
+
+.gimnasios-container p {
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 1.5rem; /* Margen más pequeño */
+}
+
+.gimnasios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem; /* Espacio más pequeño entre las tarjetas */
+  align-items: center;
+}
+
+.gimnasio-card {
+  background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
+  border-radius: 8px; /* Bordes más redondeados */
+  overflow: hidden;
+  width: 100%;
+  max-width: 500px; /* Ancho máximo más pequeño */
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.gimnasio-card:hover {
+  transform: scale(1.05); /* Efecto de escala al hacer hover */
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra más suave */
+}
+
+.gimnasio-image {
+  width: 100%;
+  height: 150px; /* Altura más pequeña */
+  object-fit: cover; /* Ajusta la imagen sin distorsionarse */
+}
+
+.gimnasio-info {
+  padding: 0.8rem; /* Padding más pequeño */
+  text-align: left;
+}
+
+.gimnasio-info h2 {
+  font-size: 18px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 0.4rem; /* Margen más pequeño */
+}
+
+.gimnasio-info p {
+  font-size: 14px; /* Tamaño de fuente más pequeño */
+  color: #ccc; /* Texto gris claro */
+}
+
+/* Responsive Design para Gimnasios */
+@media (max-width: 768px) {
+  .gimnasios-container {
+    padding: 1rem; /* Padding más pequeño */
+    margin: 10px; /* Margen más pequeño */
+  }
+
+  .gimnasios-container h1 {
+    font-size: 20px; /* Tamaño de fuente más pequeño */
+  }
+
+  .gimnasios-container p {
+    font-size: 12px; /* Tamaño de fuente más pequeño */
+  }
+
+  .gimnasio-card {
+    max-width: 100%; /* Ocupa el ancho completo en móviles */
+  }
+
+  .gimnasio-info h2 {
+    font-size: 16px; /* Tamaño de fuente más pequeño */
+  }
+
+  .gimnasio-info p {
+    font-size: 12px; /* Tamaño de fuente más pequeño */
+  }
 }

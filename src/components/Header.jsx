@@ -11,6 +11,7 @@ function Header() {
           <li><Link to="/blog">Blog</Link></li>
           <li><Link to="/citas">Agendar Citas</Link></li>
           <li><Link to="/videos">Videos</Link></li>
+          <li><Link to="/gimnasios">Gimnasios</Link></li>
         </ul>
       </nav>
       <Link to="/login" className="login-button">Iniciar Sesión</Link>
