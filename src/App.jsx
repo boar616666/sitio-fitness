@@ -9,6 +9,7 @@ import ErrorPage from "./pages/ErrorPage";
 import Header from "./components/header"; // Asegúrate de que el archivo sea Header.js o Header.jsx
 import Footer from "./components/Footer"; // Asegúrate de que el archivo sea Footer.js o Footer.jsx
 import GimnasioDetalle from "./pages/GimnasioDetalle";
+import LibrosEjercicios from "./pages/LibrosEjercicios";
 
 function App() {
   return (
@@ -22,7 +23,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/gimnasios" element={<Gimnasios />} />
-        
+          <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="/gimnasios/:id" element={<GimnasioDetalle />} />
         </Routes>
