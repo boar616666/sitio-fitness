@@ -25,5 +25,17 @@ export const gimnasios = [
       horarios: "Lunes a Domingo: 5:00 AM - 11:00 PM",
       servicios: ["Entrenamiento funcional", "Nutrición", "Yoga"],
     },
+    {
+      id: 3,
+      nombre: "Power Paseo",
+      direccion: "Paseo Jardín 118, Zona Activa",
+      descripcion: "Especializado en nutrición deportiva.",
+      fotos: [
+        "https://via.placeholder.com/600x400",
+        "https://via.placeholder.com/600x400",
+      ],
+      horarios: "Lunes a Domingo: 8:00 AM - 11:00 PM",
+      servicios: ["Entrenamiento funcional", "Nutrición", "Yoga"],
+    },
     // Agrega más gimnasios aquí...
   ];
