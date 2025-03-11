@@ -16,13 +16,7 @@ const LibrosEjercicios = () => {
       titulo: "Entrenamiento con Pesas",
       descripcion: "Aprende a realizar ejercicios con pesas para ganar fuerza y masa muscular.",
       archivo: "/libros/libro2.pdf", // Ruta en la carpeta public
-    },
-    {
-      id: 3,
-      titulo: "Yoga y Estiramientos",
-      descripcion: "Mejora tu flexibilidad y relájate con estas rutinas de yoga y estiramientos.",
-      archivo: "/libros/libro3.pdf", // Ruta en la carpeta public
-    },
+    }
   ];
 
   return (
