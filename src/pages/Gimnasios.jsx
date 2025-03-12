@@ -1,8 +1,8 @@
-// src/pages/Gimnasios.jsx
 import React from "react";
 import { gimnasios } from "../data/gimnasios";
 import GimnasioCard from "../components/GimnasioCard";
 import Breadcrumbs from "../components/Breadcrumbs";
+
 const Gimnasios = () => {
   return (
     <div className="gimnasios-container">

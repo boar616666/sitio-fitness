@@ -417,13 +417,13 @@ body {
   font-size: 14px; /* Tamaño de fuente más pequeño */
   color: #ccc; /* Texto gris claro */
 }
+
 /* Estilos para el contenedor de detalles del gimnasio */
 .gimnasio-detalle-container {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-  
   min-height: 100vh;
 }
 
@@ -489,13 +489,13 @@ body {
   font-size: 0.9rem;
   color: var(--secondary-color);
 }
+
 /* Estilos para el contenedor del blog */
 .blog-container {
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 2rem;
-
   min-height: 100vh;
 }
 
@@ -537,20 +537,76 @@ body {
   background-color: var(--button-hover);
   transform: scale(1.05);
 }
+
+/* Estilos para el contenedor de la página de libros */
+.libros-page-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
+}
+
+/* Estilos para el recuadro blanco */
+.libros-box {
+  background-color: white;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
+  padding: 2rem;
+  max-width: 1200px; /* Ajusta el ancho según sea necesario */
+  width: 100%;
+  text-align: center;
+}
+
+/* Estilos para la breadcrumb */
+.breadcrumb {
+  font-size: 0.9rem;
+  color: #555;
+  margin-bottom: 1rem;
+}
+
+.breadcrumb a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+.breadcrumb a:hover {
+  text-decoration: underline;
+}
+
+.breadcrumb span {
+  color: #d90303;
+}
+
+/* Estilos para el título */
+.libros-box h1 {
+  font-size: 2rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+}
+
+/* Estilos para la lista de libros en una línea horizontal */
+.libros-list-horizontal {
+  display: flex;
+  justify-content: center; /* Centra las cards horizontalmente */
+  gap: 1.5rem; /* Espacio entre las cards */
+  flex-wrap: nowrap; /* Evita que las cards se envuelvan a la siguiente línea */
+}
+
 /* Estilos para las tarjetas de libros */
 .libro-card {
-  background-color: #ffffff; /* Fondo blanco */
+  background-color: #f9f9f9; /* Fondo gris claro */
   border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* Sombra suave */
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   padding: 1.5rem;
-  text-align: center;
   width: 250px; /* Ancho fijo para cada card */
+  text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .libro-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
 }
 
 /* Estilos para el ícono o imagen */
