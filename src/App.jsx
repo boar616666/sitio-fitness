@@ -10,6 +10,7 @@ import Header from "./components/header"; // Asegúrate de que el archivo sea He
 import Footer from "./components/Footer"; // Asegúrate de que el archivo sea Footer.js o Footer.jsx
 import GimnasioDetalle from "./pages/GimnasioDetalle";
 import LibrosEjercicios from "./pages/LibrosEjercicios";
+import InstructorDetail from "./components/InstructorDetail";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
           <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
           <Route path="*" element={<ErrorPage />} />
           <Route path="/gimnasios/:id" element={<GimnasioDetalle />} />
+          <Route path="/citas/instructor/:id" element={<InstructorDetail />} />
         </Routes>
       </main>
       <Footer />
