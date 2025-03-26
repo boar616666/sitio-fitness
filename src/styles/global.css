@@ -495,8 +495,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 2rem;
-  min-height: 100vh;
+  padding: 50px;
+  min-height: 50px;
 }
 
 /* Estilos para el recuadro del blog */
@@ -784,13 +784,17 @@ body {
   min-width: 200px;
   margin-bottom: 1rem;
 }
-
+/* Cambia SOLO los elementos grises (secondary-color) a negro */
 .footer-section h5 {
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
-  color: var(--secondary-color);
+  color: black; /* Antes: var(--secondary-color) */
+  font-size: 20px;
 }
 
+.footer-bottom p {
+  color: black; /* Antes: var(--secondary-color) */
+}
+
+/* --- El resto del CSS se mantiene IGUAL --- */
 .footer-section ul {
   list-style: none;
   padding: 0;
@@ -801,7 +805,7 @@ body {
 }
 
 .footer-section ul li a {
-  color: white;
+  color: white; /* Esto sigue siendo blanco */
   text-decoration: none;
   transition: color 0.3s ease;
 }
@@ -828,7 +832,7 @@ body {
 
 .subscribe-form button {
   padding: 0.5rem 1rem;
-  background-color: var(--secondary-color);
+  background-color: black; /* Cambiado a negro (antes secondary-color) */
   color: white;
   border: none;
   border-radius: 4px;
@@ -846,9 +850,67 @@ body {
   padding-top: 1rem;
   border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
+/* Estilos para la página de error a pantalla completa */
+.fullscreen-error {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  background-color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Asegura que esté por encima de otros elementos */
+}
 
-.footer-bottom p {
-  margin: 0;
-  font-size: 0.9rem;
-  color: var(--secondary-color);
+.error-content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 800px;
+}
+
+.fullscreen-error h1 {
+  font-size: 3rem;
+  color: #333;
+  margin-bottom: 1.5rem;
+}
+
+.error-message {
+  margin: 2rem 0;
+  font-size: 1.5rem;
+  color: #555;
+}
+
+.error-image {
+  margin: 1rem 0;
+}
+
+.error-image img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  max-height: 50vh;
+}
+
+.help-text {
+  font-size: 1.2rem;
+  color: #666;
+  margin: 1.5rem 0;
+}
+
+.home-button {
+  display: inline-block;
+  padding: 0.8rem 2rem;
+  background-color: #4a6fa5;
+  color: white;
+  text-decoration: none;
+  border-radius: 5px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+}
+
+.home-button:hover {
+  background-color: #3a5a8f;
 }

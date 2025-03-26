@@ -7,7 +7,7 @@ const instructores = [
   {
     id: 1,
     nombre: "Juan Pérez",
-    imagen: "ruta/a/la/imagen1.jpg",
+    imagen: "https://img.freepik.com/foto-gratis/entrenador-personal-fitness-haciendo-ejercicio_23-2148989171.jpg",
     edad: 30,
     gimnasio: "Gimnasio XYZ",
     costoPorSesion: "$50",
@@ -17,7 +17,7 @@ const instructores = [
   {
     id: 2,
     nombre: "Ana Gómez",
-    imagen: "ruta/a/la/imagen2.jpg",
+    imagen: "https://img.freepik.com/foto-gratis/mujer-fitness-sosteniendo-pesa-alegre_23-2148283182.jpg",
     edad: 28,
     gimnasio: "Gimnasio ABC",
     costoPorSesion: "$60",
@@ -27,7 +27,7 @@ const instructores = [
   {
     id: 3,
     nombre: "Carlos Ruiz",
-    imagen: "ruta/a/la/imagen3.jpg",
+    imagen: "https://www.efdeportes.com/efd187/el-arte-de-competir-en-el-fisicoculturismo-03.jpg",
     edad: 35,
     gimnasio: "Gimnasio DEF",
     costoPorSesion: "$55",
@@ -37,36 +37,35 @@ const instructores = [
 ];
 
 function InstructorDetail() {
-  const { id } = useParams(); // Obtiene el ID del instructor de la URL
+  const { id } = useParams();
   const navigate = useNavigate();
 
-  // Busca el instructor en la lista
   const instructor = instructores.find((inst) => inst.id === parseInt(id));
 
-  // Si no se encuentra el instructor, muestra un mensaje de error
   if (!instructor) {
     return <div>Instructor no encontrado</div>;
   }
 
-  // Rutas para el Breadcrumbs
   const breadcrumbPaths = [
     { name: "Inicio", link: "/" },
     { name: "Citas", link: "/citas" },
-    { name: "Instructor", link: null }, // No hay enlace para la página actual
-    { name: instructor.nombre, link: null }, // No hay enlace para la página actual
+    { name: "Instructor", link: null },
+    { name: instructor.nombre, link: null },
   ];
 
   return (
     <div className="instructor-detalle-container">
       <div className="instructor-detalle-box">
-        {/* Breadcrumbs */}
         <Breadcrumbs paths={breadcrumbPaths} />
 
         <h1>{instructor.nombre}</h1>
         <img
           src={instructor.imagen}
-          alt={instructor.nombre}
+          alt={`Foto de ${instructor.nombre}`}
           className="instructor-detalle-image"
+          onError={(e) => {
+            e.target.src = 'https://via.placeholder.com/300x200?text=Imagen+no+disponible';
+          }}
         />
         <p>Edad: {instructor.edad} años</p>
         <p>Gimnasio: {instructor.gimnasio}</p>
@@ -74,8 +73,7 @@ function InstructorDetail() {
         <p>Costo mensual: {instructor.costoMensual}</p>
         <p>Teléfono: {instructor.telefono}</p>
 
-        {/* Botón para volver a la lista de instructores */}
-        <button onClick={() => navigate("/citas")}>Volver a Instructores</button>
+        
       </div>
     </div>
   );
