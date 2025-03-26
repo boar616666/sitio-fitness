@@ -914,3 +914,31 @@ body {
 .home-button:hover {
   background-color: #3a5a8f;
 }
+
+/* Contenedor principal (logo + texto) */
+.brand-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Estilo para la imagen del logo */
+.header-logo {
+  height: 60px;               /* Tamaño aumentado */
+  width: auto;
+  margin-right: 30px;         /* Espacio personalizado a la derecha del logo */
+  transition: all 0.3s ease;  /* Transición suave para efectos */
+}
+
+/* Estilo para el texto */
+.brand-title {
+  font-size: 1.8rem;          /* Tamaño de fuente */
+  color: #ffffff;                /* Color del texto */
+  margin: 0;                  /* Elimina márgenes por defecto */
+  padding-left: 5px;
+  display: inline;         /* Espacio opcional a la izquierda del texto */
+}
+
+/* Efecto hover opcional */
+.brand-container:hover .header-logo {
+  transform: scale(1.05);     /* Ligero aumento al pasar el mouse */
+}
