@@ -942,3 +942,167 @@ body {
 .brand-container:hover .header-logo {
   transform: scale(1.05);     /* Ligero aumento al pasar el mouse */
 }
+/*/
+/* Sistema de Calificación por Estrellas */
+.rating-section {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.average-rating .stars {
+  font-size: 1.5rem;
+  color: var(--primary-color); /* Usa el rojo vino de tu paleta */
+  margin-right: 10px;
+}
+
+.average-rating .rating-value {
+  font-size: 1.1rem;
+  color: var(--secondary-color);
+}
+
+.rating-form {
+  margin-top: 20px;
+}
+
+.star-rating {
+  font-size: 2rem;
+  margin: 10px 0;
+}
+
+.star-rating button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0 5px;
+}
+
+.star-rating .on {
+  color: var(--primary-color); /* Estrellas seleccionadas en rojo vino */
+}
+
+.star-rating .off {
+  color: #e4e5e9; /* Gris para estrellas no seleccionadas */
+}
+
+.submit-rating-btn {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.submit-rating-btn:hover {
+  background-color: var(--button-hover);
+}
+
+.submit-rating-btn:disabled {
+  background-color: var(--secondary-color);
+  cursor: not-allowed;
+}
+
+.login-message {
+  margin-top: 10px;
+  color: var(--secondary-color);
+}
+
+.login-message a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.login-message a:hover {
+  text-decoration: underline;
+}
+
+.rating-message {
+  margin-top: 10px;
+  color: var(--primary-color);
+  font-weight: bold;
+}
+
+/* Estilos para el CAPTCHA */
+.g-recaptcha {
+  margin: 15px 0;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .rating-section {
+    padding: 15px;
+    margin-top: 20px;
+  }
+  
+  .average-rating .stars {
+    font-size: 1.3rem;
+  }
+  
+  .star-rating {
+    font-size: 1.8rem;
+  }
+  
+  .submit-rating-btn {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+  }
+}
+.login-container {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.error-message {
+  color: #ff4444;
+  margin-bottom: 1rem;
+}
+
+.toggle-link {
+  color: #800020;
+  cursor: pointer;
+  text-decoration: underline;
+}
+
+button {
+  background-color: #800020;
+  color: white;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+/* Estilos específicos para el reCAPTCHA */
+.g-recaptcha {
+  margin: 15px 0;
+  transform: scale(0.85); /* Escala el widget para que quepa mejor */
+  transform-origin: 0 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Contenedor padre para mejor ajuste */
+.captcha-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  margin: 10px 0;
+}
