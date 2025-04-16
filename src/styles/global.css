@@ -1106,3 +1106,352 @@ button {
   width: 100%;
   margin: 10px 0;
 }
+/* Estilos para el detalle del gimnasio */
+.gimnasio-detalle-container {
+  padding: 20px;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.gimnasio-detalle-box {
+  background: white;
+  padding: 25px;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.gimnasio-info-section {
+  margin-bottom: 20px;
+}
+
+.gimnasio-info-section p {
+  margin: 8px 0;
+}
+
+.gimnasio-descripcion {
+  margin-top: 15px;
+}
+
+.servicios-list {
+  padding-left: 20px;
+  margin: 10px 0;
+}
+
+.servicios-list li {
+  margin-bottom: 5px;
+}
+
+/* Estilos para las fotos */
+.gimnasio-fotos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 15px;
+  margin: 15px 0;
+}
+
+.gimnasio-fotos img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Estilos para el rating */
+.rating-section {
+  margin: 30px 0;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.average-rating {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.stars {
+  font-size: 1.2rem;
+  color: #ffc107;
+  margin-right: 10px;
+}
+
+.rating-value {
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.rating-form {
+  margin-top: 15px;
+}
+
+.login-message {
+  margin-top: 15px;
+  color: #666;
+}
+
+.login-message a {
+  color: #800020;
+  text-decoration: none;
+}
+
+.login-message a:hover {
+  text-decoration: underline;
+}
+
+/* Estilos para el botón de WhatsApp */
+.whatsapp-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.whatsapp-button {
+  background-color: #25D366;
+  color: white;
+  border: none;
+  padding: 12px 25px;
+  border-radius: 6px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.whatsapp-button:hover {
+  background-color: #128C7E;
+}
+
+.whatsapp-button::before {
+  content: "";
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3e%3cpath d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/%3e%3c/svg%3e");
+  background-size: contain;
+}
+/* Contenedor principal de gimnasios */
+.gimnasios-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100vh; /* Ocupa toda la altura de la pantalla */
+  padding: 2rem 1rem;
+  background-color: rgba(255, 255, 255, 0.9);
+}
+
+/* Título de la sección */
+.gimnasios-container h1 {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  width: 100%;
+}
+
+/* Lista de gimnasios - Grid responsivo */
+.gimnasios-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1200px; /* Ancho máximo del grid */
+  padding: 0 1rem;
+}
+
+/* Card individual de gimnasio */
+.gimnasio-card {
+  background-color: white;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto; /* Centra la card dentro de su celda grid */
+  width: 100%; /* Ocupa todo el ancho disponible en su celda */
+}
+
+.gimnasio-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* Imagen del gimnasio */
+.gimnasio-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+}
+
+/* Contenido de la card */
+.gimnasio-info {
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.gimnasio-info h2 {
+  font-size: 1.25rem;
+  margin-bottom: 0.5rem;
+  color: var(--secondary-color);
+}
+
+.gimnasio-info p {
+  font-size: 0.9rem;
+  color: #666;
+  margin-bottom: 1rem;
+  flex-grow: 1;
+}
+
+/* Botón de ver detalles */
+.ver-detalles-btn {
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.6rem 1.2rem;
+  border-radius: 5px;
+  text-align: center;
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: background-color 0.3s ease;
+  margin-top: auto; /* Empuja el botón hacia abajo */
+  align-self: flex-start; /* Alinea a la izquierda */
+}
+
+.ver-detalles-btn:hover {
+  background-color: var(--button-hover);
+  transform: scale(1.02);
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+  .gimnasios-list {
+    grid-template-columns: 1fr; /* Una columna en móviles */
+    max-width: 500px; /* Ancho máximo más estrecho */
+  }
+  
+  .gimnasio-card {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .gimnasios-container {
+    padding: 1.5rem 0.5rem;
+  }
+  
+  .gimnasio-image {
+    height: 180px;
+  }
+  
+  .gimnasio-info {
+    padding: 1rem;
+  }
+}
+  /* Estilos globales para verificación */
+.verification-container {
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
+  text-align: center;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.verification-card {
+  padding: 1.5rem;
+}
+
+.verification-title {
+  color: #2d3748;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.verification-text {
+  color: #4a5568;
+  font-size: 1rem;
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+}
+
+.verification-success {
+  color: #2f855a;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.verification-error {
+  color: #c53030;
+  font-size: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.verification-form-container {
+  max-width: 500px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.verification-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
+}
+
+.verification-input {
+  padding: 0.8rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.verification-input:focus {
+  outline: none;
+  border-color: #4299e1;
+  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.2);
+}
+
+.verification-button {
+  padding: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.verification-button.primary {
+  background-color: #4299e1;
+  color: white;
+}
+
+.verification-button.primary:hover {
+  background-color: #3182ce;
+}
+
+.verification-button.secondary {
+  background-color: #e2e8f0;
+  color: #4a5568;
+}
+
+.verification-button.secondary:hover {
+  background-color: #cbd5e0;
+}
+
+/* Responsive */
+@media (max-width: 640px) {
+  .verification-container,
+  .verification-form-container {
+    margin: 1rem;
+    padding: 1.5rem;
+  }
+}

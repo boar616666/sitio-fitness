@@ -1,43 +1,72 @@
-// src/components/Register.jsx
-import { useState } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
-    password: '',
-    captchaToken: 'test_token' // Reemplaza con token real de reCAPTCHA
+    password: ''
   });
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    
     try {
-      const response = await axios.post('http://localhost:5000/api/auth/register', formData);
-      alert('¡Registro exitoso! Verifica tu email.');
-    } catch (error) {
-      alert(error.response?.data?.error || 'Error en el registro');
+      const response = await axios.post('/api/auth/register', formData, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        withCredentials: true
+      });
+
+      if (response.data.success) {
+        navigate('/verify-pending', { state: { email: formData.email } });
+      }
+    } catch (err) {
+      setError(err.response?.data?.message || 'Error en el registro');
+      console.error('Error de registro:', err.response?.data || err.message);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <input
-        type="text"
-        placeholder="Nombre"
-        onChange={(e) => setFormData({...formData, name: e.target.value})}
-      />
-      <input
-        type="email"
-        placeholder="Email"
-        onChange={(e) => setFormData({...formData, email: e.target.value})}
-      />
-      <input
-        type="password"
-        placeholder="Contraseña"
-        onChange={(e) => setFormData({...formData, password: e.target.value})}
-      />
-      <button type="submit">Registrarse</button>
-    </form>
+    <div className="auth-container">
+      <h2>Registro</h2>
+      {error && <div className="error-message">{error}</div>}
+      
+      <form onSubmit={handleSubmit}>
+        <input
+          type="text"
+          placeholder="Nombre de usuario"
+          value={formData.username}
+          onChange={(e) => setFormData({...formData, username: e.target.value})}
+          required
+        />
+        
+        <input
+          type="email"
+          placeholder="Email"
+          value={formData.email}
+          onChange={(e) => setFormData({...formData, email: e.target.value})}
+          required
+        />
+        
+        <input
+          type="password"
+          placeholder="Contraseña"
+          value={formData.password}
+          onChange={(e) => setFormData({...formData, password: e.target.value})}
+          required
+          minLength="8"
+        />
+        
+        <button type="submit">Registrarse</button>
+      </form>
+    </div>
   );
 };
+
+export default Register;
