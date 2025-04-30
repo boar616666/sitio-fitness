@@ -5,6 +5,9 @@
   --background-color: #f5f5f5; /* Gris claro */
   --text-color: #333; /* Gris oscuro para texto */
   --button-hover: #5a0014; /* Rojo vino más oscuro para hover */
+  --border-color: #e4e4e4; /* Color para bordes */
+  --profile-bg: #ffffff; /* Fondo para tarjetas de perfil */
+  --profile-hover: #f7f7f7; /* Color hover para tarjetas */
 }
 
 /* Estilos generales */
@@ -137,64 +140,111 @@ body {
 
 /* Login Container */
 .login-container {
-  width: 250px; /* Ancho más pequeño */
-  margin: 30px auto; /* Margen más pequeño */
-  padding: 15px; /* Padding más pequeño */
+  max-width: 600px;
+  margin: 2rem auto;
+  padding: 2rem;
   background-color: white;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1); /* Sombra más suave */
-  border-radius: 5px; /* Bordes más redondeados */
-  text-align: center;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
 }
 
 .login-container h2 {
-  font-size: 18px; /* Tamaño de fuente más pequeño */
-  margin-bottom: 10px; /* Margen más pequeño */
+  font-size: 1.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  color: var(--primary-color);
 }
 
-.login-container form div {
-  margin-bottom: 8px; /* Margen más pequeño */
-  text-align: left;
+.form-group {
+  margin-bottom: 1.2rem;
 }
 
-.login-container label {
+.form-group label {
   display: block;
-  font-weight: bold;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: var(--text-color);
 }
 
-.login-container input {
+.form-group input,
+.form-group select {
   width: 100%;
-  padding: 6px; /* Padding más pequeño */
-  margin-top: 4px; /* Margen más pequeño */
+  padding: 0.8rem;
   border: 1px solid #ccc;
-  border-radius: 4px; /* Bordes más redondeados */
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+  border-radius: 4px;
+  font-size: 1rem;
 }
 
-.login-container button {
+.button {
   width: 100%;
-  padding: 8px; /* Padding más pequeño */
+  padding: 0.8rem;
   background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 4px; /* Bordes más redondeados */
+  border-radius: 4px;
+  font-size: 1rem;
   cursor: pointer;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+  transition: background-color 0.3s;
 }
 
-.login-container button:hover {
+.button:hover {
   background-color: var(--button-hover);
 }
 
-/* Enlace de alternar entre login/registro */
+.error-message {
+  background-color: #ffecec;
+  color: #e74c3c;
+  padding: 0.8rem;
+  border-radius: 4px;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.toggle-text {
+  text-align: center;
+  margin-top: 1.5rem;
+}
+
 .toggle-link {
   color: var(--primary-color);
   cursor: pointer;
-  font-size: 14px; /* Tamaño de fuente más pequeño */
+  font-weight: 500;
 }
 
 .toggle-link:hover {
   text-decoration: underline;
+}
+
+.register-options {
+  margin-bottom: 1.2rem;
+}
+
+.register-type-selector {
+  display: flex;
+  margin-top: 0.5rem;
+}
+
+.register-type-btn {
+  flex: 1;
+  padding: 0.6rem;
+  background-color: #f1f1f1;
+  border: 1px solid #ccc;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.register-type-btn:first-child {
+  border-radius: 4px 0 0 4px;
+}
+
+.register-type-btn:last-child {
+  border-radius: 0 4px 4px 0;
+}
+
+.register-type-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
 }
 
 /* Breadcrumbs */
@@ -358,128 +408,131 @@ body {
 
 /* Estilos para la página de Gimnasios */
 .gimnasios-container {
-  padding: 1.5rem; /* Padding más pequeño */
+  padding: 2rem;
   text-align: center;
-  background-color: rgba(28, 28, 28, 0.9); /* Fondo oscuro semi-transparente */
-  color: white; /* Texto en blanco */
-  border-radius: 10px; /* Bordes más redondeados */
-  margin: 15px; /* Margen más pequeño */
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 10px;
+  margin: 2rem auto;
+  max-width: 1200px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .gimnasios-container h1 {
-  font-size: 22px; /* Tamaño de fuente más pequeño */
-  margin-bottom: 0.8rem; /* Margen más pequeño */
+  color: var(--primary-color);
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
 }
 
-.gimnasios-container p {
-  font-size: 14px; /* Tamaño de fuente más pequeño */
-  margin-bottom: 1.5rem; /* Margen más pequeño */
+.gimnasios-description {
+  color: var(--text-color);
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
 }
 
 .gimnasios-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.2rem; /* Espacio más pequeño entre las tarjetas */
-  align-items: center;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 2rem;
+  margin-bottom: 3rem;
 }
 
 .gimnasio-card {
-  background-color: rgba(255, 255, 255, 0.1); /* Fondo semi-transparente */
-  border-radius: 8px; /* Bordes más redondeados */
+  background-color: white;
+  border-radius: 8px;
   overflow: hidden;
-  width: 100%;
-  max-width: 500px; /* Ancho máximo más pequeño */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .gimnasio-card:hover {
-  transform: scale(1.05); /* Efecto de escala al hacer hover */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3); /* Sombra más suave */
+  transform: translateY(-5px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
 }
 
 .gimnasio-image {
   width: 100%;
-  height: 150px; /* Altura más pequeña */
-  object-fit: cover; /* Ajusta la imagen sin distorsionarse */
+  height: 200px;
+  object-fit: cover;
 }
 
 .gimnasio-info {
-  padding: 0.8rem; /* Padding más pequeño */
-  text-align: left;
+  padding: 1.5rem;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
 }
 
 .gimnasio-info h2 {
-  font-size: 18px; /* Tamaño de fuente más pequeño */
-  margin-bottom: 0.4rem; /* Margen más pequeño */
+  color: var(--primary-color);
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
 }
 
 .gimnasio-info p {
-  font-size: 14px; /* Tamaño de fuente más pequeño */
-  color: #ccc; /* Texto gris claro */
-}
-
-/* Estilos para el contenedor de detalles del gimnasio */
-.gimnasio-detalle-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 2rem;
-  min-height: 100vh;
-}
-
-/* Estilos para el recuadro de detalles */
-.gimnasio-detalle-box {
-  background-color: white;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); /* Sombra suave */
-  padding: 2rem;
-  max-width: 800px;
-  width: 100%;
-}
-
-.gimnasio-detalle-box h1 {
-  font-size: 2rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-}
-
-.gimnasio-detalle-box p {
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
   color: var(--text-color);
+  margin-bottom: 0.75rem;
 }
 
-.gimnasio-detalle-box h2 {
-  font-size: 1.5rem;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-  color: var(--primary-color);
+.gimnasio-horario {
+  margin-bottom: 1.5rem;
+  font-size: 0.9rem;
 }
 
-.gimnasio-detalle-box ul {
-  list-style-type: disc;
-  margin-left: 1.5rem;
-  margin-bottom: 1rem;
+.horario-label {
+  font-weight: 600;
+  color: var(--secondary-color);
 }
 
-.gimnasio-detalle-box ul li {
-  font-size: 1rem;
-  color: var(--text-color);
+.ver-detalles-btn {
+  margin-top: auto;
+  display: inline-block;
+  background-color: var(--primary-color);
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  align-self: flex-start;
+  transition: background-color 0.3s, transform 0.2s;
+  border: none;
+  cursor: pointer;
 }
 
-/* Estilos para las fotos */
-.gimnasio-fotos {
-  display: flex;
-  gap: 1rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
+.ver-detalles-btn:hover {
+  background-color: var(--button-hover);
+  transform: translateY(-2px);
 }
 
-.gimnasio-fotos img {
-  width: 100%;
-  max-width: 300px;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+.loading-indicator {
+  padding: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  color: var(--secondary-color);
+}
+
+.gimnasios-cta-section {
+  margin: 3rem auto 1rem;
+  max-width: 600px;
+}
+
+/* Estilos para pantallas pequeñas */
+@media (max-width: 768px) {
+  .gimnasios-container {
+    padding: 1.5rem;
+  }
+  
+  .gimnasios-list {
+    grid-template-columns: 1fr;
+  }
+  
+  .gimnasio-card {
+    max-width: 450px;
+    margin: 0 auto;
+  }
 }
 
 /* Estilos para el footer */
@@ -1108,9 +1161,11 @@ button {
 }
 /* Estilos para el detalle del gimnasio */
 .gimnasio-detalle-container {
-  padding: 20px;
-  max-width: 800px;
-  margin: 0 auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  min-height: 100vh;
 }
 
 .gimnasio-detalle-box {
@@ -1453,5 +1508,345 @@ button {
   .verification-form-container {
     margin: 1rem;
     padding: 1.5rem;
+  }
+}
+
+/* Estilos para la sección de entrenadores en el detalle del gimnasio */
+.gimnasio-entrenadores {
+  margin-top: 2.5rem;
+}
+
+.gimnasio-entrenadores h2 {
+  color: var(--primary-color);
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+}
+
+.gimnasio-entrenadores h2:after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background-color: var(--primary-color);
+  margin: 10px auto 0;
+}
+
+.entrenadores-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+/* Nuevo estilo para las tarjetas de entrenador tipo perfil de red social */
+.entrenador-card {
+  background-color: var(--profile-bg);
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: all 0.2s ease;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border-color);
+  position: relative;
+}
+
+.entrenador-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.entrenador-card .entrenador-banner {
+  height: 80px;
+  background: linear-gradient(135deg, var(--primary-color) 0%, #9a0029 100%);
+  position: relative;
+}
+
+.entrenador-imagen-container {
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  border: 4px solid white;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.entrenador-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.entrenador-card h3 {
+  margin: 60px 0 5px;
+  color: var(--text-color);
+  font-size: 1.3rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.entrenador-cargo {
+  display: block;
+  text-align: center;
+  color: var(--primary-color);
+  font-size: 0.9rem;
+  margin-bottom: 15px;
+  font-weight: 500;
+}
+
+.entrenador-estado {
+  display: inline-block;
+  background: #e6f7e8;
+  color: #28a745;
+  font-size: 0.8rem;
+  padding: 3px 8px;
+  border-radius: 10px;
+  margin: 0 auto;
+  text-align: center;
+  display: table;
+  margin-bottom: 10px;
+}
+
+.entrenador-info {
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  color: var(--text-color);
+  flex-grow: 1;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+}
+
+.entrenador-info span {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.entrenador-info svg {
+  width: 16px;
+  height: 16px;
+  color: var(--primary-color);
+  opacity: 0.8;
+}
+
+.entrenador-acciones {
+  display: flex;
+  justify-content: space-between;
+  padding: 0.7rem 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: #fafafa;
+  margin-top: auto;
+}
+
+.entrenador-acciones .ver-detalles-btn {
+  flex: 1;
+  text-align: center;
+  margin: 0;
+  font-size: 0.95rem;
+  padding: 0.6rem 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.entrenador-accion-secundaria {
+  border: none;
+  background: none;
+  color: var(--secondary-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.entrenador-accion-secundaria:hover {
+  background-color: #f0f0f0;
+}
+
+@media (max-width: 768px) {
+  .entrenadores-grid {
+    grid-template-columns: 1fr;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+/* Estilos para el menú de perfil de usuario */
+.profile-menu-container {
+  position: relative;
+  margin-right: 20px;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 20px;
+  transition: background-color 0.2s;
+}
+
+.profile-button:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.profile-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.profile-name {
+  font-size: 0.9rem;
+  font-weight: 500;
+  max-width: 120px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.profile-arrow {
+  font-size: 0.7rem;
+  margin-left: 5px;
+  transition: transform 0.2s;
+}
+
+.profile-arrow.up {
+  transform: rotate(180deg);
+}
+
+.profile-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  width: 240px;
+  z-index: 1000;
+  margin-top: 8px;
+  overflow: hidden;
+}
+
+.profile-dropdown-header {
+  display: flex;
+  padding: 16px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.profile-dropdown-avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 12px;
+}
+
+.profile-dropdown-info {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.profile-dropdown-name {
+  font-weight: 600;
+  margin: 0 0 4px 0;
+}
+
+.profile-dropdown-email {
+  font-size: 0.8rem;
+  color: #666;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 160px;
+}
+
+.profile-dropdown-options {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.profile-dropdown-options li {
+  padding: 0;
+  margin: 0;
+}
+
+.profile-dropdown-options li a,
+.profile-dropdown-options li button {
+  display: flex;
+  align-items: center;
+  padding: 12px 16px;
+  color: #333;
+  text-decoration: none;
+  transition: background-color 0.2s;
+  width: 100%;
+  text-align: left;
+  border: none;
+  background: none;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.profile-dropdown-options li a:hover,
+.profile-dropdown-options li button:hover {
+  background-color: #f5f5f5;
+}
+
+.profile-dropdown-options li svg {
+  margin-right: 8px;
+  color: #666;
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: #f0f0f0;
+  margin: 4px 0;
+}
+
+.logout-button {
+  color: #e74c3c !important;
+}
+
+.logout-button svg {
+  color: #e74c3c !important;
+}
+
+/* Media queries para responsive */
+@media (max-width: 768px) {
+  .profile-name {
+    display: none;
+  }
+  
+  .profile-button {
+    padding: 6px;
+  }
+  
+  .profile-avatar {
+    margin-right: 0;
+  }
+  
+  .profile-arrow {
+    display: none;
   }
 }

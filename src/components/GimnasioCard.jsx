@@ -2,21 +2,30 @@ import React from "react";
 import { Link } from "react-router-dom";
 
 const GimnasioCard = ({ gimnasio }) => {
+  // URL de imagen predeterminada en caso de que no exista
+  const imagenPredeterminada = "https://img.freepik.com/foto-gratis/gimnasio-luz-gimnasio-equipos-moderno_124507-14735.jpg";
+
   return (
     <div className="gimnasio-card">
       <img 
-        src={gimnasio.fotos[0]} 
+        src={gimnasio.imagen || imagenPredeterminada} 
         alt={gimnasio.nombre} 
         className="gimnasio-image" 
+        onError={(e) => {
+          e.target.src = imagenPredeterminada;
+        }}
       />
       
       <div className="gimnasio-info">
         <h2>{gimnasio.nombre}</h2>
         <p>{gimnasio.direccion}</p>
+        <p className="gimnasio-horario">
+          <span className="horario-label">Horario:</span> {gimnasio.hora_entrada} - {gimnasio.hora_salida}
+        </p>
         
         <Link 
-          to={`/gimnasios/${gimnasio.id}`} 
-          className="button ver-detalles-btn"
+          to={`/gimnasios/${gimnasio.id_gimnasio}`} 
+          className="ver-detalles-btn"
         >
           Ver detalles
         </Link>

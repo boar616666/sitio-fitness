@@ -1,265 +1,312 @@
 import React, { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
-import { gimnasios } from "../data/gimnasios";
+import { useParams, Link } from "react-router-dom";
+import axios from "axios";
 import Breadcrumbs from "../components/Breadcrumbs";
-import StarRating from "../components/StarRating";
-import ReCAPTCHA from "react-google-recaptcha";
+import RegisterCallToAction from "../components/RegisterCallToAction";
+import AppointmentModal from '../components/AppointmentModal';
+
+// Importamos los íconos SVG inline
+const IconEdad = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm.5-13h-1v6l5.25 3.15.75-1.23-5-3V7z"/>
+  </svg>
+);
+
+const IconTelefono = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+  </svg>
+);
+
+const IconSesion = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <path d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z"/>
+  </svg>
+);
+
+const IconMensualidad = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <path d="M19 14V6c0-1.1-.9-2-2-2H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zm-9-1c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm13-6v11c0 1.1-.9 2-2 2H4v-2h17V7h2z"/>
+  </svg>
+);
+
+const IconAgendarCita = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z"/>
+  </svg>
+);
 
 const GimnasioDetalle = () => {
   const { id } = useParams();
   const [gimnasio, setGimnasio] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [rating, setRating] = useState(0);
-  const [captcha, setCaptcha] = useState(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [message, setMessage] = useState("");
-  const [userLocation, setUserLocation] = useState(null);
-  const [distance, setDistance] = useState(null);
-  const [loadingLocation, setLoadingLocation] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [entrenadores, setEntrenadores] = useState([]);
+  const [loadingEntrenadores, setLoadingEntrenadores] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedEntrenador, setSelectedEntrenador] = useState(null);
+  const [usuarioActual, setUsuarioActual] = useState(null);
 
-  // Coordenadas del gimnasio (extraídas del enlace de Google Maps proporcionado)
-  const gymLocation = {
-    lat: 25.6789, // Reemplaza con la latitud real
-    lng: -100.3090 // Reemplaza con la longitud real
+  // URL de imagen predeterminada en caso de que no exista
+  const imagenPredeterminada = "https://img.freepik.com/foto-gratis/gimnasio-luz-gimnasio-equipos-moderno_124507-14735.jpg";
+  const fotoPredeterminada = "https://img.freepik.com/foto-gratis/entrenador-guapo-gimnasio_144627-36228.jpg";
+
+  // Obtener información del usuario logueado
+  useEffect(() => {
+    const obtenerUsuarioActual = () => {
+      try {
+        console.log("Contenido de sessionStorage:", { ...sessionStorage });
+        
+        // Verificar si hay datos directamente en sessionStorage
+        const idUsuario = sessionStorage.getItem('idUsuario');
+        const nombre = sessionStorage.getItem('nombre');
+        const correo = sessionStorage.getItem('correo');
+        
+        if (idUsuario) {
+          console.log('Información de usuario encontrada directamente en sessionStorage');
+          setUsuarioActual({
+            idUsuario: parseInt(idUsuario),
+            nombre,
+            correo
+          });
+          return;
+        }
+        
+        // Intentar obtener como objeto serializado
+        const usuarioString = sessionStorage.getItem('usuario');
+        if (usuarioString) {
+          const usuario = JSON.parse(usuarioString);
+          console.log('Usuario encontrado como objeto en sesión:', usuario);
+          setUsuarioActual(usuario);
+        } else {
+          console.log('No hay usuario en sesión');
+        }
+      } catch (error) {
+        console.error('Error al obtener datos del usuario:', error);
+      }
+    };
+
+    obtenerUsuarioActual();
+  }, []);
+
+  // Función para cargar entrenadores del gimnasio
+  const fetchEntrenadores = async (idGimnasio) => {
+    try {
+      setLoadingEntrenadores(true);
+      const response = await axios.post(
+        "http://localhost:3000/entrenadores/por-gym",
+        { id_gimnasio: idGimnasio },
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+      
+      if (response.data.exito) {
+        setEntrenadores(response.data.datos);
+      } else {
+        console.error("Error al cargar entrenadores:", response.data.mensaje);
+      }
+    } catch (error) {
+      console.error("Error al cargar entrenadores:", error);
+    } finally {
+      setLoadingEntrenadores(false);
+    }
   };
 
   useEffect(() => {
-    // Buscar el gimnasio
-    const foundGym = gimnasios.find((g) => g.id === parseInt(id));
-    setGimnasio(foundGym || null);
-    
-    // Verificar autenticación
-    setIsLoggedIn(!!localStorage.getItem("token"));
-    
-    // Configurar ubicación por defecto del gimnasio si no existe
-    if (foundGym && !foundGym.ubicacion) {
-      setGimnasio(prev => ({
-        ...prev,
-        ubicacion: "https://maps.app.goo.gl/urc44edpy37fPBFK8"
-      }));
-    }
+    const fetchGimnasioDetalle = async () => {
+      try {
+        setLoading(true);
+        // Aquí deberías tener un endpoint específico para obtener los detalles de un gimnasio por su ID
+        // Por ahora, vamos a obtener todos los gimnasios y filtrar por ID
+        const response = await axios.get("http://localhost:3000/gimnasios/listar");
+        
+        if (response.data.exito) {
+          const gimnasioEncontrado = response.data.datos.find(
+            (g) => g.id_gimnasio === parseInt(id)
+          );
+          
+          if (gimnasioEncontrado) {
+            setGimnasio(gimnasioEncontrado);
+            
+            // Cargar los entrenadores asociados a este gimnasio
+            fetchEntrenadores(gimnasioEncontrado.id_gimnasio);
+          } else {
+            setError("Gimnasio no encontrado");
+          }
+        } else {
+          setError("No se pudo cargar la información del gimnasio");
+        }
+      } catch (error) {
+        console.error("Error al cargar detalles del gimnasio:", error);
+        setError("Error de conexión al servidor");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGimnasioDetalle();
   }, [id]);
 
-  const getUserLocation = () => {
-    setLoadingLocation(true);
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(
-        (position) => {
-          setUserLocation({
-            lat: position.coords.latitude,
-            lng: position.coords.longitude
-          });
-          calculateDistance(position.coords);
-          setLoadingLocation(false);
-        },
-        (error) => {
-          console.error("Error getting location:", error);
-          setMessage("No pudimos obtener tu ubicación");
-          setLoadingLocation(false);
-        }
-      );
-    } else {
-      setMessage("Geolocalización no soportada por tu navegador");
-      setLoadingLocation(false);
-    }
-  };
-
-  const calculateDistance = (userCoords) => {
-    // Fórmula Haversine para calcular distancia entre dos coordenadas
-    const R = 6371; // Radio de la Tierra en km
-    const dLat = (gymLocation.lat - userCoords.latitude) * Math.PI / 180;
-    const dLon = (gymLocation.lng - userCoords.longitude) * Math.PI / 180;
-    const a = 
-      Math.sin(dLat/2) * Math.sin(dLat/2) +
-      Math.cos(userCoords.latitude * Math.PI / 180) * 
-      Math.cos(gymLocation.lat * Math.PI / 180) * 
-      Math.sin(dLon/2) * Math.sin(dLon/2);
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-    const distance = R * c;
-    setDistance(distance.toFixed(1)); // 1 decimal
-  };
-
-  const openWhatsApp = () => {
-    const phone = gimnasio?.telefono || "4181571316";
-    const message = encodeURIComponent("Estoy interesado en agendar una cita en su gimnasio");
-    window.open(`https://wa.me/${phone}?text=${message}`, "_blank");
-  };
-
-  const handleRateChange = (newRating) => {
-    setRating(newRating);
-    setMessage("");
-  };
-
-  const submitRating = async () => {
-    if (!isLoggedIn) {
-      setMessage("Debes iniciar sesión para calificar");
+  const openModal = (idEntrenador) => {
+    if (!usuarioActual || !usuarioActual.idUsuario) {
+      console.log('Datos de usuario actuales:', usuarioActual);
+      alert('Debes iniciar sesión para agendar una cita');
+      // Aquí podrías redirigir al usuario a la página de login
       return;
     }
-
-    if (!captcha) {
-      setMessage("Por favor completa el CAPTCHA");
-      return;
-    }
-
-    if (rating === 0) {
-      setMessage("Por favor selecciona una calificación");
-      return;
-    }
-
-    setIsSubmitting(true);
-    setMessage("Enviando calificación...");
-
-    try {
-      // Simulación de llamada a API
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setMessage("¡Gracias por tu calificación!");
-      setRating(0);
-      setCaptcha(null);
-    } catch (error) {
-      setMessage("Error al enviar la calificación. Intenta nuevamente.");
-    } finally {
-      setIsSubmitting(false);
-    }
+    
+    setSelectedEntrenador(idEntrenador);
+    setModalIsOpen(true);
   };
 
-  if (!gimnasio) {
-    return <div className="error-message">Gimnasio no encontrado</div>;
+  const closeModal = () => {
+    setModalIsOpen(false);
+    setSelectedEntrenador(null);
+  };
+
+  if (loading) {
+    return (
+      <div className="gimnasio-detalle-container">
+        <div className="loading-indicator">
+          <p>Cargando información del gimnasio...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !gimnasio) {
+    return (
+      <div className="gimnasio-detalle-container">
+        <div className="error-message">
+          <p>{error || "No se pudo encontrar el gimnasio solicitado"}</p>
+          <Link to="/gimnasios" className="button">
+            Volver a la lista de gimnasios
+          </Link>
+        </div>
+      </div>
+    );
   }
 
   return (
     <div className="gimnasio-detalle-container">
       <div className="gimnasio-detalle-box">
         <Breadcrumbs />
+        
         <h1>{gimnasio.nombre}</h1>
         
-        {/* Sección de información */}
         <div className="gimnasio-info-section">
           <p><strong>Dirección:</strong> {gimnasio.direccion}</p>
+          <p><strong>Horario:</strong> {gimnasio.hora_entrada} - {gimnasio.hora_salida}</p>
           
-          {/* Mapa y ubicación */}
-          <div className="location-section">
-            <h3>Ubicación</h3>
-            <div className="map-container">
-              <iframe
-                title="Ubicación del gimnasio"
-                src={`https://www.google.com/maps/embed?pb=${gimnasio.ubicacion?.split('gl/')[1] || ''}`}
-                width="100%"
-                height="300"
-                style={{ border: 0 }}
-                allowFullScreen=""
-                loading="lazy"
-                referrerPolicy="no-referrer-when-downgrade"
-              ></iframe>
-            </div>
-            
-            <div className="distance-info">
-              {!userLocation ? (
-                <button 
-                  onClick={getUserLocation} 
-                  disabled={loadingLocation}
-                  className="location-button"
-                >
-                  {loadingLocation ? 'Calculando...' : '¿Qué tan lejos estoy?'}
-                </button>
-              ) : (
-                <p>
-                  Estás a aproximadamente {distance} km del gimnasio
-                </p>
-              )}
-            </div>
+          <div className="gimnasio-descripcion">
+            <h2>Descripción</h2>
+            <p>{gimnasio.descripcion}</p>
           </div>
-          
-          <p><strong>Horarios:</strong> {gimnasio.horarios}</p>
-          <p><strong>Teléfono:</strong> {gimnasio.telefono}</p>
-          
-          {gimnasio.descripcion && (
-            <div className="gimnasio-descripcion">
-              <strong>Descripción:</strong>
-              <p>{gimnasio.descripcion}</p>
-            </div>
-          )}
-          
-          {gimnasio.servicios && gimnasio.servicios.length > 0 && (
-            <>
-              <h3>Servicios:</h3>
-              <ul className="servicios-list">
-                {gimnasio.servicios.map((servicio, index) => (
-                  <li key={index}>{servicio}</li>
-                ))}
-              </ul>
-            </>
+
+          {gimnasio.total_entrenadores && (
+            <p><strong>Entrenadores disponibles:</strong> {gimnasio.total_entrenadores}</p>
           )}
         </div>
-        
-        {/* Sección de fotos */}
-        {gimnasio.fotos && gimnasio.fotos.length > 0 && (
-          <>
-            <h3>Fotos:</h3>
-            <div className="gimnasio-fotos">
-              {gimnasio.fotos.map((foto, index) => (
-                <img key={index} src={foto} alt={`Foto ${index + 1}`} />
+
+        <div className="gimnasio-fotos">
+          <img 
+            src={gimnasio.imagen || imagenPredeterminada} 
+            alt={gimnasio.nombre}
+            onError={(e) => {
+              e.target.src = imagenPredeterminada;
+            }}
+          />
+          {/* Aquí podrías mostrar más fotos si estuvieran disponibles */}
+        </div>
+
+        <div className="gimnasio-entrenadores">
+          <h2>Entrenadores</h2>
+          {loadingEntrenadores ? (
+            <p>Cargando entrenadores...</p>
+          ) : entrenadores && entrenadores.length > 0 ? (
+            <div className="entrenadores-grid">
+              {entrenadores.map(entrenador => (
+                <div key={entrenador.id_entrenador} className="entrenador-card">
+                  <div className="entrenador-banner"></div>
+                  <div className="entrenador-imagen-container">
+                    <img 
+                      src={entrenador.foto || fotoPredeterminada} 
+                      alt={entrenador.nombre} 
+                      className="entrenador-imagen"
+                      onError={(e) => {
+                        e.target.src = fotoPredeterminada;
+                      }}
+                    />
+                  </div>
+                  <h3>{entrenador.nombre}</h3>
+                  <span className="entrenador-cargo">Entrenador Personal</span>
+                  <span className="entrenador-estado">Disponible</span>
+                  
+                  <div className="entrenador-info">
+                    <span>
+                      <IconEdad />
+                      <strong>Edad:</strong> {entrenador.edad} años
+                    </span>
+                    <span>
+                      <IconTelefono />
+                      <strong>Teléfono:</strong> {entrenador.telefono}
+                    </span>
+                    <span>
+                      <IconSesion />
+                      <strong>Costo por sesión:</strong> ${entrenador.costo_sesion}
+                    </span>
+                    <span>
+                      <IconMensualidad />
+                      <strong>Mensualidad:</strong> ${entrenador.costo_mensual}
+                    </span>
+                  </div>
+                  
+                  <div className="entrenador-acciones">
+                    <button onClick={() => openModal(entrenador.id_entrenador)} className="ver-detalles-btn">
+                      <IconAgendarCita />
+                      Agendar cita
+                    </button>
+                  </div>
+                </div>
               ))}
-            </div>
-          </>
-        )}
-        
-        {/* Sección de rating */}
-        <div className="rating-section">
-          <h3>Calificación</h3>
-          <div className="average-rating">
-            <span className="stars">
-              {[...Array(5)].map((_, i) => (
-                <span key={i} className={i < Math.floor(gimnasio.promedioCalificacion) ? "filled" : "empty"}>
-                  ★
-                </span>
-              ))}
-            </span>
-            <span className="rating-value">
-              {gimnasio.promedioCalificacion} ({gimnasio.totalCalificaciones} calificaciones)
-            </span>
-          </div>
-          
-          {isLoggedIn ? (
-            <div className="rating-form">
-              <h4>Califica este gimnasio</h4>
-              <StarRating 
-                initialRating={rating}
-                onRate={handleRateChange}
-              />
-              
-              <div className="captcha-container">
-                <ReCAPTCHA
-                  sitekey={process.env.REACT_APP_RECAPTCHA_SITE_KEY}
-                  onChange={(value) => setCaptcha(value)}
-                />
-              </div>
-              
-              <button 
-                onClick={submitRating}
-                disabled={isSubmitting || !rating || !captcha}
-                className="submit-rating-btn"
-              >
-                {isSubmitting ? "Enviando..." : "Enviar Calificación"}
-              </button>
-              
-              {message && <p className="rating-message">{message}</p>}
             </div>
           ) : (
-            <p className="login-message">
-              <a href="/login">Inicia sesión</a> para calificar este gimnasio
-            </p>
+            <p>No hay entrenadores disponibles en este gimnasio.</p>
           )}
         </div>
-        
-        {/* Botón de WhatsApp al final */}
-        <div className="whatsapp-section">
-          <button 
-            onClick={openWhatsApp} 
-            className="whatsapp-button"
-          >
-            Agendar cita via WhatsApp
-          </button>
+
+        <div className="gimnasios-cta-section">
+          <RegisterCallToAction 
+            title="¿Eres entrenador?"
+            description={`Registra tu perfil como entrenador en ${gimnasio.nombre} y conéctate con nuevos clientes.`}
+            buttonText="Registrarme como entrenador"
+            type="entrenador"
+          />
         </div>
+
+        <div className="gimnasio-footer">
+          <Link to="/gimnasios" className="button">
+            Volver a la lista de gimnasios
+          </Link>
+        </div>
+      </div>
+      <AppointmentModal
+        isOpen={modalIsOpen}
+        onRequestClose={closeModal}
+        idUsuario={usuarioActual ? usuarioActual.idUsuario : null}
+        idEntrenador={selectedEntrenador}
+      />
+      <div style={{ display: 'none' }}>
+        {/* Para depuración */}
+        {usuarioActual && (
+          <div>
+            <p>ID Usuario: {usuarioActual.idUsuario}</p>
+            <p>Nombre: {usuarioActual.nombre}</p>
+          </div>
+        )}
       </div>
     </div>
   );

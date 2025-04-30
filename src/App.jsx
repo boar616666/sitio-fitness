@@ -3,6 +3,7 @@ import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 
 import Login from "./pages/Login";
+import Register from "./pages/Register";
 import Videos from "./pages/Videos";
 import Gimnasios from "./pages/Gimnasios";
 import ErrorPage from "./pages/ErrorPage";
@@ -14,6 +15,9 @@ import InstructorDetail from "./components/InstructorDetail";
 import VerifyEmail from './pages/VerifyEmail';
 import ResendVerification from './pages/ResendVerification';
 import VerifyPending from './pages/VerifyPending';
+import Citas from './pages/Citas';
+import Profile from './pages/Profile';
+import MisCitas from './pages/MisCitas';
 
 
 function App() {
@@ -29,12 +33,16 @@ function App() {
           <Route path="/resend-verification" element={<ResendVerification />} />
           <Route path="/verify-pending" element={<VerifyPending />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/gimnasios" element={<Gimnasios />} />
           <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
-          <Route path="*" element={<ErrorPage />} />
           <Route path="/gimnasios/:id" element={<GimnasioDetalle />} />
           <Route path="/citas/instructor/:id" element={<InstructorDetail />} />
+          <Route path="/citas" element={<Citas />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/mis-citas" element={<MisCitas />} />
+          <Route path="*" element={<ErrorPage />} />
         </Routes>
       </main>
       <Footer />

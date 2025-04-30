@@ -1,0 +1,298 @@
+.mis-citas-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Arial', sans-serif;
+}
+
+.citas-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+.citas-header h1 {
+  color: #333;
+  font-size: 2rem;
+  margin: 0;
+}
+
+.btn-volver {
+  padding: 0.6rem 1.2rem;
+  background-color: #f8f9fa;
+  color: #333;
+  text-decoration: none;
+  border-radius: 4px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid #ddd;
+}
+
+.btn-volver:hover {
+  background-color: #e9ecef;
+}
+
+.filtros-container {
+  background-color: #f8f9fa;
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.filtro-grupo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.filtro-grupo label {
+  font-weight: 600;
+  color: #555;
+}
+
+.filtro-select {
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  background-color: white;
+  min-width: 180px;
+  font-size: 0.9rem;
+}
+
+.citas-lista {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.cita-card {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr;
+  gap: 1.5rem;
+  background-color: white;
+  border-radius: 8px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+  border-left: 5px solid transparent;
+}
+
+.cita-card:hover {
+  transform: translateY(-5px);
+}
+
+.cita-card.estado-confirmada {
+  border-left-color: #28a745;
+}
+
+.cita-card.estado-pendiente {
+  border-left-color: #ffc107;
+}
+
+.cita-card.estado-cancelada {
+  border-left-color: #dc3545;
+  opacity: 0.8;
+}
+
+.cita-gimnasio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+
+.cita-gimnasio img {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 0.8rem;
+  border: 2px solid #f0f0f0;
+}
+
+.cita-gimnasio h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  color: #333;
+}
+
+.cita-detalles {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cita-detalles p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.cita-estado {
+  padding: 0.3rem 0;
+}
+
+.cita-estado.estado-confirmada {
+  color: #28a745;
+}
+
+.cita-estado.estado-pendiente {
+  color: #ffc107;
+}
+
+.cita-estado.estado-cancelada {
+  color: #dc3545;
+}
+
+.cita-acciones {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.btn-cancelar, .btn-ver-gimnasio, .btn-agendar, .btn-agendar-nueva, .btn-aceptar {
+  padding: 0.7rem 1rem;
+  border-radius: 4px;
+  text-align: center;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.btn-cancelar {
+  background-color: #fff;
+  color: #dc3545;
+  border: 1px solid #dc3545;
+}
+
+.btn-cancelar:hover:not(:disabled) {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btn-aceptar {
+  background-color: #fff;
+  color: #28a745;
+  border: 1px solid #28a745;
+  margin-bottom: 0.8rem;
+}
+
+.btn-aceptar:hover:not(:disabled) {
+  background-color: #28a745;
+  color: white;
+}
+
+.btn-aceptar:disabled, .btn-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn-ver-gimnasio {
+  background-color: #007bff;
+  color: white;
+  border: none;
+}
+
+.btn-ver-gimnasio:hover {
+  background-color: #0069d9;
+}
+
+.no-citas {
+  text-align: center;
+  padding: 2rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.no-citas p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.btn-agendar {
+  background-color: #28a745;
+  color: white;
+  display: inline-block;
+  border: none;
+}
+
+.btn-agendar:hover {
+  background-color: #218838;
+}
+
+.citas-footer {
+  margin-top: 2rem;
+  text-align: center;
+}
+
+.btn-agendar-nueva {
+  background-color: #28a745;
+  color: white;
+  display: inline-block;
+  border: none;
+  padding: 0.8rem 1.5rem;
+  font-size: 1rem;
+}
+
+.btn-agendar-nueva:hover {
+  background-color: #218838;
+}
+
+.loading-container,
+.error-container {
+  text-align: center;
+  padding: 3rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.loading-container p {
+  color: #007bff;
+  font-size: 1.2rem;
+}
+
+.error-container p {
+  color: #dc3545;
+  font-size: 1.2rem;
+  margin-bottom: 1.5rem;
+}
+
+.btn-retry {
+  padding: 0.7rem 1.5rem;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-retry:hover {
+  background-color: #c82333;
+}
+
+@media (max-width: 768px) {
+  .cita-card {
+    grid-template-columns: 1fr;
+  }
+
+  .citas-header {
+    flex-direction: column;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .filtro-grupo {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+} 
