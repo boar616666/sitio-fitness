@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Link } from "react-router-dom";
-import "../styles/global.css"; // Importación de estilos
+import "../styles/global.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navbarRef = useRef(null);
+
+  const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -32,11 +34,22 @@ const Navbar = () => {
   return (
     <nav className="navbar" ref={navbarRef}>
       <div className={`navbar-links ${isOpen ? "active" : ""}`}>
-        <Link to="/" onClick={handleLinkClick}>Inicio</Link>
-        <Link to="/blog" onClick={handleLinkClick}>Blog</Link>
-
-        <Link to="/videos" onClick={handleLinkClick}>Videos</Link>
-        <Link to="/gimnasios" onClick={handleLinkClick}>Gimnasios</Link>
+        <Link to="/" onClick={handleLinkClick}>
+          Inicio
+        </Link>
+        {tipoUsuario === "cliente" && (
+          <>
+            <Link to="/videos" onClick={handleLinkClick}>
+              Videos
+            </Link>
+            <Link to="/blog" onClick={handleLinkClick}>
+              Blog
+            </Link>
+          </>
+        )}
+        <Link to="/gimnasios" onClick={handleLinkClick}>
+          Gimnasios
+        </Link>
       </div>
       <div className="navbar-toggle" onClick={toggleMenu}>
         <span></span>
@@ -46,5 +59,4 @@ const Navbar = () => {
     </nav>
   );
 };
-
 export default Navbar;

@@ -80,7 +80,6 @@ function Header() {
   return (
     <header className="header">
       <div className="header-content">
-        {/* Contenedor del logo + texto (clickeable) */}
         <Link to="/" className="brand-link">
           <img src={logo} alt="FitnessPro Logo" className="header-logo" />
           <h1 className="brand-title">FitnessPro</h1>

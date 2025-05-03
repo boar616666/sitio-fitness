@@ -7,46 +7,51 @@ import Register from "./pages/Register";
 import Videos from "./pages/Videos";
 import Gimnasios from "./pages/Gimnasios";
 import ErrorPage from "./pages/ErrorPage";
-import Header from "./components/header"; 
-import Footer from "./components/Footer"; 
+import Header from "./components/header";
+import Footer from "./components/Footer";
 import GimnasioDetalle from "./pages/GimnasioDetalle";
 import LibrosEjercicios from "./pages/LibrosEjercicios";
 import InstructorDetail from "./components/InstructorDetail";
-import VerifyEmail from './pages/VerifyEmail';
-import ResendVerification from './pages/ResendVerification';
-import VerifyPending from './pages/VerifyPending';
-import Citas from './pages/Citas';
-import Profile from './pages/Profile';
-import MisCitas from './pages/MisCitas';
-
+import VerifyEmail from "./pages/VerifyEmail";
+import ResendVerification from "./pages/ResendVerification";
+import VerifyPending from "./pages/VerifyPending";
+import Citas from "./pages/Citas";
+import Profile from "./pages/Profile";
+import MisCitas from "./pages/MisCitas";
 
 function App() {
   return (
-    <div className="app-container">
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/blog" element={<Blog />} />
+      <div className="app-container">
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/blog" element={<Blog />} />
 
-          <Route path="/verify-email/:token" element={<VerifyEmail />} />
-          <Route path="/resend-verification" element={<ResendVerification />} />
-          <Route path="/verify-pending" element={<VerifyPending />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/videos" element={<Videos />} />
-          <Route path="/gimnasios" element={<Gimnasios />} />
-          <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
-          <Route path="/gimnasios/:id" element={<GimnasioDetalle />} />
-          <Route path="/citas/instructor/:id" element={<InstructorDetail />} />
-          <Route path="/citas" element={<Citas />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/mis-citas" element={<MisCitas />} />
-          <Route path="*" element={<ErrorPage />} />
-        </Routes>
-      </main>
-      <Footer />
-    </div>
+            <Route path="/verify-email/:token" element={<VerifyEmail />} />
+            <Route
+              path="/resend-verification"
+              element={<ResendVerification />}
+            />
+            <Route path="/verify-pending" element={<VerifyPending />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/videos" element={<Videos />} />
+            <Route path="/gimnasios" element={<Gimnasios />} />
+            <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
+            <Route path="/gimnasios/:id" element={<GimnasioDetalle />} />
+            <Route
+              path="/citas/instructor/:id"
+              element={<InstructorDetail />}
+            />
+            <Route path="/citas" element={<Citas />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="/mis-citas" element={<MisCitas />} />
+            <Route path="*" element={<ErrorPage />} />
+          </Routes>
+        </main>
+        <Footer />
+      </div>
   );
 }
 

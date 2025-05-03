@@ -60,7 +60,7 @@ function Login() {
         sessionStorage.setItem("rolCliente", dataEntrenador.rol);
         sessionStorage.setItem("idUsuario", dataEntrenador.id_usuario);
       }
-      navigate("/");
+      window.location.href="/";
     } catch (err) {
       console.error("Error:", err);
       setError(

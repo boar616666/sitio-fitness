@@ -47,14 +47,6 @@ function Footer() {
             </li>
           </ul>
         </div>
-
-        <div className="footer-section">
-          <h5>Suscríbete</h5>
-          <form className="subscribe-form">
-            <input type="email" placeholder="Tu correo electrónico" required />
-            <button type="submit">Suscribirse</button>
-          </form>
-        </div>
       </div>
 
       <div className="footer-bottom">

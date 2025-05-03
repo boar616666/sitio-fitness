@@ -99,15 +99,6 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
               <small className="form-help">Selecciona la fecha y hora para tu cita</small>
             </div>
             
-            <div className="info-panel">
-              <div className="info-item">
-                <strong>ID Usuario:</strong> {idUsuario}
-              </div>
-              <div className="info-item">
-                <strong>ID Entrenador:</strong> {idEntrenador}
-              </div>
-            </div>
-            
             <div className="form-actions">
               <button 
                 type="button" 

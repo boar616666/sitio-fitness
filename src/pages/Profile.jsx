@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import "../styles/profile.css";
+import axios from "axios";
 
 const Profile = () => {
   const [user, setUser] = useState({
@@ -16,35 +17,49 @@ const Profile = () => {
   const [formData, setFormData] = useState({ ...user });
 
   useEffect(() => {
-    // Obtener datos del usuario desde sessionStorage
-    const tipoUsuario = sessionStorage.getItem("tipoUsuario");
-    const nombre = sessionStorage.getItem("nombre");
-    const correo = sessionStorage.getItem("correo");
-    const foto = sessionStorage.getItem("foto");
+    const fetchData = async () => {
+      // Obtener datos del usuario desde sessionStorage
+      const tipoUsuario = sessionStorage.getItem("tipoUsuario");
+      const nombre = sessionStorage.getItem("nombre");
+      const correo = sessionStorage.getItem("correo");
+      const foto = sessionStorage.getItem("foto");
+      const idGimnasio = sessionStorage.getItem("idGimEntrenador")
 
-    if (tipoUsuario === "entrenador") {
-      const costoMensual = sessionStorage.getItem("costoMensualEntrenador");
-      const costoSesion = sessionStorage.getItem("costoSesionEntrenador");
-      const edad = sessionStorage.getItem("edad");
-      const telefono = sessionStorage.getItem("telefono");
-      setUser({
-        name: nombre,
-        email: correo,
-        photo: foto,
-        costoMensual,
-        costoSesion,
-        edad,
-        telefono,
-      });
-    } else if (tipoUsuario === "cliente") {
-      const rolCliente = sessionStorage.getItem("rolCliente");
-      setUser({
-        name: nombre,
-        email: correo,
-        photo: foto,
-        rolCliente,
-      });
-    }
+      if (tipoUsuario === "entrenador") {
+        const costoMensual = sessionStorage.getItem("costoMensualEntrenador");
+        const costoSesion = sessionStorage.getItem("costoSesionEntrenador");
+        const edad = sessionStorage.getItem("edad");
+        const telefono = sessionStorage.getItem("telefono");
+        setUser({
+          name: nombre,
+          email: correo,
+          photo: foto,
+          costoMensual,
+          costoSesion,
+          edad,
+          telefono,
+        });
+
+        try {
+          const response = await axios.get(
+            `http://localhost:3000/gimnasios/${idGimnasio}`
+          );
+          console.log("Datos del gimnasio:", response.data);
+        } catch (error) {
+          console.error("Error al obtener datos del gimnasio:", error);
+        }
+      } else if (tipoUsuario === "cliente") {
+        const rolCliente = sessionStorage.getItem("rolCliente");
+        setUser({
+          name: nombre,
+          email: correo,
+          photo: foto,
+          rolCliente,
+        });
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleChange = (e) => {
