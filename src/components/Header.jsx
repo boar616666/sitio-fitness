@@ -15,6 +15,7 @@ function Header() {
   useEffect(() => {
     const checkLoginStatus = () => {
       const userType = sessionStorage.getItem("tipoUsuario");
+      const rolCliente = sessionStorage.getItem("rolCliente");
       const userNombre = sessionStorage.getItem("nombre");
 
       if (userType && userNombre) {
@@ -22,6 +23,7 @@ function Header() {
         setUserData({
           nombre: userNombre,
           tipo: userType,
+          rolCliente: rolCliente, // <--- agrega aquí el rolCliente
           correo: sessionStorage.getItem("correo"),
           foto:
             sessionStorage.getItem("foto") ||
@@ -170,23 +172,26 @@ function Header() {
                       </Link>
                     </li>
 
-                    <li>
-                      <Link
-                        to="/solicitudes"
-                        onClick={() => setIsProfileMenuOpen(false)}
-                      >
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 24 24"
-                          width="18"
-                          height="18"
-                          fill="currentColor"
+                    {/* Solo visible para administradores */}
+                    {userData.rolCliente === "admin" && (
+                      <li>
+                        <Link
+                          to="/solicitudes"
+                          onClick={() => setIsProfileMenuOpen(false)}
                         >
-                          <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" />
-                        </svg>
-                        Solicitudes de entrenadores
-                      </Link>
-                    </li>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            width="18"
+                            height="18"
+                            fill="currentColor"
+                          >
+                            <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7v-5z" />
+                          </svg>
+                          Solicitudes de entrenadores
+                        </Link>
+                      </li>
+                    )}
 
                     <li className="dropdown-divider"></li>
 

@@ -7,7 +7,7 @@ import Register from "./pages/Register";
 import Videos from "./pages/Videos";
 import Gimnasios from "./pages/Gimnasios";
 import ErrorPage from "./pages/ErrorPage";
-import Header from "./components/header";
+import Header from "./components/Header";
 import Footer from "./components/Footer";
 import GimnasioDetalle from "./pages/GimnasioDetalle";
 import LibrosEjercicios from "./pages/LibrosEjercicios";

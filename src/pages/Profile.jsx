@@ -4,6 +4,7 @@ import "../styles/profile.css";
 import axios from "axios";
 
 const Profile = () => {
+  const tipoUsuario = sessionStorage.getItem("tipoUsuario");
   const [user, setUser] = useState({
     name: "",
     email: "",
@@ -102,6 +103,14 @@ const Profile = () => {
           </div>
           <div className="profile-info">
             <h2>{user.name || "Usuario Ejemplo"}</h2>
+            <p style={{ fontWeight: 500, color: "#800020", margin: "8px 0 0 0" }}>
+              Tipo de usuario:{" "}
+              {tipoUsuario === "entrenador"
+                ? "Entrenador"
+                : tipoUsuario === "cliente"
+                  ? (user.rolCliente === "admin" ? "Administrador" : "Cliente")
+                  : "Desconocido"}
+            </p>
           </div>
         </div>
 
@@ -152,7 +161,48 @@ const Profile = () => {
               <span className="detail-value">{user.email}</span>
             </div>
 
-            <div className="profile-actions">
+            {/* Botón para darse de baja del gimnasio */}
+            {sessionStorage.getItem("tipoUsuario") === "entrenador" &&
+              sessionStorage.getItem("idGimEntrenador") && (
+                <button
+                  className="btn btn-danger"
+                  style={{ margin: "12px 0", background: "#e74c3c" }}
+                  onClick={async () => {
+                    if (
+                      window.confirm(
+                        "¿Seguro que deseas darte de baja del gimnasio?"
+                      )
+                    ) {
+                      try {
+                        const id_entrenador =
+                          sessionStorage.getItem("idEntrenador");
+                        const res = await fetch(
+                          "http://localhost:3000/entrenadores/baja-gym",
+                          {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({ id_entrenador }),
+                          }
+                        );
+                        const data = await res.json();
+                        if (data.exito) {
+                          alert("Te has dado de baja del gimnasio.");
+                          sessionStorage.removeItem("idGimEntrenador");
+                          window.location.reload();
+                        } else {
+                          alert("No se pudo realizar la baja.");
+                        }
+                      } catch {
+                        alert("Error al darse de baja.");
+                      }
+                    }
+                  }}
+                >
+                  Darme de baja del gimnasio
+                </button>
+              )}
+
+            {/*             <div className="profile-actions">
               <button
                 className="btn btn-primary"
                 onClick={() => setIsEditing(true)}
@@ -162,20 +212,22 @@ const Profile = () => {
               <Link to="/mis-citas" className="btn btn-secondary">
                 Ver mis citas
               </Link>
-            </div>
+            </div> */}
           </div>
         )}
 
-        <div>
-          <h3>Mis solicitudes a gimnasios</h3>
-          <ul>
-            {solicitudes.map((s) => (
-              <li key={s.id_solicitud}>
-                {s.nombre_gimnasio}: {s.estado}
-              </li>
-            ))}
-          </ul>
-        </div>
+        {tipoUsuario === "entrenador" && (
+          <div>
+            <h3>Mis solicitudes a gimnasios</h3>
+            <ul>
+              {solicitudes.map((s) => (
+                <li key={s.id_solicitud}>
+                  {s.nombre_gimnasio}: {s.estado}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </div>
     </div>
   );
