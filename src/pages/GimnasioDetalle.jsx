@@ -86,6 +86,8 @@ const GimnasioDetalle = () => {
     descripcion: "",
   });
 
+  const [solicitudEnviada, setSolicitudEnviada] = useState(false);
+  const idEntrenador = sessionStorage.getItem("idEntrenador");
   const rolCliente = sessionStorage.getItem("rolCliente");
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
@@ -107,6 +109,24 @@ const GimnasioDetalle = () => {
       });
     }
   }, [gimnasio]);
+
+  const handleSolicitarIngreso = async () => {
+    try {
+      await axios.post("http://localhost:3000/solicitudes/solicitar", {
+        id_entrenador: parseInt(idEntrenador),
+        id_gimnasio: gimnasio.id_gimnasio,
+      });
+      setSolicitudEnviada(true);
+      alert("Solicitud enviada correctamente");
+    } catch (err) {
+      if (err.response && err.response.status === 409) {
+        setSolicitudEnviada(true);
+        alert("Ya has enviado una solicitud para este gimnasio.");
+      } else {
+        alert("Error al enviar la solicitud");
+      }
+    }
+  };
 
   const handleInputChange = (e) => {
     setFormData({
@@ -239,6 +259,33 @@ const GimnasioDetalle = () => {
 
     fetchGimnasioDetalle();
   }, [id]);
+
+  useEffect(() => {
+    const verificarSolicitudExistente = async () => {
+      if (
+        tipoUsuario === "entrenador" &&
+        idEntrenador &&
+        gimnasio?.id_gimnasio
+      ) {
+        try {
+          const res = await axios.get(
+            "http://localhost:3000/solicitudes/pendientes"
+          );
+          // Busca si hay una solicitud para este gym y este entrenador que NO esté rechazada
+          const yaSolicitada = (res.data.datos || []).some(
+            (s) =>
+              s.id_entrenador === parseInt(idEntrenador) &&
+              s.id_gimnasio === gimnasio.id_gimnasio &&
+              s.estado !== "rechazada"
+          );
+          setSolicitudEnviada(yaSolicitada);
+        } catch (err) {
+          // Puedes manejar el error si lo deseas
+        }
+      }
+    };
+    verificarSolicitudExistente();
+  }, [tipoUsuario, idEntrenador, gimnasio]);
 
   const openModal = (idEntrenador) => {
     if (!usuarioActual || !usuarioActual.idUsuario) {
@@ -462,6 +509,7 @@ const GimnasioDetalle = () => {
             <p>No hay entrenadores disponibles en este gimnasio.</p>
           )}
         </div>
+
         {!tipoUsuario && (
           <div className="gimnasios-cta-section">
             <RegisterCallToAction
@@ -471,6 +519,18 @@ const GimnasioDetalle = () => {
               type="entrenador"
             />
           </div>
+        )}
+
+        {tipoUsuario === "entrenador" && !solicitudEnviada && (
+          <button onClick={handleSolicitarIngreso} className="button">
+            Solicitar ingreso a este gimnasio
+          </button>
+        )}
+        {tipoUsuario === "entrenador" && solicitudEnviada && (
+          <p className="info-message">
+            Ya has enviado una solicitud para este gimnasio. Espera la respuesta
+            del administrador.
+          </p>
         )}
 
         <div className="gimnasio-footer">
