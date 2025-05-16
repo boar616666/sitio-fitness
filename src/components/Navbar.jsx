@@ -44,9 +44,12 @@ const Navbar = () => {
             </Link>
           </>
         )}
-        <Link to="/videos" onClick={handleLinkClick}>
-          Videos
-        </Link>
+        {/* Solo mostrar Videos si está autenticado */}
+        {tipoUsuario && (
+          <Link to="/videos" onClick={handleLinkClick}>
+            Videos
+          </Link>
+        )}
         <Link to="/gimnasios" onClick={handleLinkClick}>
           Gimnasios
         </Link>
