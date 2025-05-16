@@ -1,9 +1,16 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import "../styles/global.css";
 
 const ErrorPage = () => {
-  const handleGoHome = () => {
-    window.top.location.href = '/'; // Esto afectará a la ventana principal
+   const navigate = useNavigate();
+
+  const handleGoBack = () => {
+  if (window.history.state && window.history.length > 1) {
+    navigate(-1); // vuelve sin recargar
+  } else {
+    navigate("/"); // redirige a inicio si no hay historial
+  }
   };
 
   return (
@@ -23,8 +30,8 @@ const ErrorPage = () => {
         
         <p className="help-text">Tal vez esto te ayude:</p>
         
-        <button onClick={handleGoHome} className="home-button">
-          Volver al Inicio
+        <button onClick={handleGoBack} className="home-button">
+          Volver atrás
         </button>
       </div>
     </div>
