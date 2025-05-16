@@ -15,6 +15,7 @@ const Profile = () => {
 
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...user });
+  const [solicitudes, setSolicitudes] = useState([]);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -23,7 +24,7 @@ const Profile = () => {
       const nombre = sessionStorage.getItem("nombre");
       const correo = sessionStorage.getItem("correo");
       const foto = sessionStorage.getItem("foto");
-      const idGimnasio = sessionStorage.getItem("idGimEntrenador")
+      const idGimnasio = sessionStorage.getItem("idGimEntrenador");
 
       if (tipoUsuario === "entrenador") {
         const costoMensual = sessionStorage.getItem("costoMensualEntrenador");
@@ -60,6 +61,16 @@ const Profile = () => {
     };
 
     fetchData();
+  }, []);
+
+  useEffect(() => {
+    const idEntrenador = sessionStorage.getItem("idEntrenador");
+    if (!idEntrenador) return;
+    axios.get("http://localhost:3000/solicitudes/pendientes").then((res) => {
+      setSolicitudes(
+        res.data.datos.filter((s) => s.id_entrenador === parseInt(idEntrenador))
+      );
+    });
   }, []);
 
   const handleChange = (e) => {
@@ -154,6 +165,17 @@ const Profile = () => {
             </div>
           </div>
         )}
+
+        <div>
+          <h3>Mis solicitudes a gimnasios</h3>
+          <ul>
+            {solicitudes.map((s) => (
+              <li key={s.id_solicitud}>
+                {s.nombre_gimnasio}: {s.estado}
+              </li>
+            ))}
+          </ul>
+        </div>
       </div>
     </div>
   );
