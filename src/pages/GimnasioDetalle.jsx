@@ -444,15 +444,17 @@ const GimnasioDetalle = () => {
                     </span>
                   </div>
 
-                  <div className="entrenador-acciones">
-                    <button
-                      onClick={() => openModal(entrenador.id_entrenador)}
-                      className="ver-detalles-btn"
-                    >
-                      <IconAgendarCita />
-                      Agendar cita
-                    </button>
-                  </div>
+                  {rolCliente === "cliente" && (
+                    <div className="entrenador-acciones">
+                      <button
+                        onClick={() => openModal(entrenador.id_entrenador)}
+                        className="ver-detalles-btn"
+                      >
+                        <IconAgendarCita />
+                        Agendar cita
+                      </button>
+                    </div>
+                  )}
                 </div>
               ))}
             </div>

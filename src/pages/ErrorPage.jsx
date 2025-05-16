@@ -2,6 +2,10 @@ import React from "react";
 import "../styles/global.css";
 
 const ErrorPage = () => {
+  const handleGoHome = () => {
+    window.top.location.href = '/'; // Esto afectará a la ventana principal
+  };
+
   return (
     <div className="fullscreen-error">
       <div className="error-content">
@@ -19,9 +23,9 @@ const ErrorPage = () => {
         
         <p className="help-text">Tal vez esto te ayude:</p>
         
-        <a href="/" className="home-button">
+        <button onClick={handleGoHome} className="home-button">
           Volver al Inicio
-        </a>
+        </button>
       </div>
     </div>
   );

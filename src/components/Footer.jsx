@@ -2,7 +2,10 @@ import React from "react";
 import { Link } from "react-router-dom"; // Importa Link desde react-router-dom
 import "../styles/global.css";
 
+
 function Footer() {
+  const tipoUsuario = sessionStorage.getItem("tipoUsuario");
+
   return (
     <footer className="gimnasio-footer">
       <div className="footer-content">
@@ -15,14 +18,19 @@ function Footer() {
             <li>
               <Link to="/blog">Blog</Link> {/* Enlace a la página de blog */}
             </li>
+
+            {tipoUsuario === "cliente" && (
+              <>
+              <li>
+                <Link to="/videos">
+                  Videos
+                </Link>
+                </li>
+              </>
+            )}
             <li>
-              <Link to="/citas">Agendar Citas</Link> {/* Enlace a la página de citas */}
-            </li>
-            <li>
-              <Link to="/videos">Videos</Link> {/* Enlace a la página de videos */}
-            </li>
-            <li>
-              <Link to="/gimnasios">Gimnasios</Link> {/* Enlace a la página de gimnasios */}
+              <Link to="/gimnasios">Gimnasios</Link>{" "}
+              {/* Enlace a la página de gimnasios */}
             </li>
           </ul>
         </div>
@@ -31,17 +39,29 @@ function Footer() {
           <h5>Redes Sociales</h5>
           <ul className="social-links">
             <li>
-              <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://facebook.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-facebook"></i> Facebook
               </a>
             </li>
             <li>
-              <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://twitter.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-twitter"></i> Twitter
               </a>
             </li>
             <li>
-              <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+              <a
+                href="https://instagram.com"
+                target="_blank"
+                rel="noopener noreferrer"
+              >
                 <i className="fab fa-instagram"></i> Instagram
               </a>
             </li>

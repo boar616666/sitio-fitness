@@ -42,11 +42,11 @@ const Navbar = () => {
             <Link to="/videos" onClick={handleLinkClick}>
               Videos
             </Link>
-            <Link to="/blog" onClick={handleLinkClick}>
-              Blog
-            </Link>
           </>
         )}
+        <Link to="/blog" onClick={handleLinkClick}>
+          Blog
+        </Link>
         <Link to="/gimnasios" onClick={handleLinkClick}>
           Gimnasios
         </Link>
