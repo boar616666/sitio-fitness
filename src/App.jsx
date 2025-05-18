@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Routes, Route } from "react-router-dom";
+import { initSessionManager } from "./utils/sessionManager";
 import Home from "./pages/Home";
 import Blog from "./pages/Blog";
 
@@ -21,6 +23,13 @@ import MisCitas from "./pages/MisCitas";
 import SolicitudesAdmin from "./pages/SolicitudesAdmin";
 
 function App() {
+  useEffect(() => {
+    // Inicializar el manejador de sesión solo si hay un usuario logueado
+    if (sessionStorage.getItem("tipoUsuario")) {
+      initSessionManager();
+    }
+  }, []);
+
   return (
     <div className="app-container">
       <Header />

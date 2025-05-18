@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 import "../styles/global.css";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Función para extraer el ID de YouTube de la URL
 function getYoutubeId(url) {
@@ -249,6 +250,7 @@ const Videos = () => {
           </div>
         )}
       </div>
+      <ScrollToTop />
     </div>
   );
 };

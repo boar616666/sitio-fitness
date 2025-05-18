@@ -3,6 +3,7 @@ import axios from "axios";
 import GimnasioCard from "../components/GimnasioCard";
 import Breadcrumbs from "../components/Breadcrumbs";
 import RegisterCallToAction from "../components/RegisterCallToAction";
+import ScrollToTop from "../components/ScrollToTop";
 
 const Gimnasios = () => {
   const [gimnasios, setGimnasios] = useState([]);
@@ -213,6 +214,7 @@ const Gimnasios = () => {
           />
         </div>
       )}
+      <ScrollToTop />
     </div>
   );
 };

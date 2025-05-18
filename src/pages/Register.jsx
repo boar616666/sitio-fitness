@@ -9,6 +9,7 @@ function Register() {
   const typeFromUrl = queryParams.get("type");
   
   const [registerType, setRegisterType] = useState(typeFromUrl === "entrenador" ? "entrenador" : "usuario");
+  const [passwordStrength, setPasswordStrength] = useState("");
   const [formData, setFormData] = useState({
     correo: "",
     contrasena: "",
@@ -46,11 +47,40 @@ function Register() {
     }
   };
 
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      setPasswordStrength("débil");
+      return false;
+    }
+    
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    const strength = 
+      (hasUpperCase ? 1 : 0) +
+      (hasLowerCase ? 1 : 0) +
+      (hasNumbers ? 1 : 0) +
+      (hasSpecialChar ? 1 : 0);
+    
+    if (strength < 2) setPasswordStrength("débil");
+    else if (strength < 4) setPasswordStrength("media");
+    else setPasswordStrength("fuerte");
+    
+    return strength >= 2;
+  };
+
   const handleChange = (e) => {
+    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: value,
     });
+
+    if (name === "contrasena") {
+      validatePassword(value);
+    }
   };
 
   const resetForm = () => {
@@ -267,7 +297,23 @@ function Register() {
             value={formData.contrasena}
             onChange={handleChange}
             required
+            minLength="8"
           />
+          {formData.contrasena && (
+            <div className={`password-strength ${passwordStrength}`}>
+              Fortaleza de la contraseña: {passwordStrength}
+            </div>
+          )}
+          <div className="password-requirements">
+            La contraseña debe tener al menos:
+            <ul>
+              <li>8 caracteres</li>
+              <li>Una letra mayúscula</li>
+              <li>Una letra minúscula</li>
+              <li>Un número</li>
+              <li>Un carácter especial (!@#$%^&*)</li>
+            </ul>
+          </div>
         </div>
 
         <button type="submit" className="button">
@@ -285,4 +331,4 @@ function Register() {
   );
 }
 
-export default Register; 
+export default Register;
