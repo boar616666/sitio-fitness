@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate, Link, useLocation } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/login.css";
+
+// Configuración de Axios para todas las peticiones
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+});
 
 function Register() {
   const location = useLocation();
@@ -9,13 +15,11 @@ function Register() {
   const typeFromUrl = queryParams.get("type");
   
   const [registerType, setRegisterType] = useState(typeFromUrl === "entrenador" ? "entrenador" : "usuario");
-  const [passwordStrength, setPasswordStrength] = useState("");
   const [formData, setFormData] = useState({
     correo: "",
     contrasena: "",
     nombre: "",
-    rol: "cliente", // Para usuarios
-    // Campos para entrenador
+    rol: "cliente",
     id_gimnasio: "",
     foto: "",
     edad: "",
@@ -25,6 +29,9 @@ function Register() {
   });
   const [error, setError] = useState("");
   const [gimnasios, setGimnasios] = useState([]);
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const RECAPTCHA_SITE_KEY = "6LdFFQgrAAAAAA-FMYiSLoVzBL1iNKR79XPU7mFy";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,9 +42,7 @@ function Register() {
 
   const fetchGimnasios = async () => {
     try {
-      const response = await axios.get(
-        "http://localhost:3000/gimnasios/listar"
-      );
+      const response = await api.get("/gimnasios/listar");
       if (response.data.exito) {
         setGimnasios(response.data.datos);
       }
@@ -47,40 +52,11 @@ function Register() {
     }
   };
 
-  const validatePassword = (password) => {
-    if (password.length < 8) {
-      setPasswordStrength("débil");
-      return false;
-    }
-    
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumbers = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
-    
-    const strength = 
-      (hasUpperCase ? 1 : 0) +
-      (hasLowerCase ? 1 : 0) +
-      (hasNumbers ? 1 : 0) +
-      (hasSpecialChar ? 1 : 0);
-    
-    if (strength < 2) setPasswordStrength("débil");
-    else if (strength < 4) setPasswordStrength("media");
-    else setPasswordStrength("fuerte");
-    
-    return strength >= 2;
-  };
-
   const handleChange = (e) => {
-    const { name, value } = e.target;
     setFormData({
       ...formData,
-      [name]: value,
+      [e.target.name]: e.target.value,
     });
-
-    if (name === "contrasena") {
-      validatePassword(value);
-    }
   };
 
   const resetForm = () => {
@@ -96,19 +72,37 @@ function Register() {
       costo_mensual: "",
       telefono: "",
     });
+    setCaptchaValue(null);
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
+
+    if (!captchaValue) {
+      setError("Por favor, completa el CAPTCHA.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
-      // Proceso de registro
+      // 1. Validar el CAPTCHA con la ruta correcta
+      const captchaResponse = await api.post("/auth/validar-captcha", {
+        captchaToken: captchaValue
+      });
+
+      if (!captchaResponse.data.success) {
+        setError("CAPTCHA inválido. Inténtalo de nuevo.");
+        setIsSubmitting(false);
+        return;
+      }
+
+      // 2. Preparar datos para el registro
       let endpoint, dataToSend;
 
       if (registerType === "usuario") {
-        // Registro de usuario
-        endpoint = "http://localhost:3000/usuarios/registrar";
+        endpoint = "/usuarios/registrar";
         dataToSend = {
           nombre: formData.nombre,
           correo: formData.correo,
@@ -116,8 +110,7 @@ function Register() {
           rol: formData.rol,
         };
       } else {
-        // Registro de entrenador
-        endpoint = "http://localhost:3000/entrenadores/crear";
+        endpoint = "/entrenadores/crear";
         dataToSend = {
           id_gimnasio: parseInt(formData.id_gimnasio),
           nombre: formData.nombre,
@@ -131,23 +124,25 @@ function Register() {
         };
       }
 
-      await axios.post(endpoint, dataToSend, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      // 3. Registrar el usuario/entrenador
+      const response = await api.post(endpoint, dataToSend);
 
-      alert(
-        `¡Registro exitoso como ${registerType}! Por favor inicia sesión.`
-      );
-      resetForm();
-      navigate("/login");
+      if (response.data.exito) {
+        alert(`¡Registro exitoso como ${registerType}! Por favor inicia sesión.`);
+        resetForm();
+        navigate("/login");
+      } else {
+        setError(response.data.mensaje || "Error en el registro");
+      }
     } catch (err) {
       console.error("Error:", err);
       setError(
         err.response?.data?.message ||
-          "Error en la operación. Verifica tus datos."
+        err.response?.data?.error ||
+        "Error en la operación. Verifica tus datos."
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -233,6 +228,7 @@ function Register() {
                 value={formData.edad}
                 onChange={handleChange}
                 required
+                min="18"
               />
             </div>
 
@@ -246,6 +242,7 @@ function Register() {
                 onChange={handleChange}
                 required
                 step="0.01"
+                min="0"
               />
             </div>
 
@@ -259,13 +256,14 @@ function Register() {
                 onChange={handleChange}
                 required
                 step="0.01"
+                min="0"
               />
             </div>
 
             <div className="form-group">
               <label>Teléfono:</label>
               <input
-                type="text"
+                type="tel"
                 name="telefono"
                 placeholder="123-456-7890"
                 value={formData.telefono}
@@ -297,27 +295,24 @@ function Register() {
             value={formData.contrasena}
             onChange={handleChange}
             required
-            minLength="8"
+            minLength="6"
           />
-          {formData.contrasena && (
-            <div className={`password-strength ${passwordStrength}`}>
-              Fortaleza de la contraseña: {passwordStrength}
-            </div>
-          )}
-          <div className="password-requirements">
-            La contraseña debe tener al menos:
-            <ul>
-              <li>8 caracteres</li>
-              <li>Una letra mayúscula</li>
-              <li>Una letra minúscula</li>
-              <li>Un número</li>
-              <li>Un carácter especial (!@#$%^&*)</li>
-            </ul>
-          </div>
         </div>
 
-        <button type="submit" className="button">
-          Registrarse
+        <div className="form-group">
+          <ReCAPTCHA
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={(token) => setCaptchaValue(token)}
+            onExpired={() => setCaptchaValue(null)}
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          className="button" 
+          disabled={!captchaValue || isSubmitting}
+        >
+          {isSubmitting ? "Registrando..." : "Registrarse"}
         </button>
       </form>
 

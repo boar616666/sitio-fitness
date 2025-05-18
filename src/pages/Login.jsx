@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 
 function Login() {
   const [formData, setFormData] = useState({ correo: "", contrasena: "" });
@@ -10,6 +11,8 @@ function Login() {
   const [error, setError] = useState("");
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(false);
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const RECAPTCHA_SITE_KEY = "6LdFFQgrAAAAAA-FMYiSLoVzBL1iNKR79XPU7mFy"; // Tu clave pública de reCAPTCHA
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -18,8 +21,28 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    
+    // Validación del CAPTCHA
+    if (!captchaValue) {
+      setError("Por favor, completa el CAPTCHA.");
+      return;
+    }
+
     setLoadingLogin(true);
+
     try {
+      // Verificar CAPTCHA con el backend
+      const captchaResponse = await axios.post(
+        "http://localhost:3000/auth/validar-captcha",
+        { captchaToken: captchaValue }
+      );
+
+      if (!captchaResponse.data.success) {
+        setError("CAPTCHA inválido. Por favor, inténtalo de nuevo.");
+        return;
+      }
+
+      // Proceso de login normal
       const response = await axios.post(
         "http://localhost:3000/auth/login",
         { correo: formData.correo, contrasena: formData.contrasena },
@@ -127,7 +150,21 @@ function Login() {
               disabled={loadingLogin}
             />
           </div>
-          <button type="submit" className="button" disabled={loadingLogin}>
+          
+          {/* Añadido: Componente reCAPTCHA */}
+          <div className="form-group">
+            <ReCAPTCHA
+              sitekey={RECAPTCHA_SITE_KEY}
+              onChange={(token) => setCaptchaValue(token)}
+              onExpired={() => setCaptchaValue(null)}
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            className="button" 
+            disabled={loadingLogin || !captchaValue} // Deshabilitar si no hay CAPTCHA
+          >
             {loadingLogin ? (
               <>
                 Ingresando
