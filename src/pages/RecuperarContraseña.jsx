@@ -10,6 +10,7 @@ function RecuperarContraseña() {
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [loading, setLoading] = useState(false);
+  const [passwordStrength, setPasswordStrength] = useState("");
 
   const handleCorreoSubmit = async (e) => {
     e.preventDefault();
@@ -63,6 +64,36 @@ function RecuperarContraseña() {
     setLoading(false);
   };
 
+  const validatePassword = (password) => {
+    if (password.length < 8) {
+      setPasswordStrength("débil");
+      return false;
+    }
+    
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasLowerCase = /[a-z]/.test(password);
+    const hasNumbers = /\d/.test(password);
+    const hasSpecialChar = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+    
+    const strength = 
+      (hasUpperCase ? 1 : 0) +
+      (hasLowerCase ? 1 : 0) +
+      (hasNumbers ? 1 : 0) +
+      (hasSpecialChar ? 1 : 0);
+    
+    if (strength < 2) setPasswordStrength("débil");
+    else if (strength < 4) setPasswordStrength("media");
+    else setPasswordStrength("fuerte");
+    
+    return strength >= 2;
+  };
+
+  const handlePasswordChange = (e) => {
+    const value = e.target.value;
+    setNuevaContrasena(value);
+    validatePassword(value);
+  };
+
   return (
     <div className="login-container">
       <h2>Recuperar Contraseña</h2>
@@ -111,10 +142,26 @@ function RecuperarContraseña() {
               name="nuevaContrasena"
               placeholder="Nueva contraseña"
               value={nuevaContrasena}
-              onChange={e => setNuevaContrasena(e.target.value)}
+              onChange={handlePasswordChange}
               required
               disabled={loading}
+              minLength="8"
             />
+            {nuevaContrasena && (
+              <div className={`password-strength ${passwordStrength}`}>
+                Fortaleza de la contraseña: {passwordStrength}
+              </div>
+            )}
+            <div className="password-requirements">
+              La contraseña debe tener al menos:
+              <ul>
+                <li>8 caracteres</li>
+                <li>Una letra mayúscula</li>
+                <li>Una letra minúscula</li>
+                <li>Un número</li>
+                <li>Un carácter especial (!@#$%^&*)</li>
+              </ul>
+            </div>
           </div>
           <div className="form-group">
             <label>Repetir nueva contraseña:</label>
