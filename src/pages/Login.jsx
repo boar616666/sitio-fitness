@@ -167,12 +167,21 @@ function Login() {
       )}
 
       {!showTokenForm && (
-        <p className="toggle-text">
-          ¿No tienes cuenta?{" "}
-          <Link to="/register" className="toggle-link">
-            Regístrate
-          </Link>
-        </p>
+        <>
+          <p className="toggle-text">
+            ¿No tienes cuenta?{" "}
+            <Link to="/register" className="toggle-link">
+              Regístrate
+            </Link>
+          </p>
+
+          <p className="toggle-text">
+            ¿Perdiste tu contraseña?{" "}
+            <Link to="/recuperarContraseña" className="toggle-link">
+              Recuperar contraseña
+            </Link>
+          </p>
+        </>
       )}
     </div>
   );

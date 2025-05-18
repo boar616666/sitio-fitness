@@ -19,6 +19,7 @@ import Citas from "./pages/Citas";
 import Profile from "./pages/Profile";
 import MisCitas from "./pages/MisCitas";
 import SolicitudesAdmin from "./pages/SolicitudesAdmin";
+import RecuperarContraseña from "./pages/RecuperarContraseña";
 
 function App() {
   return (
@@ -34,6 +35,7 @@ function App() {
           <Route path="/verify-pending" element={<VerifyPending />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/recuperarContraseña" element={<RecuperarContraseña />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/gimnasios" element={<Gimnasios />} />
           <Route path="/libros-ejercicios" element={<LibrosEjercicios />} />
