@@ -2,6 +2,7 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
+import ScrollToTop from "../components/ScrollToTop";
 
 const Blog = () => {
   const isLoggedIn = !!sessionStorage.getItem("correo");
@@ -130,6 +131,7 @@ const Blog = () => {
           </div>
         </div>
       </div>
+      <ScrollToTop />
     </div>
   );
 };

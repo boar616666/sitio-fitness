@@ -4,6 +4,7 @@ import axios from "axios";
 import Breadcrumbs from "../components/Breadcrumbs";
 import RegisterCallToAction from "../components/RegisterCallToAction";
 import AppointmentModal from "../components/AppointmentModal";
+import ScrollToTop from "../components/ScrollToTop";
 
 // Importamos los íconos SVG inline
 const IconEdad = () => (
@@ -554,6 +555,7 @@ const GimnasioDetalle = () => {
           </div>
         )}
       </div>
+      <ScrollToTop />
     </div>
   );
 };
