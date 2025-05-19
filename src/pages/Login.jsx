@@ -1,71 +1,71 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate, Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
+import "../styles/login.css";
+
+// Configuración de Axios
+const api = axios.create({
+  baseURL: "http://localhost:3000",
+});
 
 function Login() {
-  const [formData, setFormData] = useState({ correo: "", contrasena: "" });
-  const [token, setToken] = useState("");
-  const [showTokenForm, setShowTokenForm] = useState(false);
-  const [pendingData, setPendingData] = useState(null);
+  const [correo, setCorreo] = useState("");
+  const [contrasena, setContrasena] = useState("");
   const [error, setError] = useState("");
+  const [captchaValue, setCaptchaValue] = useState(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const RECAPTCHA_SITE_KEY = "6LdFFQgrAAAAAA-FMYiSLoVzBL1iNKR79XPU7mFy";
+
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
-  };
-
-  const handleLogin = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setIsSubmitting(true);
+
+    if (!captchaValue) {
+      setError("Por favor, completa el CAPTCHA.");
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
-      // Proceso de login
-      const response = await axios.post(
-        "http://localhost:3000/auth/login",
-        { correo: formData.correo, contrasena: formData.contrasena },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      // 1. Validar el CAPTCHA
+      const captchaResponse = await api.post("/auth/validar-captcha", {
+        captchaToken: captchaValue,
+      });
 
-      console.log("Respuesta del login: ", response);
-      const dataEntrenador = response.data.datos;
-      console.log("Datos del entrenador antes de almacenar:", dataEntrenador);
-      sessionStorage.setItem("correo", dataEntrenador.correo);
-      sessionStorage.setItem("nombre", dataEntrenador.nombre);
-      sessionStorage.setItem("tipoUsuario", dataEntrenador.tipo);
-
-      if (dataEntrenador.tipo === "entrenador") {
-        sessionStorage.setItem(
-          "costoSesionEntrenador",
-          datos.costo_sesion || ""
-        );
-        sessionStorage.setItem(
-          "costoMensualEntrenador",
-          datos.costo_mensual || ""
-        );
-        sessionStorage.setItem("telefono", datos.telefono || "");
-      } else {
-        sessionStorage.setItem("correo", datos.correo);
-        sessionStorage.setItem("nombre", datos.nombre);
-        sessionStorage.setItem("tipoUsuario", "cliente");
-        sessionStorage.setItem("idUsuario", datos.id_usuario);
-        sessionStorage.setItem("rolCliente", datos.rol);
+      if (!captchaResponse.data.success) {
+        setError("CAPTCHA inválido. Intenta nuevamente.");
+        setIsSubmitting(false);
+        return;
       }
-      window.location.href="/";
+
+      // 2. Intentar iniciar sesión
+      const response = await api.post("/auth/login", {
+        correo,
+        contrasena,
+      });
+
+      if (response.data.exito) {
+        localStorage.setItem("token", response.data.token);
+        alert("¡Inicio de sesión exitoso!");
+        navigate("/"); // redirige a la página principal
+      } else {
+        setError(response.data.mensaje || "Credenciales incorrectas");
+      }
     } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          "Error al verificar el token. Intenta de nuevo."
-      );
+      console.error("Error de login:", err);
+      setError("Error al iniciar sesión. Verifica tus datos.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   return (
     <div className="login-container">
-      <h2>Iniciar Sesión</h2>
+      <h2>Iniciar sesión</h2>
       {error && <div className="error-message">{error}</div>}
 
       <form onSubmit={handleSubmit}>
@@ -75,8 +75,8 @@ function Login() {
             type="email"
             name="correo"
             placeholder="correo@ejemplo.com"
-            value={formData.correo}
-            onChange={handleChange}
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
             required
           />
         </div>
@@ -87,34 +87,35 @@ function Login() {
             type="password"
             name="contrasena"
             placeholder="Tu contraseña"
-            value={formData.contrasena}
-            onChange={handleChange}
+            value={contrasena}
+            onChange={(e) => setContrasena(e.target.value)}
             required
           />
         </div>
 
-        <button type="submit" className="button">
-          Ingresar
+        <div className="form-group">
+          <ReCAPTCHA
+            sitekey={RECAPTCHA_SITE_KEY}
+            onChange={(token) => setCaptchaValue(token)}
+            onExpired={() => setCaptchaValue(null)}
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="button"
+          disabled={!captchaValue || isSubmitting}
+        >
+          {isSubmitting ? "Iniciando..." : "Iniciar sesión"}
         </button>
       </form>
 
-      {!showTokenForm && (
-        <>
-          <p className="toggle-text">
-            ¿No tienes cuenta?{" "}
-            <Link to="/register" className="toggle-link">
-              Regístrate
-            </Link>
-          </p>
-
-          <p className="toggle-text">
-            ¿Perdiste tu contraseña?{" "}
-            <Link to="/recuperarContraseña" className="toggle-link">
-              Recuperar contraseña
-            </Link>
-          </p>
-        </>
-      )}
+      <p className="toggle-text">
+        ¿No tienes cuenta?{" "}
+        <Link to="/register" className="toggle-link">
+          Regístrate aquí
+        </Link>
+      </p>
     </div>
   );
 }
