@@ -185,7 +185,7 @@ const MisCitas = () => {
         };
       } else if (tipoUsuario === "entrenador") {
         // Endpoint para entrenadores
-        endpoint = "http://localhost:3000/citas/actualizar-estado";
+        endpoint = "/api/citas/actualizar-estado";
         const idEntrenador = parseInt(sessionStorage.getItem("idEntrenador"));
 
         requestBody = {

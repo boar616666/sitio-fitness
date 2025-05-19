@@ -6,7 +6,7 @@ import "../styles/login.css";
 
 // Configuración de Axios
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+ baseURL: "https://backend-gimnasio-lu0e.onrender.com",
 });
 
 function Login() {

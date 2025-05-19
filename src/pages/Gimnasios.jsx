@@ -25,7 +25,7 @@ const Gimnasios = () => {
     try {
       setLoading(true);
       const response = await axios.get(
-        "http://localhost:3000/gimnasios/listar"
+        "/api/gimnasios/listar"
       );
       if (response.data.exito) {
         setGimnasios(response.data.datos);
@@ -87,7 +87,7 @@ const Gimnasios = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:3000/gimnasios/crearGym",
+        "/api/gimnasios/crearGym",
         formData
       );
       if (response.data.exito) {

@@ -6,7 +6,7 @@ import "../styles/login.css";
 
 // Configuración de Axios para todas las peticiones
 const api = axios.create({
-  baseURL: "http://localhost:3000",
+baseURL: "https://backend-gimnasio-lu0e.onrender.com",
 });
 
 function Register() {
@@ -88,7 +88,7 @@ function Register() {
 
     try {
       // 1. Validar el CAPTCHA con la ruta correcta
-      const captchaResponse = await api.post("/auth/validar-captcha", {
+      const captchaResponse = await api.post("api/auth/validar-captcha", {
         captchaToken: captchaValue
       });
 
