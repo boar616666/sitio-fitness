@@ -15,7 +15,7 @@ const VerifyEmail = () => {
           throw new Error('Token inválido');
         }
 
-        const response = await axios.get(`http://localhost:5000/api/auth/verify/${token}`);
+        const response = await axios.get(`/api/auth/verify/${token}`);
         
         if (response.data.success) {
           setStatus('success');

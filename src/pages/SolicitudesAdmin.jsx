@@ -13,7 +13,7 @@ const SolicitudesAdmin = () => {
     try {
       setLoading(true);
       const res = await axios.get(
-        "http://localhost:3000/solicitudes/pendientes"
+        "/api/solicitudes/pendientes"
       );
       setSolicitudes(res.data.datos || []);
     } catch (err) {
@@ -32,7 +32,7 @@ const SolicitudesAdmin = () => {
     try {
       setActualizando(true);
       const res = await axios.put(
-        "http://localhost:3000/solicitudes/responder",
+        "/api/solicitudes/responder",
         { id_solicitud, estado }
       );
       setSolicitudes((prev) =>

@@ -113,7 +113,7 @@ const GimnasioDetalle = () => {
 
   const handleSolicitarIngreso = async () => {
     try {
-      await axios.post("http://localhost:3000/solicitudes/solicitar", {
+      await axios.post("api/solicitudes/solicitar", {
         id_entrenador: parseInt(idEntrenador),
         id_gimnasio: gimnasio.id_gimnasio,
       });
@@ -140,7 +140,7 @@ const GimnasioDetalle = () => {
     e.preventDefault();
     try {
       const response = await axios.put(
-        "http://localhost:3000/gimnasios/Actualizar",
+        "/api/gimnasios/Actualizar",
         formData
       );
 
@@ -203,7 +203,7 @@ const GimnasioDetalle = () => {
     try {
       setLoadingEntrenadores(true);
       const response = await axios.post(
-        "http://localhost:3000/entrenadores/por-gym",
+        "/api/entrenadores/por-gym",
         { id_gimnasio: idGimnasio },
         {
           headers: {
@@ -231,7 +231,7 @@ const GimnasioDetalle = () => {
         // Aquí deberías tener un endpoint específico para obtener los detalles de un gimnasio por su ID
         // Por ahora, vamos a obtener todos los gimnasios y filtrar por ID
         const response = await axios.get(
-          "http://localhost:3000/gimnasios/listar"
+          "/api/gimnasios/listar"
         );
 
         if (response.data.exito) {
@@ -270,7 +270,7 @@ const GimnasioDetalle = () => {
       ) {
         try {
           const res = await axios.get(
-            "http://localhost:3000/solicitudes/pendientes"
+            "/api/solicitudes/pendientes"
           );
           // Busca si hay una solicitud para este gym y este entrenador que NO esté rechazada
           const yaSolicitada = (res.data.datos || []).some(

@@ -47,7 +47,7 @@ const MisCitas = () => {
 
         console.log("Enviando solicitud:", requestBody);
 
-        const response = await fetch("http://localhost:3000/citas/mis-citas", {
+        const response = await fetch("/api/citas/mis-citas", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -127,7 +127,7 @@ const MisCitas = () => {
       console.log("Aceptando cita:", requestBody);
 
       const response = await fetch(
-        "http://localhost:3000/citas/actualizar-estado",
+        "/api/citas/actualizar-estado",
         {
           method: "PUT",
           headers: {
@@ -176,7 +176,7 @@ const MisCitas = () => {
       // Diferentes endpoints según el tipo de usuario
       if (tipoUsuario === "cliente") {
         // Endpoint específico para clientes
-        endpoint = "http://localhost:3000/citas/cancelar";
+        endpoint = "/api/citas/cancelar";
         const idUsuario = parseInt(sessionStorage.getItem("idUsuario"));
 
         requestBody = {

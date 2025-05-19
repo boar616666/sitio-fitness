@@ -36,7 +36,7 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
     
     try {
       console.log('Iniciando petición POST a /citas/crear');
-      const response = await axios.post('http://localhost:3000/citas/crear', datosEnviar);
+      const response = await axios.post('api/citas/crear', datosEnviar);
       
       console.log('Respuesta del servidor:', response.data);
       

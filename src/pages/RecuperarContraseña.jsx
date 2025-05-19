@@ -18,7 +18,7 @@ function RecuperarContraseña() {
     setMensaje("");
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/auth/recuperar", {
+      const res = await fetch("/api/auth/recuperar", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ correo }),
@@ -46,7 +46,7 @@ function RecuperarContraseña() {
     }
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:3000/auth/cambiar-contrasena", {
+      const res = await fetch("api/auth/cambiar-contrasena", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ token, nuevaContrasena }),

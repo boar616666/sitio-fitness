@@ -18,7 +18,7 @@ function Breadcrumbs() {
           const gymId = pathnames[pathnames.indexOf("gimnasios") + 1];
           
           if (!isNaN(gymId)) {
-            const response = await axios.get("http://localhost:3000/gimnasios/listar");
+            const response = await axios.get("api/gimnasios/listar");
             
             if (response.data.exito) {
               const gimnasioEncontrado = response.data.datos.find(

@@ -44,7 +44,7 @@ const Profile = () => {
 
         try {
           const response = await axios.get(
-            `http://localhost:3000/gimnasios/${idGimnasio}`
+            `/api/gimnasios/${idGimnasio}`
           );
           console.log("Datos del gimnasio:", response.data);
         } catch (error) {
@@ -67,7 +67,7 @@ const Profile = () => {
   useEffect(() => {
     const idEntrenador = sessionStorage.getItem("idEntrenador");
     if (!idEntrenador) return;
-    axios.get("http://localhost:3000/solicitudes/pendientes").then((res) => {
+    axios.get("/api/solicitudes/pendientes").then((res) => {
       setSolicitudes(
         res.data.datos.filter((s) => s.id_entrenador === parseInt(idEntrenador))
       );
@@ -177,7 +177,7 @@ const Profile = () => {
                         const id_entrenador =
                           sessionStorage.getItem("idEntrenador");
                         const res = await fetch(
-                          "http://localhost:3000/entrenadores/baja-gym",
+                          "/api/entrenadores/baja-gym",
                           {
                             method: "POST",
                             headers: { "Content-Type": "application/json" },
