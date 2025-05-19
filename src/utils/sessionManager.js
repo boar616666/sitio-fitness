@@ -30,7 +30,7 @@ const showSessionPrompt = () => {
     if (sessionTimer) {
       cerrarSesion();
     }
-  }, 30000);
+  }, 15000);
 };
 
 export const cerrarSesion = () => {
