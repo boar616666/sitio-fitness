@@ -174,7 +174,6 @@ function Login() {
               Regístrate
             </Link>
           </p>
-
           <p className="toggle-text">
             ¿Perdiste tu contraseña?{" "}
             <Link to="/recuperarContraseña" className="toggle-link">
