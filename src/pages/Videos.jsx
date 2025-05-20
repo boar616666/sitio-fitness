@@ -48,7 +48,7 @@ const Videos = () => {
         setError(null);
 
         // Obtener videos
-        const videosResponse = await api.get("/api/videos/todos");
+       const videosResponse = await api.get("/todos");
         if (!videosResponse.data.exito) {
           throw new Error(videosResponse.data.mensaje || "Error al cargar videos");
         }
@@ -102,7 +102,7 @@ const Videos = () => {
     setMensaje("");
 
     try {
-      const response = await api.post("/api/videos/publicar", {
+    const response = await api.post("/publicar", {
         id_entrenador,
         categoria: nuevoVideo.categoria,
         url: nuevoVideo.url

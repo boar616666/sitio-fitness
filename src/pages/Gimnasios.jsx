@@ -33,7 +33,7 @@ const api = axios.create({
   const fetchGimnasios = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/api/gimnasios/listar");
+      const response = await api.get("/listar");
       
       if (response.data.exito) {
         setGimnasios(response.data.datos);
@@ -62,7 +62,7 @@ const api = axios.create({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/api/gimnasios/crearGym", formData);
+      const response = await api.post("/crearGym", formData);
       
       if (response.data.exito) {
         setShowModal(false);

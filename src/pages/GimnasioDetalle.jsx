@@ -8,11 +8,12 @@ import ScrollToTop from "../components/ScrollToTop";
 
 // Configuración de Axios para usar la URL base desde las variables de entorno
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
   headers: {
     'Content-Type': 'application/json'
   }
 });
+
 
 // Componentes de íconos SVG
 const IconEdad = () => (
