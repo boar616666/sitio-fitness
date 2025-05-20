@@ -299,13 +299,13 @@ function Register() {
           />
         </div>
 
-        <div className="form-group">
+        {/* <div className="form-group">
           <ReCAPTCHA
             sitekey={RECAPTCHA_SITE_KEY}
             onChange={(token) => setCaptchaValue(token)}
             onExpired={() => setCaptchaValue(null)}
           />
-        </div>
+        </div> */}
 
         <button 
           type="submit" 
