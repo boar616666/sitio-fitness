@@ -39,7 +39,7 @@ function RecuperarContraseña() {
     }
     setLoading(true);
     try {
-      const response = await api.post("/api/auth/recuperar", { correo });
+      const response = await api.post("/auth/recuperar", { correo });
       if (response.data.exito) {
         setMensaje("Hemos enviado un código de verificación a tu correo. Por favor revísalo.");
         setStep(2);
@@ -71,7 +71,7 @@ function RecuperarContraseña() {
     }
     setLoading(true);
     try {
-      const response = await api.post("/api/auth/cambiar-contrasena", {
+      const response = await api.post("/auth/cambiar-contrasena", {
         token,
         nuevaContrasena
       });
