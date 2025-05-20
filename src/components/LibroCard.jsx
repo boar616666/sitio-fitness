@@ -1,5 +1,6 @@
 // src/components/LibroCard.jsx
 import React from "react";
+import "../styles/global.css";
 
 const LibroCard = ({ libro }) => {
   return (

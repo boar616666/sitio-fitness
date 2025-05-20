@@ -2405,3 +2405,53 @@ button {
   position: relative;
   width: 100%;
 }
+.comment-text-container {
+  position: relative;
+}
+
+.comment-text {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.expand-button {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  padding: 0;
+  margin-top: 0.5rem;
+  text-decoration: underline;
+}
+
+.expand-button:hover {
+  color: var(--secondary-color);
+}
+
+.comment-dots {
+  color: #666;
+}
+.comment-card.dragging {
+  opacity: 0.5;
+  transform: scale(0.95);
+}
+
+.comment-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.delete-comment-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background-color 0.2s;
+}
+
+.delete-comment-btn:hover {
+  background-color: rgba(220, 53, 69, 0.1);
+}

@@ -28,19 +28,51 @@ const Blog = () => {
     },
   ]);
   const [newComment, setNewComment] = useState("");
+  const [draggedComment, setDraggedComment] = useState(null);
 
   const handleAddComment = () => {
     if (newComment.trim() === "") return;
 
     const comment = {
       id: comments.length + 1,
-      user: "UsuarioActual", // Reemplazar con el nombre del usuario real
+      user: userName || "Anónimo", // Usamos el nombre del usuario desde sessionStorage
       text: newComment,
       date: new Date().toLocaleDateString(),
     };
 
     setComments([comment, ...comments]);
     setNewComment("");
+  };
+
+  const handleDeleteComment = (commentId) => {
+    if (window.confirm('¿Estás seguro de que deseas eliminar este comentario?')) {
+      setComments(comments.filter(comment => comment.id !== commentId));
+    }
+  };
+
+  const handleDragStart = (e, commentId) => {
+    e.target.classList.add('dragging');
+    setDraggedComment(commentId);
+  };
+
+  const handleDragEnd = (e) => {
+    e.target.classList.remove('dragging');
+  };
+
+  const handleDragOver = (e) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e, dropId) => {
+    e.preventDefault();
+    const commentsCopy = [...comments];
+    const draggedIndex = commentsCopy.findIndex(c => c.id === draggedComment);
+    const dropIndex = commentsCopy.findIndex(c => c.id === dropId);
+    
+    const [removed] = commentsCopy.splice(draggedIndex, 1);
+    commentsCopy.splice(dropIndex, 0, removed);
+    
+    setComments(commentsCopy);
   };
 
   return (
@@ -110,6 +142,11 @@ const Blog = () => {
                   marginBottom: "1rem",
                   borderLeft: "3px solid var(--primary-color)",
                 }}
+                draggable
+                onDragStart={(e) => handleDragStart(e, comment.id)}
+                onDragEnd={handleDragEnd}
+                onDragOver={handleDragOver}
+                onDrop={(e) => handleDrop(e, comment.id)}
               >
                 <div
                   style={{
@@ -118,14 +155,60 @@ const Blog = () => {
                     marginBottom: "0.5rem",
                   }}
                 >
-                  <strong style={{ color: "var(--primary-color)" }}>
-                    {comment.user}
-                  </strong>
+                  <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                    <strong style={{ color: "var(--primary-color)" }}>
+                      {comment.user}
+                    </strong>
+                    {/* Mostrar botón de eliminar solo si el comentario es del usuario actual */}
+                    {comment.user === userName && (
+                      <button
+                        onClick={() => handleDeleteComment(comment.id)}
+                        className="delete-comment-btn"
+                        title="Eliminar comentario"
+                      >
+                        🗑️
+                      </button>
+                    )}
+                  </div>
                   <span style={{ color: "#666", fontSize: "0.8rem" }}>
                     {comment.date}
                   </span>
                 </div>
-                <p style={{ margin: 0 }}>{comment.text}</p>
+                <div className="comment-text-container">
+                  {comment.text.length > 150 ? (
+                    <>
+                      <p className="comment-text">
+                        {comment.text.slice(0, 150)}
+                        <span className="comment-full" style={{ display: 'none' }}>
+                          {comment.text.slice(150)}
+                        </span>
+                        <span className="comment-dots">...</span>
+                      </p>
+                      <button
+                        className="expand-button"
+                        onClick={(e) => {
+                          const container = e.target.previousElementSibling;
+                          const fullText = container.querySelector('.comment-full');
+                          const dots = container.querySelector('.comment-dots');
+                          
+                          if (fullText.style.display === 'none') {
+                            fullText.style.display = 'inline';
+                            dots.style.display = 'none';
+                            e.target.textContent = 'Ver menos';
+                          } else {
+                            fullText.style.display = 'none';
+                            dots.style.display = 'inline';
+                            e.target.textContent = 'Ver más';
+                          }
+                        }}
+                      >
+                        Ver más
+                      </button>
+                    </>
+                  ) : (
+                    <p className="comment-text">{comment.text}</p>
+                  )}
+                </div>
               </div>
             ))}
           </div>
