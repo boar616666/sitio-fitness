@@ -109,7 +109,7 @@ const MisCitas = () => {
         throw new Error("No se pudo determinar el ID del entrenador");
       }
 
-      const response = await api.put("/api/citas/actualizar-estado", {
+      const response = await api.put("/actualizar-estado", {
         id_cita: idCita,
         estado: "confirmada",
         id_entrenador: idEntrenador,

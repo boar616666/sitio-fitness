@@ -57,7 +57,7 @@ const Profile = () => {
 
           // Obtener información del gimnasio si es entrenador
           if (idGimnasio) {
-            const response = await api.get(`/api/gimnasios/${idGimnasio}`);
+            const response = await api.get(`/${idGimnasio}`);
             if (response.data.exito) {
               setGimnasioInfo(response.data.datos);
             }
@@ -75,7 +75,7 @@ const Profile = () => {
         // Obtener solicitudes si es entrenador
         const idEntrenador = sessionStorage.getItem("idEntrenador");
         if (idEntrenador) {
-          const solicitudesResponse = await api.get("/api/solicitudes/pendientes");
+          const solicitudesResponse = await api.get("/pendientes");
           const filteredSolicitudes = solicitudesResponse.data.datos.filter(
             s => s.id_entrenador === parseInt(idEntrenador)
           );
@@ -104,7 +104,7 @@ const Profile = () => {
     e.preventDefault();
     try {
       // Actualizar perfil en el backend
-      const response = await api.put("/api/usuarios/actualizar", {
+      const response = await api.put("/actualizar", {
         nombre: formData.name,
         correo: formData.email,
         // Agregar otros campos según sea necesario
@@ -132,7 +132,7 @@ const Profile = () => {
 
     try {
       const id_entrenador = sessionStorage.getItem("idEntrenador");
-      const response = await api.post("/api/entrenadores/baja-gym", {
+      const response = await api.post("/baja-gym", {
         id_entrenador: parseInt(id_entrenador)
       });
 

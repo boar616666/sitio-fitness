@@ -110,7 +110,7 @@ const GimnasioDetalle = () => {
     const fetchGimnasioDetalle = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/api/gimnasios/${id}`);
+        const response = await api.get(`/${id}`);
 
         if (response.data.exito) {
           setGimnasio(response.data.datos);
@@ -188,7 +188,7 @@ const GimnasioDetalle = () => {
     if (!idEntrenador || !gimnasio?.id_gimnasio) return;
 
     try {
-      const response = await api.post("/api/solicitudes/solicitar", {
+     const response = await api.post("/solicitar", {
         id_entrenador: parseInt(idEntrenador),
         id_gimnasio: gimnasio.id_gimnasio,
       });
@@ -220,7 +220,7 @@ const GimnasioDetalle = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.put("/api/gimnasios/Actualizar", formData);
+     const response = await api.put("/actualizar", formData);
 
       if (response.data.exito) {
         setShowEditModal(false);

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import "../styles/login.css";
 
@@ -23,25 +23,23 @@ function RecuperarContraseña() {
   const [passwordStrength, setPasswordStrength] = useState({
     level: 0,
     message: "",
-    valid: false
+    valid: false,
+    messages: []
   });
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   const handleCorreoSubmit = async (e) => {
     e.preventDefault();
     setError("");
     setMensaje("");
-    
-    // Validación básica del correo
     if (!correo.includes("@") || !correo.includes(".")) {
       setError("Por favor ingresa un correo electrónico válido");
       return;
     }
-
     setLoading(true);
     try {
       const response = await api.post("/api/auth/recuperar", { correo });
-      
       if (response.data.exito) {
         setMensaje("Hemos enviado un código de verificación a tu correo. Por favor revísalo.");
         setStep(2);
@@ -50,7 +48,6 @@ function RecuperarContraseña() {
       }
     } catch (err) {
       setError(err.response?.data?.mensaje || "Error al conectar con el servidor. Intenta más tarde.");
-      console.error("Error al enviar correo de recuperación:", err);
     } finally {
       setLoading(false);
     }
@@ -60,30 +57,24 @@ function RecuperarContraseña() {
     e.preventDefault();
     setError("");
     setMensaje("");
-
-    // Validaciones
     if (!token || token.length !== 8) {
       setError("El código de verificación debe tener 8 caracteres");
       return;
     }
-
     if (nuevaContrasena !== repetirContrasena) {
       setError("Las contraseñas no coinciden");
       return;
     }
-
     if (!passwordStrength.valid) {
       setError("La contraseña no cumple con los requisitos mínimos de seguridad");
       return;
     }
-
     setLoading(true);
     try {
       const response = await api.post("/api/auth/cambiar-contrasena", {
         token,
         nuevaContrasena
       });
-
       if (response.data.exito) {
         setMensaje("¡Contraseña actualizada correctamente! Ya puedes iniciar sesión con tu nueva contraseña.");
         setStep(3);
@@ -92,7 +83,6 @@ function RecuperarContraseña() {
       }
     } catch (err) {
       setError(err.response?.data?.mensaje || "Error al cambiar la contraseña. Intenta nuevamente.");
-      console.error("Error al cambiar contraseña:", err);
     } finally {
       setLoading(false);
     }
@@ -101,28 +91,16 @@ function RecuperarContraseña() {
   const validatePassword = (password) => {
     let strength = 0;
     let messages = [];
-    
-    // Longitud mínima
     if (password.length >= 8) strength++;
     else messages.push("8 caracteres mínimo");
-    
-    // Mayúsculas
     if (/[A-Z]/.test(password)) strength++;
     else messages.push("una mayúscula");
-    
-    // Minúsculas
     if (/[a-z]/.test(password)) strength++;
     else messages.push("una minúscula");
-    
-    // Números
     if (/\d/.test(password)) strength++;
     else messages.push("un número");
-    
-    // Caracteres especiales
-    if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
+    if (/[!@#$%^&*(),.?\":{}|<>]/.test(password)) strength++;
     else messages.push("un carácter especial");
-    
-    // Determinar nivel de fortaleza
     let level, message;
     if (strength >= 5) {
       level = 3;
@@ -134,11 +112,10 @@ function RecuperarContraseña() {
       level = 1;
       message = "Débil";
     }
-    
     setPasswordStrength({
       level,
       message,
-      valid: strength >= 4, // Requerimos al menos 4 de 5 criterios
+      valid: strength >= 4,
       messages
     });
   };

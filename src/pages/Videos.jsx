@@ -112,7 +112,7 @@ const Videos = () => {
         setMensaje("¡Video publicado con éxito!");
         setNuevoVideo({ categoria: "", url: "" });
         // Actualizar lista de videos
-        const res = await api.get("/api/videos/todos");
+       const videosResponse = await api.get("/todos"); 
         if (res.data.exito) {
           setVideos(res.data.datos);
         }
@@ -132,7 +132,7 @@ const Videos = () => {
     if (!window.confirm("¿Seguro que deseas eliminar este video?")) return;
     
     try {
-      const response = await api.post("/api/videos/eliminar", {
+      const response = await api.post("/eliminar", {
         id_video,
         id_entrenador
       });
