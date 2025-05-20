@@ -47,8 +47,8 @@ const Videos = () => {
         setLoading(true);
         setError(null);
 
-        // Obtener videos
-       const videosResponse = await api.get("/todos");
+        // Obtener videos (ruta corregida)
+        const videosResponse = await api.get("/videos/todos");
         if (!videosResponse.data.exito) {
           throw new Error(videosResponse.data.mensaje || "Error al cargar videos");
         }
@@ -63,7 +63,7 @@ const Videos = () => {
         await Promise.all(
           idsEntrenadores.map(async (id) => {
             try {
-              const res = await api.get(`/api/entrenadores/${id}`);
+              const res = await api.get(`/entrenadores/${id}`);
               if (res.data.exito) {
                 entrenadoresData[id] = res.data.datos;
               }
@@ -102,7 +102,7 @@ const Videos = () => {
     setMensaje("");
 
     try {
-    const response = await api.post("/publicar", {
+      const response = await api.post("/videos/publicar", {
         id_entrenador,
         categoria: nuevoVideo.categoria,
         url: nuevoVideo.url
@@ -112,9 +112,9 @@ const Videos = () => {
         setMensaje("¡Video publicado con éxito!");
         setNuevoVideo({ categoria: "", url: "" });
         // Actualizar lista de videos
-       const videosResponse = await api.get("/todos"); 
-        if (res.data.exito) {
-          setVideos(res.data.datos);
+        const videosResponse = await api.get("/videos/todos");
+        if (videosResponse.data.exito) {
+          setVideos(videosResponse.data.datos);
         }
       } else {
         throw new Error(response.data.mensaje || "Error al publicar el video");
@@ -132,9 +132,8 @@ const Videos = () => {
     if (!window.confirm("¿Seguro que deseas eliminar este video?")) return;
     
     try {
-      const response = await api.post("/eliminar", {
-        id_video,
-        id_entrenador
+      const response = await api.delete("/videos/eliminar", {
+        data: { id_video, id_entrenador }
       });
 
       if (response.data.exito) {

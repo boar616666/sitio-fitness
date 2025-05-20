@@ -16,10 +16,7 @@ const Profile = () => {
   const [user, setUser] = useState({
     name: "",
     email: "",
-    photo: "",
-    memberSince: "15 de enero de 2023",
-    fitnessLevel: "Intermedio",
-    preferredActivities: ["Pesas", "Yoga", "Running"],
+    photo: ""
   });
 
   const [isEditing, setIsEditing] = useState(false);
@@ -29,7 +26,6 @@ const Profile = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Cargar datos del usuario y solicitudes
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -57,7 +53,7 @@ const Profile = () => {
 
           // Obtener información del gimnasio si es entrenador
           if (idGimnasio) {
-            const response = await api.get(`/${idGimnasio}`);
+            const response = await api.get(`/gimnasios/${idGimnasio}`);
             if (response.data.exito) {
               setGimnasioInfo(response.data.datos);
             }
@@ -75,11 +71,10 @@ const Profile = () => {
         // Obtener solicitudes si es entrenador
         const idEntrenador = sessionStorage.getItem("idEntrenador");
         if (idEntrenador) {
-          const solicitudesResponse = await api.get("/pendientes");
-          const filteredSolicitudes = solicitudesResponse.data.datos.filter(
-            s => s.id_entrenador === parseInt(idEntrenador)
-          );
-          setSolicitudes(filteredSolicitudes);
+          const solicitudesResponse = await api.get(`/solicitudes/entrenador/${idEntrenador}/pendientes`);
+          if (solicitudesResponse.data.exito) {
+            setSolicitudes(solicitudesResponse.data.datos);
+          }
         }
       } catch (err) {
         setError(err.response?.data?.mensaje || "Error al cargar datos del perfil");
@@ -103,26 +98,31 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Actualizar perfil en el backend
-      const response = await api.put("/actualizar", {
+      const endpoint = tipoUsuario === "entrenador" 
+        ? "/entrenadores/actualizar" 
+        : "/usuarios/actualizar";
+
+      const response = await api.put(endpoint, {
         nombre: formData.name,
         correo: formData.email,
-        // Agregar otros campos según sea necesario
+        costoMensual: formData.costoMensual,
+        costoSesion: formData.costoSesion
       });
 
       if (response.data.exito) {
-        // Actualizar datos en sessionStorage
         sessionStorage.setItem("nombre", formData.name);
         sessionStorage.setItem("correo", formData.email);
+        if (tipoUsuario === "entrenador") {
+          sessionStorage.setItem("costoMensualEntrenador", formData.costoMensual);
+          sessionStorage.setItem("costoSesionEntrenador", formData.costoSesion);
+        }
         
         setUser(formData);
         setIsEditing(false);
         alert("Perfil actualizado correctamente");
-      } else {
-        throw new Error(response.data.mensaje || "Error al actualizar perfil");
       }
     } catch (err) {
-      setError(err.response?.data?.mensaje || err.message);
+      setError(err.response?.data?.mensaje || "Error al actualizar perfil");
       console.error("Error al actualizar perfil:", err);
     }
   };
@@ -132,7 +132,7 @@ const Profile = () => {
 
     try {
       const id_entrenador = sessionStorage.getItem("idEntrenador");
-      const response = await api.post("/baja-gym", {
+      const response = await api.post("/entrenadores/baja-gym", {
         id_entrenador: parseInt(id_entrenador)
       });
 
@@ -140,33 +140,16 @@ const Profile = () => {
         sessionStorage.removeItem("idGimEntrenador");
         alert("Te has dado de baja del gimnasio.");
         window.location.reload();
-      } else {
-        throw new Error(response.data.mensaje || "No se pudo realizar la baja");
       }
     } catch (err) {
-      setError(err.response?.data?.mensaje || err.message);
+      setError(err.response?.data?.mensaje || "Error al darse de baja");
       console.error("Error al darse de baja:", err);
       alert("Error al darse de baja: " + (err.response?.data?.mensaje || err.message));
     }
   };
 
-  if (loading) {
-    return (
-      <div className="profile-container loading">
-        <div className="spinner"></div>
-        <p>Cargando perfil...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="profile-container error">
-        <p>Error: {error}</p>
-        <button onClick={() => window.location.reload()}>Reintentar</button>
-      </div>
-    );
-  }
+  if (loading) return <div className="profile-container loading"><div className="spinner"></div><p>Cargando perfil...</p></div>;
+  if (error) return <div className="profile-container error"><p>Error: {error}</p><button onClick={() => window.location.reload()}>Reintentar</button></div>;
 
   return (
     <div className="profile-container">

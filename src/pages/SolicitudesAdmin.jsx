@@ -23,7 +23,8 @@ const SolicitudesAdmin = () => {
       setLoading(true);
       setError(null);
       
-      const response = await api.get("/api/solicitudes/pendientes");
+      // Ruta corregida: eliminado /api
+      const response = await api.get("/solicitudes/pendientes");
       
       if (response.data.exito) {
         setSolicitudes(response.data.datos || []);
@@ -53,7 +54,8 @@ const SolicitudesAdmin = () => {
       setActualizando(true);
       setError(null);
       
-      const response = await api.put("/api/solicitudes/responder", {
+      // Ruta corregida: eliminado /api
+      const response = await api.put("/solicitudes/responder", {
         id_solicitud,
         estado
       });

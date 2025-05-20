@@ -35,7 +35,8 @@ const MisCitas = () => {
         setError(null);
 
         let requestBody = {};
-        let endpoint = "/api/citas/mis-citas";
+        // Ruta corregida: eliminar /api/
+        const endpoint = "/citas/mis-citas";
 
         if (tipoUsuario === "cliente") {
           const idUsuario = sessionStorage.getItem("idUsuario");
@@ -109,7 +110,8 @@ const MisCitas = () => {
         throw new Error("No se pudo determinar el ID del entrenador");
       }
 
-      const response = await api.put("/actualizar-estado", {
+      // Ruta corregida
+      const response = await api.put("/citas/actualizar-estado", {
         id_cita: idCita,
         estado: "confirmada",
         id_entrenador: idEntrenador,
@@ -139,13 +141,15 @@ const MisCitas = () => {
       let endpoint, requestBody;
 
       if (tipoUsuario === "cliente") {
-        endpoint = "/api/citas/cancelar";
+        // Ruta corregida
+        endpoint = "/citas/cancelar";
         requestBody = {
           id_usuario: parseInt(sessionStorage.getItem("idUsuario")),
           id_cita: idCita,
         };
       } else if (tipoUsuario === "entrenador") {
-        endpoint = "/api/citas/actualizar-estado";
+        // Ruta corregida
+        endpoint = "/citas/actualizar-estado";
         requestBody = {
           id_cita: idCita,
           estado: "cancelada",

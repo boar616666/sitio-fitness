@@ -21,19 +21,20 @@ const Gimnasios = () => {
   const rolCliente = sessionStorage.getItem("rolCliente");
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
-  // Configura Axios para usar la URL base desde las variables de entorno
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
-  headers: {
-    'Content-Type': 'application/json'
-  }
-});
-
+  // Configura Axios con la URL base
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
 
   const fetchGimnasios = async () => {
     try {
       setLoading(true);
-      const response = await api.get("/listar");
+      console.log('Intentando conectar a:', api.defaults.baseURL + '/gimnasios/listar');
+      // Cambiado de "/listar" a "/gimnasios/listar"
+      const response = await api.get("/gimnasios/listar");
       
       if (response.data.exito) {
         setGimnasios(response.data.datos);
@@ -62,11 +63,12 @@ const api = axios.create({
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await api.post("/crearGym", formData);
+      // Cambiado de "/crearGym" a "/gimnasios/crear"
+      const response = await api.post("/gimnasios/crearGYM", formData);
       
       if (response.data.exito) {
         setShowModal(false);
-        await fetchGimnasios(); // Espera a que se recarguen los gimnasios
+        await fetchGimnasios();
         setFormData({
           nombre: "",
           direccion: "",
