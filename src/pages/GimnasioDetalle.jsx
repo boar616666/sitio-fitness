@@ -110,7 +110,7 @@ const GimnasioDetalle = () => {
     const fetchGimnasioDetalle = async () => {
       try {
         setLoading(true);
-        const response = await api.get(`/${id}`);
+        const response = await api.get(`/gimnasios/${id}`);
 
         if (response.data.exito) {
           setGimnasio(response.data.datos);
@@ -133,7 +133,7 @@ const GimnasioDetalle = () => {
   const fetchEntrenadores = async (idGimnasio) => {
     try {
       setLoadingEntrenadores(true);
-      const response = await api.post("/api/entrenadores/por-gym", {
+      const response = await api.post("/entrenadores/por-gym", {
         id_gimnasio: idGimnasio
       });
 
@@ -153,7 +153,10 @@ const GimnasioDetalle = () => {
   const verificarSolicitudExistente = async () => {
     if (tipoUsuario === "entrenador" && idEntrenador && gimnasio?.id_gimnasio) {
       try {
-        const response = await api.get(`/api/solicitudes/entrenador/${idEntrenador}`);
+        const response = await api.post("/solicitudes/por-gym", {
+          id_entrenador: parseInt(idEntrenador),
+          id_gimnasio: gimnasio.id_gimnasio
+        });
         const yaSolicitada = response.data.datos.some(
           s => s.id_gimnasio === gimnasio.id_gimnasio && s.estado !== "rechazada"
         );
@@ -188,7 +191,7 @@ const GimnasioDetalle = () => {
     if (!idEntrenador || !gimnasio?.id_gimnasio) return;
 
     try {
-     const response = await api.post("/solicitar", {
+      const response = await api.post("/solicitudes/solicitar", {
         id_entrenador: parseInt(idEntrenador),
         id_gimnasio: gimnasio.id_gimnasio,
       });
@@ -220,7 +223,7 @@ const GimnasioDetalle = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     try {
-     const response = await api.put("/actualizar", formData);
+      const response = await api.put("/gimnasios/actualizar", formData);
 
       if (response.data.exito) {
         setShowEditModal(false);
