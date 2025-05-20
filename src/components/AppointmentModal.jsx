@@ -3,55 +3,71 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import '../styles/modal.css';
 
-Modal.setAppElement('#root'); // Necesario para accesibilidad
+Modal.setAppElement('#root');
 
 const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) => {
+  const API_URL = import.meta.env.VITE_API_URL; // Obtenemos la URL base del .env
   const [fechaHora, setFechaHora] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  // Console log al recibir props
   useEffect(() => {
     if (isOpen) {
-      console.log('Props recibidas en el modal:');
+      console.log('Props recibidas:');
       console.log('idUsuario:', idUsuario);
       console.log('idEntrenador:', idEntrenador);
+      console.log('API URL:', API_URL); // Verificamos la URL en consola
     }
-  }, [isOpen, idUsuario, idEntrenador]);
+  }, [isOpen, idUsuario, idEntrenador, API_URL]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
     
-    // Datos que se enviarán a la API
     const datosEnviar = {
       id_usuario: idUsuario,
       id_entrenador: idEntrenador,
       fecha_hora: fechaHora,
     };
     
-    console.log('Datos a enviar al servidor:', datosEnviar);
-    
+    console.log('Enviando a:', `${API_URL}/api/citas/crear`);
+    console.log('Datos:', datosEnviar);
+
     try {
-      console.log('Iniciando petición POST a /citas/crear');
-      const response = await axios.post('api/citas/crear', datosEnviar);
+      const response = await axios.post(
+        `${API_URL}/api/citas/crear`,
+        datosEnviar,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        }
+      );
       
-      console.log('Respuesta del servidor:', response.data);
-      
+      console.log('Respuesta:', response.data);
+
       if (response.data.exito) {
         setSuccess(true);
         setTimeout(() => {
           onRequestClose();
           setSuccess(false);
+          setFechaHora('');
         }, 2000);
       } else {
-        setError('No se pudo agendar la cita: ' + (response.data.mensaje || 'Error desconocido'));
+        setError(response.data.mensaje || 'Error al agendar la cita');
       }
     } catch (error) {
       console.error('Error completo:', error);
-      setError('Error al conectar con el servidor: ' + (error.message || 'Error desconocido'));
+      if (error.response) {
+        setError(error.response.data?.mensaje || `Error ${error.response.status}`);
+      } else if (error.request) {
+        setError('No se recibió respuesta del servidor');
+      } else {
+        setError('Error al configurar la petición');
+      }
     } finally {
       setLoading(false);
     }
@@ -64,10 +80,17 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
       contentLabel="Agendar Cita"
       className="appointment-modal"
       overlayClassName="appointment-modal-overlay"
+      shouldCloseOnOverlayClick={!loading}
     >
       <div className="appointment-modal-header">
         <h2>Agendar Cita</h2>
-        <button className="close-button" onClick={onRequestClose}>×</button>
+        <button 
+          className="close-button" 
+          onClick={onRequestClose}
+          disabled={loading}
+        >
+          ×
+        </button>
       </div>
       
       <div className="appointment-modal-content">
@@ -89,14 +112,12 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
                 id="fechaHora"
                 type="datetime-local"
                 value={fechaHora}
-                onChange={(e) => {
-                  setFechaHora(e.target.value);
-                  console.log('Fecha y hora seleccionada:', e.target.value);
-                }}
+                onChange={(e) => setFechaHora(e.target.value)}
                 required
                 className="form-control"
+                min={new Date().toISOString().slice(0, 16)}
               />
-              <small className="form-help">Selecciona la fecha y hora para tu cita</small>
+              <small className="form-help">Selecciona fecha y hora para tu cita</small>
             </div>
             
             <div className="form-actions">
@@ -111,9 +132,13 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
               <button 
                 type="submit" 
                 className="confirm-button"
-                disabled={loading || !fechaHora || !idUsuario || !idEntrenador}
+                disabled={loading || !fechaHora}
               >
-                {loading ? 'Procesando...' : 'Confirmar Cita'}
+                {loading ? (
+                  <>
+                    <span className="spinner"></span> Procesando...
+                  </>
+                ) : 'Confirmar Cita'}
               </button>
             </div>
           </form>
@@ -123,4 +148,4 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
   );
 };
 
-export default AppointmentModal; 
+export default AppointmentModal;

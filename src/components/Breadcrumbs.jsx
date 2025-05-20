@@ -8,6 +8,7 @@ function Breadcrumbs() {
   const params = useParams();
   const pathnames = location.pathname.split("/").filter((x) => x);
   const [gimnasio, setGimnasio] = useState(null);
+  const API_URL = import.meta.env.VITE_API_URL; // Obtenemos la URL base del .env
 
   // Obtener el nombre del gimnasio si estamos en la página de detalle
   useEffect(() => {
@@ -18,7 +19,7 @@ function Breadcrumbs() {
           const gymId = pathnames[pathnames.indexOf("gimnasios") + 1];
           
           if (!isNaN(gymId)) {
-            const response = await axios.get("api/gimnasios/listar");
+            const response = await axios.get(`${API_URL}/api/gimnasios/listar`);
             
             if (response.data.exito) {
               const gimnasioEncontrado = response.data.datos.find(
@@ -37,7 +38,7 @@ function Breadcrumbs() {
     };
 
     fetchGimnasioName();
-  }, [pathnames]);
+  }, [pathnames, API_URL]);
 
   return (
     <nav className="breadcrumbs">

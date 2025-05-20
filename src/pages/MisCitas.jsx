@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../styles/mis-citas.css";
+
+// Configuración de Axios con variables de entorno
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const MisCitas = () => {
   const [citas, setCitas] = useState([]);
@@ -10,13 +19,12 @@ const MisCitas = () => {
   const [actualizando, setActualizando] = useState(false);
   const navigate = useNavigate();
 
-  // Obtener el tipo de usuario para mostrar la información correcta
+  // Obtener el tipo de usuario
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
-  // Obtener datos del usuario desde sessionStorage
+  // Efecto para cargar las citas
   useEffect(() => {
     if (!tipoUsuario) {
-      // Si no hay usuario logueado, redirigir al login
       navigate("/login");
       return;
     }
@@ -24,9 +32,10 @@ const MisCitas = () => {
     const fetchCitas = async () => {
       try {
         setLoading(true);
+        setError(null);
 
-        // Preparar el cuerpo de la solicitud según el tipo de usuario
-        let requestBody;
+        let requestBody = {};
+        let endpoint = "/api/citas/mis-citas";
 
         if (tipoUsuario === "cliente") {
           const idUsuario = sessionStorage.getItem("idUsuario");
@@ -36,7 +45,6 @@ const MisCitas = () => {
           };
         } else if (tipoUsuario === "entrenador") {
           const idEntrenador = sessionStorage.getItem("idEntrenador");
-          console.log("idEntrenador recuperado:", idEntrenador);
           requestBody = {
             rol: "entrenador",
             id_entrenador: parseInt(idEntrenador),
@@ -45,33 +53,16 @@ const MisCitas = () => {
           throw new Error("Tipo de usuario no válido");
         }
 
-        console.log("Enviando solicitud:", requestBody);
+        const response = await api.post(endpoint, requestBody);
 
-        const response = await fetch("/api/citas/mis-citas", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        });
-
-        if (!response.ok) {
-          throw new Error("Error al obtener las citas");
-        }
-
-        const data = await response.json();
-        console.log("Citas recibidas:", data);
-
-        // Verificar que los datos existen y son un array
-        if (data.exito && Array.isArray(data.datos)) {
-          setCitas(data.datos);
+        if (response.data.exito && Array.isArray(response.data.datos)) {
+          setCitas(response.data.datos);
         } else {
-          console.error("Formato de respuesta inesperado:", data);
-          setCitas([]);
+          throw new Error(response.data.mensaje || "Formato de respuesta inesperado");
         }
       } catch (err) {
-        setError(err.message);
-        console.error("Error al cargar las citas:", err);
+        setError(err.response?.data?.mensaje || err.message);
+        console.error("Error al cargar citas:", err);
       } finally {
         setLoading(false);
       }
@@ -80,6 +71,7 @@ const MisCitas = () => {
     fetchCitas();
   }, [navigate, actualizando, tipoUsuario]);
 
+  // Funciones para formatear fecha y hora
   const formatearFecha = (fechaStr) => {
     try {
       const fecha = new Date(fechaStr);
@@ -107,150 +99,97 @@ const MisCitas = () => {
     }
   };
 
-  // Aceptar cita (solo entrenadores)
+  // Función para aceptar cita (entrenadores)
   const aceptarCita = async (idCita) => {
     try {
       setActualizando(true);
-
       const idEntrenador = parseInt(sessionStorage.getItem("idEntrenador"));
 
       if (!idEntrenador) {
         throw new Error("No se pudo determinar el ID del entrenador");
       }
 
-      const requestBody = {
+      const response = await api.put("/api/citas/actualizar-estado", {
         id_cita: idCita,
         estado: "confirmada",
         id_entrenador: idEntrenador,
-      };
+      });
 
-      console.log("Aceptando cita:", requestBody);
-
-      const response = await fetch(
-        "/api/citas/actualizar-estado",
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(requestBody),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error("Error al aceptar la cita");
+      if (response.data.exito) {
+        setCitas(citas.map(cita => 
+          cita.id_cita === idCita ? { ...cita, estado: "confirmada" } : cita
+        ));
+        alert("Cita aceptada exitosamente");
+      } else {
+        throw new Error(response.data.mensaje || "No se pudo aceptar la cita");
       }
-
-      const data = await response.json();
-
-      if (!data.exito) {
-        throw new Error(data.mensaje || "No se pudo aceptar la cita");
-      }
-
-      // Actualizar el estado local directamente
-      const citasActualizadas = citas.map((cita) =>
-        cita.id_cita === idCita ? { ...cita, estado: "confirmada" } : cita
-      );
-      setCitas(citasActualizadas);
-
-      // Mostrar mensaje de éxito
-      alert("Cita aceptada exitosamente");
     } catch (err) {
-      setError(err.message);
-      console.error("Error al aceptar la cita:", err);
-      alert(`Error: ${err.message}`);
+      setError(err.response?.data?.mensaje || err.message);
+      console.error("Error al aceptar cita:", err);
+      alert(`Error: ${err.response?.data?.mensaje || err.message}`);
     } finally {
       setActualizando(false);
     }
   };
 
-  // Cancelar cita (según tipo de usuario)
+  // Función para cancelar cita
   const cancelarCita = async (idCita) => {
     try {
       setActualizando(true);
+      let endpoint, requestBody;
 
-      let response;
-      let endpoint;
-      let requestBody;
-
-      // Diferentes endpoints según el tipo de usuario
       if (tipoUsuario === "cliente") {
-        // Endpoint específico para clientes
         endpoint = "/api/citas/cancelar";
-        const idUsuario = parseInt(sessionStorage.getItem("idUsuario"));
-
         requestBody = {
-          id_usuario: idUsuario,
+          id_usuario: parseInt(sessionStorage.getItem("idUsuario")),
           id_cita: idCita,
         };
       } else if (tipoUsuario === "entrenador") {
-        // Endpoint para entrenadores
         endpoint = "/api/citas/actualizar-estado";
-        const idEntrenador = parseInt(sessionStorage.getItem("idEntrenador"));
-
         requestBody = {
           id_cita: idCita,
           estado: "cancelada",
-          id_entrenador: idEntrenador,
+          id_entrenador: parseInt(sessionStorage.getItem("idEntrenador")),
         };
       } else {
         throw new Error("Tipo de usuario no válido");
       }
 
-      console.log(`Cancelando cita (${tipoUsuario}):`, requestBody);
+      const response = await api.put(endpoint, requestBody);
 
-      response = await fetch(endpoint, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(requestBody),
-      });
-
-      if (!response.ok) {
-        throw new Error("Error al cancelar la cita");
+      if (response.data.exito) {
+        setCitas(citas.map(cita => 
+          cita.id_cita === idCita ? { ...cita, estado: "cancelada" } : cita
+        ));
+        alert("Cita cancelada exitosamente");
+      } else {
+        throw new Error(response.data.mensaje || "No se pudo cancelar la cita");
       }
-
-      const data = await response.json();
-
-      if (!data.exito) {
-        throw new Error(data.mensaje || "No se pudo cancelar la cita");
-      }
-
-      // Actualizar el estado local
-      const citasActualizadas = citas.map((cita) =>
-        cita.id_cita === idCita ? { ...cita, estado: "cancelada" } : cita
-      );
-      setCitas(citasActualizadas);
-
-      // Mostrar mensaje de éxito
-      alert("Cita cancelada exitosamente");
     } catch (err) {
-      setError(err.message);
-      console.error("Error al cancelar la cita:", err);
-      alert(`Error: ${err.message}`);
+      setError(err.response?.data?.mensaje || err.message);
+      console.error("Error al cancelar cita:", err);
+      alert(`Error: ${err.response?.data?.mensaje || err.message}`);
     } finally {
       setActualizando(false);
     }
   };
 
-  const citasFiltradas =
-    filtroEstado === "Todas"
-      ? citas
-      : citas.filter(
-          (cita) =>
-            cita.estado &&
-            cita.estado.toLowerCase() === filtroEstado.toLowerCase()
-        );
+  // Filtrar citas según estado seleccionado
+  const citasFiltradas = filtroEstado === "Todas" 
+    ? citas 
+    : citas.filter(cita => cita.estado?.toLowerCase() === filtroEstado.toLowerCase());
 
+  // Renderizado durante carga
   if (loading) {
     return (
       <div className="mis-citas-container loading-container">
+        <div className="spinner"></div>
         <p>Cargando tus citas...</p>
       </div>
     );
   }
 
+  // Renderizado en caso de error
   if (error) {
     return (
       <div className="mis-citas-container error-container">
@@ -262,6 +201,7 @@ const MisCitas = () => {
     );
   }
 
+  // Renderizado principal
   return (
     <div className="mis-citas-container">
       <div className="citas-header">
@@ -283,80 +223,55 @@ const MisCitas = () => {
             <option value="confirmada">Confirmadas</option>
             <option value="pendiente">Pendientes</option>
             <option value="cancelada">Canceladas</option>
+            <option value="completada">Completadas</option>
           </select>
         </div>
       </div>
 
-      {citas.length > 0 ? (
+      {citasFiltradas.length > 0 ? (
         <div className="citas-lista">
           {citasFiltradas.map((cita) => (
             <div
               key={cita.id_cita}
-              className={`cita-card estado-${
-                cita.estado ? cita.estado.toLowerCase() : "pendiente"
-              }`}
+              className={`cita-card estado-${cita.estado?.toLowerCase() || "pendiente"}`}
             >
               <div className="cita-gimnasio">
                 <img
-                  src={cita.imagen_gimnasio || ""}
+                  src={cita.imagen_gimnasio || "/default-gym.jpg"}
                   alt="Gimnasio"
                   onError={(e) => {
-                    (e.target.src = ""), (alt = "Foto gym");
+                    e.target.src = "/default-gym.jpg";
                   }}
                 />
                 <h3>Cita #{cita.id_cita}</h3>
               </div>
 
               <div className="cita-detalles">
-                <p>
-                  <strong>Servicio:</strong> Entrenamiento personal
-                </p>
+                <p><strong>Servicio:</strong> {cita.tipo_servicio || "Entrenamiento personal"}</p>
                 {tipoUsuario === "cliente" ? (
-                  <p>
-                    <strong>Entrenador:</strong>{" "}
-                    {cita.nombre_entrenador ||
-                      "Entrenador #" + cita.id_entrenador}
-                  </p>
+                  <p><strong>Entrenador:</strong> {cita.nombre_entrenador || `Entrenador #${cita.id_entrenador}`}</p>
                 ) : (
-                  <p>
-                    <strong>Cliente:</strong>{" "}
-                    {cita.nombre_usuario ||
-                      cita.correo_usuario ||
-                      "Cliente #" + cita.id_usuario}
-                  </p>
+                  <p><strong>Cliente:</strong> {cita.nombre_usuario || cita.correo_usuario || `Cliente #${cita.id_usuario}`}</p>
                 )}
-                <p>
-                  <strong>Fecha:</strong> {formatearFecha(cita.fecha_hora)}
-                </p>
-                <p>
-                  <strong>Hora:</strong> {formatearHora(cita.fecha_hora)}
-                </p>
-                <p
-                  className={`cita-estado estado-${
-                    cita.estado ? cita.estado.toLowerCase() : "pendiente"
-                  }`}
-                >
-                  <strong>Estado:</strong>{" "}
-                  {cita.estado
-                    ? cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1)
-                    : "Pendiente"}
+                <p><strong>Fecha:</strong> {formatearFecha(cita.fecha_hora)}</p>
+                <p><strong>Hora:</strong> {formatearHora(cita.fecha_hora)}</p>
+                <p className={`cita-estado estado-${cita.estado?.toLowerCase() || "pendiente"}`}>
+                  <strong>Estado:</strong> {cita.estado ? cita.estado.charAt(0).toUpperCase() + cita.estado.slice(1) : "Pendiente"}
                 </p>
               </div>
 
               <div className="cita-acciones">
-                {tipoUsuario === "entrenador" &&
-                  cita.estado === "pendiente" && (
-                    <button
-                      className="btn-aceptar"
-                      onClick={() => aceptarCita(cita.id_cita)}
-                      disabled={actualizando}
-                    >
-                      {actualizando ? "Procesando..." : "Aceptar cita"}
-                    </button>
-                  )}
+                {tipoUsuario === "entrenador" && cita.estado === "pendiente" && (
+                  <button
+                    className="btn-aceptar"
+                    onClick={() => aceptarCita(cita.id_cita)}
+                    disabled={actualizando}
+                  >
+                    {actualizando ? "Procesando..." : "Aceptar cita"}
+                  </button>
+                )}
 
-                {(cita.estado === "pendiente" ||
-                  cita.estado === "confirmada") && (
+                {(cita.estado === "pendiente" || cita.estado === "confirmada") && (
                   <button
                     className="btn-cancelar"
                     onClick={() => cancelarCita(cita.id_cita)}
@@ -372,11 +287,12 @@ const MisCitas = () => {
       ) : (
         <div className="no-citas">
           <p>No tienes citas programadas con el filtro seleccionado.</p>
-          <Link to="/citas" className="btn-agendar">
+          <Link to="/gimnasios" className="btn-agendar">
             Agendar una cita
           </Link>
         </div>
       )}
+
       {tipoUsuario === "cliente" && (
         <div className="citas-footer">
           <Link to="/gimnasios" className="btn-agendar-nueva">

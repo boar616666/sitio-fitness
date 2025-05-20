@@ -1,7 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import "../styles/profile.css";
 import axios from "axios";
+import "../styles/profile.css";
+
+// Configuración de Axios con variables de entorno
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
 
 const Profile = () => {
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
@@ -17,62 +25,72 @@ const Profile = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({ ...user });
   const [solicitudes, setSolicitudes] = useState([]);
+  const [gimnasioInfo, setGimnasioInfo] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
+  // Cargar datos del usuario y solicitudes
   useEffect(() => {
-    const fetchData = async () => {
-      // Obtener datos del usuario desde sessionStorage
-      const tipoUsuario = sessionStorage.getItem("tipoUsuario");
-      const nombre = sessionStorage.getItem("nombre");
-      const correo = sessionStorage.getItem("correo");
-      const foto = sessionStorage.getItem("foto");
-      const idGimnasio = sessionStorage.getItem("idGimEntrenador");
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        const nombre = sessionStorage.getItem("nombre");
+        const correo = sessionStorage.getItem("correo");
+        const foto = sessionStorage.getItem("foto");
+        const idGimnasio = sessionStorage.getItem("idGimEntrenador");
 
-      if (tipoUsuario === "entrenador") {
-        const costoMensual = sessionStorage.getItem("costoMensualEntrenador");
-        const costoSesion = sessionStorage.getItem("costoSesionEntrenador");
-        const edad = sessionStorage.getItem("edad");
-        const telefono = sessionStorage.getItem("telefono");
-        setUser({
-          name: nombre,
-          email: correo,
-          photo: foto,
-          costoMensual,
-          costoSesion,
-          edad,
-          telefono,
-        });
+        if (tipoUsuario === "entrenador") {
+          const costoMensual = sessionStorage.getItem("costoMensualEntrenador");
+          const costoSesion = sessionStorage.getItem("costoSesionEntrenador");
+          const edad = sessionStorage.getItem("edad");
+          const telefono = sessionStorage.getItem("telefono");
 
-        try {
-          const response = await axios.get(
-            `/api/gimnasios/${idGimnasio}`
-          );
-          console.log("Datos del gimnasio:", response.data);
-        } catch (error) {
-          console.error("Error al obtener datos del gimnasio:", error);
+          setUser({
+            name: nombre,
+            email: correo,
+            photo: foto,
+            costoMensual,
+            costoSesion,
+            edad,
+            telefono,
+          });
+
+          // Obtener información del gimnasio si es entrenador
+          if (idGimnasio) {
+            const response = await api.get(`/api/gimnasios/${idGimnasio}`);
+            if (response.data.exito) {
+              setGimnasioInfo(response.data.datos);
+            }
+          }
+        } else if (tipoUsuario === "cliente") {
+          const rolCliente = sessionStorage.getItem("rolCliente");
+          setUser({
+            name: nombre,
+            email: correo,
+            photo: foto,
+            rolCliente,
+          });
         }
-      } else if (tipoUsuario === "cliente") {
-        const rolCliente = sessionStorage.getItem("rolCliente");
-        setUser({
-          name: nombre,
-          email: correo,
-          photo: foto,
-          rolCliente,
-        });
+
+        // Obtener solicitudes si es entrenador
+        const idEntrenador = sessionStorage.getItem("idEntrenador");
+        if (idEntrenador) {
+          const solicitudesResponse = await api.get("/api/solicitudes/pendientes");
+          const filteredSolicitudes = solicitudesResponse.data.datos.filter(
+            s => s.id_entrenador === parseInt(idEntrenador)
+          );
+          setSolicitudes(filteredSolicitudes);
+        }
+      } catch (err) {
+        setError(err.response?.data?.mensaje || "Error al cargar datos del perfil");
+        console.error("Error:", err);
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    const idEntrenador = sessionStorage.getItem("idEntrenador");
-    if (!idEntrenador) return;
-    axios.get("/api/solicitudes/pendientes").then((res) => {
-      setSolicitudes(
-        res.data.datos.filter((s) => s.id_entrenador === parseInt(idEntrenador))
-      );
-    });
-  }, []);
+    fetchUserData();
+  }, [tipoUsuario]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -82,12 +100,73 @@ const Profile = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Aquí iría la llamada a la API para actualizar el perfil
-    setUser(formData);
-    setIsEditing(false);
+    try {
+      // Actualizar perfil en el backend
+      const response = await api.put("/api/usuarios/actualizar", {
+        nombre: formData.name,
+        correo: formData.email,
+        // Agregar otros campos según sea necesario
+      });
+
+      if (response.data.exito) {
+        // Actualizar datos en sessionStorage
+        sessionStorage.setItem("nombre", formData.name);
+        sessionStorage.setItem("correo", formData.email);
+        
+        setUser(formData);
+        setIsEditing(false);
+        alert("Perfil actualizado correctamente");
+      } else {
+        throw new Error(response.data.mensaje || "Error al actualizar perfil");
+      }
+    } catch (err) {
+      setError(err.response?.data?.mensaje || err.message);
+      console.error("Error al actualizar perfil:", err);
+    }
   };
+
+  const handleBajaGimnasio = async () => {
+    if (!window.confirm("¿Seguro que deseas darte de baja del gimnasio?")) return;
+
+    try {
+      const id_entrenador = sessionStorage.getItem("idEntrenador");
+      const response = await api.post("/api/entrenadores/baja-gym", {
+        id_entrenador: parseInt(id_entrenador)
+      });
+
+      if (response.data.exito) {
+        sessionStorage.removeItem("idGimEntrenador");
+        alert("Te has dado de baja del gimnasio.");
+        window.location.reload();
+      } else {
+        throw new Error(response.data.mensaje || "No se pudo realizar la baja");
+      }
+    } catch (err) {
+      setError(err.response?.data?.mensaje || err.message);
+      console.error("Error al darse de baja:", err);
+      alert("Error al darse de baja: " + (err.response?.data?.mensaje || err.message));
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="profile-container loading">
+        <div className="spinner"></div>
+        <p>Cargando perfil...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="profile-container error">
+        <p>Error: {error}</p>
+        <button onClick={() => window.location.reload()}>Reintentar</button>
+      </div>
+    );
+  }
 
   return (
     <div className="profile-container">
@@ -97,46 +176,82 @@ const Profile = () => {
         <div className="profile-header">
           <div className="profile-photo">
             <img
-              src={user.photo || "https://via.placeholder.com/150"}
+              src={user.photo || "/default-profile.jpg"}
               alt="Foto de perfil"
+              onError={(e) => {
+                e.target.src = "/default-profile.jpg";
+              }}
             />
+            {isEditing && (
+              <button className="change-photo-btn">Cambiar foto</button>
+            )}
           </div>
           <div className="profile-info">
-            <h2>{user.name || "Usuario Ejemplo"}</h2>
-            <p style={{ fontWeight: 500, color: "#800020", margin: "8px 0 0 0" }}>
+            <h2>{user.name || "Usuario"}</h2>
+            <p className="user-type">
               Tipo de usuario:{" "}
               {tipoUsuario === "entrenador"
                 ? "Entrenador"
                 : tipoUsuario === "cliente"
-                  ? (user.rolCliente === "admin" ? "Administrador" : "Cliente")
-                  : "Desconocido"}
+                ? user.rolCliente === "admin" 
+                  ? "Administrador" 
+                  : "Cliente"
+                : "Desconocido"}
             </p>
+            {gimnasioInfo && (
+              <p className="gym-info">
+                Gimnasio: {gimnasioInfo.nombre}
+              </p>
+            )}
           </div>
         </div>
 
         {isEditing ? (
           <form onSubmit={handleSubmit} className="profile-form">
             <div className="form-group">
-              <label htmlFor="name">Nombre:</label>
+              <label>Nombre:</label>
               <input
                 type="text"
-                id="name"
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
+                required
               />
             </div>
 
             <div className="form-group">
-              <label htmlFor="email">Email:</label>
+              <label>Email:</label>
               <input
                 type="email"
-                id="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
+                required
               />
             </div>
+
+            {tipoUsuario === "entrenador" && (
+              <>
+                <div className="form-group">
+                  <label>Costo Mensual:</label>
+                  <input
+                    type="number"
+                    name="costoMensual"
+                    value={formData.costoMensual || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Costo por Sesión:</label>
+                  <input
+                    type="number"
+                    name="costoSesion"
+                    value={formData.costoSesion || ""}
+                    onChange={handleChange}
+                  />
+                </div>
+              </>
+            )}
 
             <div className="profile-actions">
               <button type="submit" className="btn btn-primary">
@@ -161,48 +276,38 @@ const Profile = () => {
               <span className="detail-value">{user.email}</span>
             </div>
 
-            {/* Botón para darse de baja del gimnasio */}
-            {sessionStorage.getItem("tipoUsuario") === "entrenador" &&
-              sessionStorage.getItem("idGimEntrenador") && (
-                <button
-                  className="btn btn-danger"
-                  style={{ margin: "12px 0", background: "#e74c3c" }}
-                  onClick={async () => {
-                    if (
-                      window.confirm(
-                        "¿Seguro que deseas darte de baja del gimnasio?"
-                      )
-                    ) {
-                      try {
-                        const id_entrenador =
-                          sessionStorage.getItem("idEntrenador");
-                        const res = await fetch(
-                          "/api/entrenadores/baja-gym",
-                          {
-                            method: "POST",
-                            headers: { "Content-Type": "application/json" },
-                            body: JSON.stringify({ id_entrenador }),
-                          }
-                        );
-                        const data = await res.json();
-                        if (data.exito) {
-                          alert("Te has dado de baja del gimnasio.");
-                          sessionStorage.removeItem("idGimEntrenador");
-                          window.location.reload();
-                        } else {
-                          alert("No se pudo realizar la baja.");
-                        }
-                      } catch {
-                        alert("Error al darse de baja.");
-                      }
-                    }
-                  }}
-                >
-                  Darme de baja del gimnasio
-                </button>
-              )}
+            {tipoUsuario === "entrenador" && (
+              <>
+                <div className="detail-item">
+                  <span className="detail-label">Costo Mensual:</span>
+                  <span className="detail-value">${user.costoMensual}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Costo por Sesión:</span>
+                  <span className="detail-value">${user.costoSesion}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Teléfono:</span>
+                  <span className="detail-value">{user.telefono}</span>
+                </div>
+                <div className="detail-item">
+                  <span className="detail-label">Edad:</span>
+                  <span className="detail-value">{user.edad} años</span>
+                </div>
+              </>
+            )}
 
-            {/*             <div className="profile-actions">
+            {tipoUsuario === "entrenador" && sessionStorage.getItem("idGimEntrenador") && (
+              <button
+                className="btn btn-danger"
+                onClick={handleBajaGimnasio}
+                disabled={loading}
+              >
+                Darme de baja del gimnasio
+              </button>
+            )}
+
+            <div className="profile-actions">
               <button
                 className="btn btn-primary"
                 onClick={() => setIsEditing(true)}
@@ -212,20 +317,24 @@ const Profile = () => {
               <Link to="/mis-citas" className="btn btn-secondary">
                 Ver mis citas
               </Link>
-            </div> */}
+            </div>
           </div>
         )}
 
-        {tipoUsuario === "entrenador" && (
-          <div>
+        {tipoUsuario === "entrenador" && solicitudes.length > 0 && (
+          <div className="solicitudes-section">
             <h3>Mis solicitudes a gimnasios</h3>
-            <ul>
+            <div className="solicitudes-list">
               {solicitudes.map((s) => (
-                <li key={s.id_solicitud}>
-                  {s.nombre_gimnasio}: {s.estado}
-                </li>
+                <div key={s.id_solicitud} className="solicitud-card">
+                  <h4>{s.nombre_gimnasio}</h4>
+                  <p className={`estado-${s.estado.toLowerCase()}`}>
+                    Estado: {s.estado.charAt(0).toUpperCase() + s.estado.slice(1)}
+                  </p>
+                  <p>Fecha solicitud: {new Date(s.fecha_solicitud).toLocaleDateString()}</p>
+                </div>
               ))}
-            </ul>
+            </div>
           </div>
         )}
       </div>

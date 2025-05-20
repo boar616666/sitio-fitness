@@ -21,20 +21,27 @@ const Gimnasios = () => {
   const rolCliente = sessionStorage.getItem("rolCliente");
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
+  // Configura Axios para usar la URL base desde las variables de entorno
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_API_URL,
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+
   const fetchGimnasios = async () => {
     try {
       setLoading(true);
-      const response = await axios.get(
-        "/api/gimnasios/listar"
-      );
+      const response = await api.get("/api/gimnasios/listar");
+      
       if (response.data.exito) {
         setGimnasios(response.data.datos);
       } else {
-        setError("No se pudieron cargar los gimnasios");
+        setError(response.data.mensaje || "No se pudieron cargar los gimnasios");
       }
     } catch (error) {
       console.error("Error al cargar gimnasios:", error);
-      setError("Error de conexión al servidor");
+      setError(error.response?.data?.mensaje || "Error de conexión al servidor");
     } finally {
       setLoading(false);
     }
@@ -43,6 +50,37 @@ const Gimnasios = () => {
   useEffect(() => {
     fetchGimnasios();
   }, []);
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await api.post("/api/gimnasios/crearGym", formData);
+      
+      if (response.data.exito) {
+        setShowModal(false);
+        await fetchGimnasios(); // Espera a que se recarguen los gimnasios
+        setFormData({
+          nombre: "",
+          direccion: "",
+          hora_entrada: "",
+          hora_salida: "",
+          descripcion: "",
+        });
+      } else {
+        setError(response.data.mensaje || "Error al crear el gimnasio");
+      }
+    } catch (error) {
+      console.error("Error al crear el gym: ", error);
+      setError(error.response?.data?.mensaje || "Error al crear el gimnasio. Verifica los datos.");
+    }
+  };
 
   if (loading) {
     return (
@@ -61,51 +99,25 @@ const Gimnasios = () => {
         <Breadcrumbs />
         <div className="error-message">
           <p>{error}</p>
+          <button onClick={fetchGimnasios}>Reintentar</button>
         </div>
       </div>
     );
   }
 
-  // Verificación de datos
   if (!gimnasios || gimnasios.length === 0) {
     return (
       <div className="gimnasios-container">
         <Breadcrumbs />
         <p>No hay gimnasios disponibles</p>
+        {rolCliente === "admin" && (
+          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
+            Agregar primer gimnasio
+          </button>
+        )}
       </div>
     );
   }
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await axios.post(
-        "/api/gimnasios/crearGym",
-        formData
-      );
-      if (response.data.exito) {
-        setShowModal(false);
-        fetchGimnasios();
-        setFormData({
-          nombre: "",
-          direccion: "",
-          hora_entrada: "",
-          hora_salida: "",
-          descripcion: "",
-        });
-      }
-    } catch (error) {
-      console.error("Error al crear el gym: ", error);
-      setError("Error al crear el gimnasio. Verifica los datos.");
-    }
-  };
 
   return (
     <div className="gimnasios-container">
@@ -114,83 +126,9 @@ const Gimnasios = () => {
         <h1>Gimnasios Recomendados</h1>
 
         {rolCliente === "admin" && (
-          <button
-            className="agregar-gym-btn"
-            onClick={() => setShowModal(true)}
-          >
+          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
             Agregar gimnasio
           </button>
-        )}
-
-        {showModal && (
-          <div className="modal-overlay">
-            <div className="modal-content">
-              <h2>Agregar Nuevo Gimnasio</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                  <label>Nombre:</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Dirección:</label>
-                  <input
-                    type="text"
-                    name="direccion"
-                    value={formData.direccion}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Hora de Entrada:</label>
-                  <input
-                    type="time"
-                    name="hora_entrada"
-                    value={formData.hora_entrada}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Hora de Salida:</label>
-                  <input
-                    type="time"
-                    name="hora_salida"
-                    value={formData.hora_salida}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="form-group">
-                  <label>Descripción:</label>
-                  <textarea
-                    name="descripcion"
-                    value={formData.descripcion}
-                    onChange={handleInputChange}
-                    required
-                  />
-                </div>
-                <div className="modal-buttons">
-                  <button type="submit" className="submit-btn">
-                    Guardar
-                  </button>
-                  <button
-                    type="button"
-                    className="cancel-btn"
-                    onClick={() => setShowModal(false)}
-                  >
-                    Cancelar
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
         )}
       </div>
 
@@ -214,6 +152,78 @@ const Gimnasios = () => {
           />
         </div>
       )}
+
+      {showModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h2>Agregar Nuevo Gimnasio</h2>
+            <form onSubmit={handleSubmit}>
+              <div className="form-group">
+                <label>Nombre:</label>
+                <input
+                  type="text"
+                  name="nombre"
+                  value={formData.nombre}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Dirección:</label>
+                <input
+                  type="text"
+                  name="direccion"
+                  value={formData.direccion}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Hora de Entrada:</label>
+                <input
+                  type="time"
+                  name="hora_entrada"
+                  value={formData.hora_entrada}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Hora de Salida:</label>
+                <input
+                  type="time"
+                  name="hora_salida"
+                  value={formData.hora_salida}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label>Descripción:</label>
+                <textarea
+                  name="descripcion"
+                  value={formData.descripcion}
+                  onChange={handleInputChange}
+                  required
+                />
+              </div>
+              <div className="modal-buttons">
+                <button type="submit" className="submit-btn">
+                  Guardar
+                </button>
+                <button
+                  type="button"
+                  className="cancel-btn"
+                  onClick={() => setShowModal(false)}
+                >
+                  Cancelar
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
       <ScrollToTop />
     </div>
   );

@@ -6,7 +6,7 @@ import axios from "axios";
 
 // Configura Axios para usar la URL base correcta
 const api = axios.create({
-  baseURL: "http://localhost:3000", // Asegúrate que coincida con tu puerto del backend
+  baseURL: "https://backend-gimnasio-lu0e.onrender.com" // Asegúrate que coincida con tu puerto del backend
 });
 
 function RegisterCallToAction({ 
