@@ -21,29 +21,20 @@ const Gimnasios = () => {
   const rolCliente = sessionStorage.getItem("rolCliente");
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
-  // Configura Axios con la URL base
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
-
   const fetchGimnasios = async () => {
     try {
       setLoading(true);
-      console.log('Intentando conectar a:', api.defaults.baseURL + '/gimnasios/listar');
-      // Cambiado de "/listar" a "/gimnasios/listar"
-      const response = await api.get("/gimnasios/listar");
-      
+      const response = await axios.get(
+        "http://localhost:3000/gimnasios/listar"
+      );
       if (response.data.exito) {
         setGimnasios(response.data.datos);
       } else {
-        setError(response.data.mensaje || "No se pudieron cargar los gimnasios");
+        setError("No se pudieron cargar los gimnasios");
       }
     } catch (error) {
       console.error("Error al cargar gimnasios:", error);
-      setError(error.response?.data?.mensaje || "Error de conexión al servidor");
+      setError("Error de conexión al servidor");
     } finally {
       setLoading(false);
     }
@@ -52,38 +43,6 @@ const Gimnasios = () => {
   useEffect(() => {
     fetchGimnasios();
   }, []);
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      // Cambiado de "/crearGym" a "/gimnasios/crear"
-      const response = await api.post("/gimnasios/crearGYM", formData);
-      
-      if (response.data.exito) {
-        setShowModal(false);
-        await fetchGimnasios();
-        setFormData({
-          nombre: "",
-          direccion: "",
-          hora_entrada: "",
-          hora_salida: "",
-          descripcion: "",
-        });
-      } else {
-        setError(response.data.mensaje || "Error al crear el gimnasio");
-      }
-    } catch (error) {
-      console.error("Error al crear el gym: ", error);
-      setError(error.response?.data?.mensaje || "Error al crear el gimnasio. Verifica los datos.");
-    }
-  };
 
   if (loading) {
     return (
@@ -102,25 +61,72 @@ const Gimnasios = () => {
         <Breadcrumbs />
         <div className="error-message">
           <p>{error}</p>
-          <button onClick={fetchGimnasios}>Reintentar</button>
         </div>
       </div>
     );
   }
 
+  // Verificación de datos
   if (!gimnasios || gimnasios.length === 0) {
     return (
       <div className="gimnasios-container">
         <Breadcrumbs />
         <p>No hay gimnasios disponibles</p>
-        {rolCliente === "admin" && (
-          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
-            Agregar primer gimnasio
-          </button>
-        )}
       </div>
     );
   }
+
+  const handleInputChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        "http://localhost:3000/gimnasios/crearGym",
+        formData
+      );
+      if (response.data.exito) {
+        setShowModal(false);
+        fetchGimnasios();
+        setFormData({
+          nombre: "",
+          direccion: "",
+          hora_entrada: "",
+          hora_salida: "",
+          descripcion: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error al crear el gym: ", error);
+      setError("Error al crear el gimnasio. Verifica los datos.");
+    }
+  };
+
+  // Agregar esta función después de handleSubmit
+  const handleDeleteGym = async (id_gimnasio) => {
+    if (window.confirm("¿Estás seguro que deseas eliminar este gimnasio?")) {
+      try {
+        const response = await axios.delete(
+          http://localhost:3000/gimnasios/eliminar/${id_gimnasio}
+        );
+
+        if (response.data.exito) {
+          // Actualizar la lista de gimnasios después de eliminar
+          fetchGimnasios();
+        } else {
+          setError("No se pudo eliminar el gimnasio");
+        }
+      } catch (error) {
+        console.error("Error al eliminar el gimnasio:", error);
+        setError("Error al eliminar el gimnasio");
+      }
+    }
+  };
 
   return (
     <div className="gimnasios-container">
@@ -129,9 +135,83 @@ const Gimnasios = () => {
         <h1>Gimnasios Recomendados</h1>
 
         {rolCliente === "admin" && (
-          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
+          <button
+            className="agregar-gym-btn"
+            onClick={() => setShowModal(true)}
+          >
             Agregar gimnasio
           </button>
+        )}
+
+        {showModal && (
+          <div className="modal-overlay">
+            <div className="modal-content">
+              <h2>Agregar Nuevo Gimnasio</h2>
+              <form onSubmit={handleSubmit}>
+                <div className="form-group">
+                  <label>Nombre:</label>
+                  <input
+                    type="text"
+                    name="nombre"
+                    value={formData.nombre}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Dirección:</label>
+                  <input
+                    type="text"
+                    name="direccion"
+                    value={formData.direccion}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hora de Entrada:</label>
+                  <input
+                    type="time"
+                    name="hora_entrada"
+                    value={formData.hora_entrada}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Hora de Salida:</label>
+                  <input
+                    type="time"
+                    name="hora_salida"
+                    value={formData.hora_salida}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="form-group">
+                  <label>Descripción:</label>
+                  <textarea
+                    name="descripcion"
+                    value={formData.descripcion}
+                    onChange={handleInputChange}
+                    required
+                  />
+                </div>
+                <div className="modal-buttons">
+                  <button type="submit" className="submit-btn">
+                    Guardar
+                  </button>
+                  <button
+                    type="button"
+                    className="cancel-btn"
+                    onClick={() => setShowModal(false)}
+                  >
+                    Cancelar
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
         )}
       </div>
 
@@ -141,7 +221,12 @@ const Gimnasios = () => {
 
       <div className="gimnasios-list">
         {gimnasios.map((gimnasio) => (
-          <GimnasioCard key={gimnasio.id_gimnasio} gimnasio={gimnasio} />
+          <GimnasioCard
+            key={gimnasio.id_gimnasio}
+            gimnasio={gimnasio}
+            isAdmin={rolCliente === "admin"}
+            onDelete={handleDeleteGym}
+          />
         ))}
       </div>
 
@@ -155,81 +240,9 @@ const Gimnasios = () => {
           />
         </div>
       )}
-
-      {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-content">
-            <h2>Agregar Nuevo Gimnasio</h2>
-            <form onSubmit={handleSubmit}>
-              <div className="form-group">
-                <label>Nombre:</label>
-                <input
-                  type="text"
-                  name="nombre"
-                  value={formData.nombre}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Dirección:</label>
-                <input
-                  type="text"
-                  name="direccion"
-                  value={formData.direccion}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Hora de Entrada:</label>
-                <input
-                  type="time"
-                  name="hora_entrada"
-                  value={formData.hora_entrada}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Hora de Salida:</label>
-                <input
-                  type="time"
-                  name="hora_salida"
-                  value={formData.hora_salida}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="form-group">
-                <label>Descripción:</label>
-                <textarea
-                  name="descripcion"
-                  value={formData.descripcion}
-                  onChange={handleInputChange}
-                  required
-                />
-              </div>
-              <div className="modal-buttons">
-                <button type="submit" className="submit-btn">
-                  Guardar
-                </button>
-                <button
-                  type="button"
-                  className="cancel-btn"
-                  onClick={() => setShowModal(false)}
-                >
-                  Cancelar
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
       <ScrollToTop />
     </div>
   );
 };
 
-export default Gimnasios;
+export default Gimnasios;

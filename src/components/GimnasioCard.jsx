@@ -1,9 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const GimnasioCard = ({ gimnasio }) => {
+const GimnasioCard = ({ gimnasio, isAdmin, onDelete }) => {
   // URL de imagen predeterminada en caso de que no exista
   const imagenPredeterminada = "https://img.freepik.com/foto-gratis/gimnasio-luz-gimnasio-equipos-moderno_124507-14735.jpg";
+
+  // Función para manejar la eliminación del gimnasio
+  const handleDelete = async () => {
+    if (window.confirm("¿Estás seguro de que deseas eliminar este gimnasio?")) {
+      onDelete(gimnasio.id_gimnasio);
+    }
+  };
 
   return (
     <div className="gimnasio-card">
@@ -22,13 +29,23 @@ const GimnasioCard = ({ gimnasio }) => {
         <p className="gimnasio-horario">
           <span className="horario-label">Horario:</span> {gimnasio.hora_entrada} - {gimnasio.hora_salida}
         </p>
+        <p>{gimnasio.descripcion}</p>
         
         <Link 
-          to={`/gimnasios/${gimnasio.id_gimnasio}`} 
+          to={`/gimnasios/${gimnasio.id_gimnasio}`}
           className="ver-detalles-btn"
         >
           Ver detalles
         </Link>
+
+        {isAdmin && (
+          <button 
+            className="delete-gym-btn"
+            onClick={handleDelete}
+          >
+            Eliminar Gimnasio
+          </button>
+        )}
       </div>
     </div>
   );
