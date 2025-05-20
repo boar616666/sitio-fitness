@@ -1,6 +1,6 @@
 let sessionTimer = null;
-//const SESSION_TIMEOUT = 5 * 60 * 1000;
-const SESSION_TIMEOUT = 15 * 1000; // 15 segundos en milisegundos
+const SESSION_TIMEOUT = 5 * 60 * 1000;
+//const SESSION_TIMEOUT = 15 * 1000; // 15 segundos en milisegundos
 
 export const initSessionManager = () => {
   resetSessionTimer();
@@ -30,7 +30,7 @@ const showSessionPrompt = () => {
     if (sessionTimer) {
       cerrarSesion();
     }
-  }, 30000);
+  }, 15000);
 };
 
 export const cerrarSesion = () => {

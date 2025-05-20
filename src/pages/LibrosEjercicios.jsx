@@ -2,6 +2,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import LibroCard from "../components/LibroCard";
+import "../styles/global.css";
 
 const LibrosEjercicios = () => {
   const libros = [

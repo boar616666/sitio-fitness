@@ -22,12 +22,13 @@ const Gimnasios = () => {
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
   // Configura Axios para usar la URL base desde las variables de entorno
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 
   const fetchGimnasios = async () => {
     try {
