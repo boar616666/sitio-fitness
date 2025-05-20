@@ -4,10 +4,12 @@ import GimnasioCard from "../components/GimnasioCard";
 import Breadcrumbs from "../components/Breadcrumbs";
 import RegisterCallToAction from "../components/RegisterCallToAction";
 import ScrollToTop from "../components/ScrollToTop";
+import "../styles/gimnasios.css";
 
 const Gimnasios = () => {
   const [gimnasios, setGimnasios] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [formData, setFormData] = useState({
@@ -21,7 +23,6 @@ const Gimnasios = () => {
   const rolCliente = sessionStorage.getItem("rolCliente");
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
-  // Configura Axios con la URL base
   const api = axios.create({
     baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
     headers: {
@@ -32,12 +33,13 @@ const Gimnasios = () => {
   const fetchGimnasios = async () => {
     try {
       setLoading(true);
+      setError(null);
       const response = await api.get("/gimnasios/listar");
       
       if (response.data.exito) {
         setGimnasios(response.data.datos);
       } else {
-        setError(response.data.mensaje || "No se pudieron cargar los gimnasios");
+        throw new Error(response.data.mensaje || "No se pudieron cargar los gimnasios");
       }
     } catch (error) {
       console.error("Error al cargar gimnasios:", error);
@@ -47,14 +49,73 @@ const Gimnasios = () => {
     }
   };
 
+  useEffect(() => {
+    fetchGimnasios();
+  }, []);
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validar campos
+    if (!formData.nombre || !formData.direccion || !formData.hora_entrada || 
+        !formData.hora_salida || !formData.descripcion) {
+      alert("Por favor completa todos los campos");
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setError(null);
+
+      const response = await api.post("/gimnasios/crearGym", formData);
+      
+      if (response.data.exito) {
+        // Actualizar la lista de gimnasios
+        if (response.data.datos) {
+          setGimnasios(prev => [...prev, response.data.datos]);
+        } else {
+          await fetchGimnasios();
+        }
+
+        // Limpiar formulario y cerrar modal
+        setFormData({
+          nombre: "",
+          direccion: "",
+          hora_entrada: "",
+          hora_salida: "",
+          descripcion: "",
+        });
+        setShowModal(false);
+        alert("Gimnasio creado exitosamente");
+      } else {
+        throw new Error(response.data.mensaje || "Error al crear el gimnasio");
+      }
+    } catch (error) {
+      console.error("Error al crear gimnasio:", error);
+      alert(error.response?.data?.mensaje || "Error al crear el gimnasio. Verifica los datos.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   const handleDelete = async (id_gimnasio) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este gimnasio?")) {
+      return;
+    }
+
     try {
       const response = await api.delete(`/gimnasios/eliminar/${id_gimnasio}`);
       
       if (response.data.exito) {
-        setGimnasios(prevGimnasios => 
-          prevGimnasios.filter(gym => gym.id_gimnasio !== id_gimnasio)
-        );
+        setGimnasios(prev => prev.filter(gym => gym.id_gimnasio !== id_gimnasio));
         alert("Gimnasio eliminado correctamente");
       } else {
         throw new Error(response.data.mensaje || "No se pudo eliminar el gimnasio");
@@ -65,109 +126,64 @@ const Gimnasios = () => {
     }
   };
 
-  useEffect(() => {
-    fetchGimnasios();
-  }, []);
-
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const response = await api.post("/gimnasios/crearGym", formData);
-      
-      if (response.data.exito) {
-        setShowModal(false);
-        await fetchGimnasios();
-        setFormData({
-          nombre: "",
-          direccion: "",
-          hora_entrada: "",
-          hora_salida: "",
-          descripcion: "",
-        });
-      } else {
-        setError(response.data.mensaje || "Error al crear el gimnasio");
-      }
-    } catch (error) {
-      console.error("Error al crear el gym: ", error);
-      setError(error.response?.data?.mensaje || "Error al crear el gimnasio. Verifica los datos.");
-    }
-  };
-
+  // Renderizado condicional para estados de carga y error
   if (loading) {
     return (
       <div className="gimnasios-container">
         <Breadcrumbs />
         <div className="loading-indicator">
+          <div className="spinner"></div>
           <p>Cargando gimnasios...</p>
         </div>
       </div>
     );
   }
 
-  if (error) {
-    return (
-      <div className="gimnasios-container">
-        <Breadcrumbs />
-        <div className="error-message">
-          <p>{error}</p>
-          <button onClick={fetchGimnasios}>Reintentar</button>
-        </div>
-      </div>
-    );
-  }
-
-  if (!gimnasios || gimnasios.length === 0) {
-    return (
-      <div className="gimnasios-container">
-        <Breadcrumbs />
-        <p>No hay gimnasios disponibles</p>
-        {rolCliente === "admin" && (
-          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
-            Agregar primer gimnasio
-          </button>
-        )}
-      </div>
-    );
-  }
-
+  // Resto del JSX sin cambios...
   return (
     <div className="gimnasios-container">
       <Breadcrumbs />
       <div className="gimnasios-header">
         <h1>Gimnasios Recomendados</h1>
         {rolCliente === "admin" && (
-          <button className="agregar-gym-btn" onClick={() => setShowModal(true)}>
+          <button 
+            className="agregar-gym-btn"
+            onClick={() => setShowModal(true)}
+          >
             Agregar gimnasio
           </button>
         )}
       </div>
 
-      <div className="gimnasios-list">
-        {gimnasios.map((gimnasio) => (
-          <GimnasioCard 
-            key={gimnasio.id_gimnasio} 
-            gimnasio={gimnasio}
-            isAdmin={rolCliente === "admin"}
-            onDelete={handleDelete}
-          />
-        ))}
-      </div>
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+          <button onClick={fetchGimnasios}>Reintentar</button>
+        </div>
+      )}
 
-      {!tipoUsuario && (
-        <div className="gimnasios-cta-section">
-          <RegisterCallToAction
-            title="¿Eres entrenador?"
-            description="Registra tu perfil como entrenador y conéctate con nuevos clientes en cualquiera de nuestros gimnasios asociados."
-            buttonText="Regístrate como entrenador"
-            type="entrenador"
-          />
+      {!gimnasios || gimnasios.length === 0 ? (
+        <div className="no-gimnasios">
+          <p>No hay gimnasios disponibles</p>
+          {rolCliente === "admin" && (
+            <button 
+              className="agregar-gym-btn"
+              onClick={() => setShowModal(true)}
+            >
+              Agregar primer gimnasio
+            </button>
+          )}
+        </div>
+      ) : (
+        <div className="gimnasios-list">
+          {gimnasios.map((gimnasio) => (
+            <GimnasioCard 
+              key={gimnasio.id_gimnasio} 
+              gimnasio={gimnasio}
+              isAdmin={rolCliente === "admin"}
+              onDelete={handleDelete}
+            />
+          ))}
         </div>
       )}
 
@@ -226,19 +242,35 @@ const Gimnasios = () => {
                 />
               </div>
               <div className="modal-buttons">
-                <button type="submit" className="submit-btn">
-                  Guardar
+                <button 
+                  type="submit" 
+                  className="submit-btn"
+                  disabled={submitting}
+                >
+                  {submitting ? "Guardando..." : "Guardar"}
                 </button>
                 <button
                   type="button"
                   className="cancel-btn"
                   onClick={() => setShowModal(false)}
+                  disabled={submitting}
                 >
                   Cancelar
                 </button>
               </div>
             </form>
           </div>
+        </div>
+      )}
+
+      {!tipoUsuario && (
+        <div className="gimnasios-cta-section">
+          <RegisterCallToAction
+            title="¿Eres entrenador?"
+            description="Registra tu perfil como entrenador y conéctate con nuevos clientes en cualquiera de nuestros gimnasios asociados."
+            buttonText="Regístrate como entrenador"
+            type="entrenador"
+          />
         </div>
       )}
 
