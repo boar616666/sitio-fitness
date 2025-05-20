@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/login.css";
 
 // Configuración de Axios con variables de entorno
@@ -19,6 +20,10 @@ function Login() {
   const [error, setError] = useState("");
   const [loadingLogin, setLoadingLogin] = useState(false);
   const [loadingToken, setLoadingToken] = useState(false);
+  const [captchaVerified, setCaptchaVerified] = useState(false);
+
+  // Configuración de reCAPTCHA (usa tu clave real)
+  const RECAPTCHA_SITE_KEY = "6LdFFQgrAAAAAA-FMYiSLoVzBL1iNKR79XPU7mFy";
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,12 +32,19 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError("");
+    
+    if (!captchaVerified) {
+      setError("Por favor completa el CAPTCHA");
+      return;
+    }
+
     setLoadingLogin(true);
     try {
       const response = await api.post(
         "/auth/login",
         { correo: formData.correo, contrasena: formData.contrasena }
       );
+      
       const datos = response.data.datos;
       if (datos.requiere_2fa) {
         setPendingData(datos);
@@ -43,7 +55,7 @@ function Login() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Error en la operación. Verifica tus datos."
+          "Error en la operación. Verifica tus datos."
       );
     } finally {
       setLoadingLogin(false);
@@ -63,12 +75,12 @@ function Login() {
         payload.id_usuario = pendingData.id_usuario;
         payload.tipo = "cliente";
       }
-
+      
       const response = await api.post(
         "/auth/verificar-token",
         payload
       );
-
+      
       const datos = response.data.datos;
       if (payload.tipo === "entrenador") {
         sessionStorage.setItem("correo", datos.correo);
@@ -92,7 +104,7 @@ function Login() {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-        "Error al verificar el token. Intenta de nuevo."
+          "Error al verificar el token. Intenta de nuevo."
       );
     } finally {
       setLoadingToken(false);
@@ -131,10 +143,30 @@ function Login() {
                 disabled={loadingLogin}
               />
             </div>
+
+            {/* Widget reCAPTCHA */}
+            <div className="captcha-container">
+              <ReCAPTCHA
+                sitekey={RECAPTCHA_SITE_KEY}
+                onChange={(token) => {
+                  setCaptchaVerified(true);
+                  setError("");
+                }}
+                onExpired={() => {
+                  setCaptchaVerified(false);
+                  setError("El CAPTCHA ha expirado, verifica de nuevo");
+                }}
+                onErrored={() => {
+                  setCaptchaVerified(false);
+                  setError("Error al cargar CAPTCHA, recarga la página");
+                }}
+              />
+            </div>
+
             <button 
               type="submit" 
               className="button" 
-              disabled={loadingLogin}
+              disabled={loadingLogin || !captchaVerified}
             >
               {loadingLogin ? (
                 <>
