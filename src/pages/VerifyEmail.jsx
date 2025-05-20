@@ -1,9 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import '../styles/verification.css';
 
-// Configuración de Axios con la ruta base correcta
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
   headers: {
@@ -16,34 +14,22 @@ const VerifyEmail = () => {
   const navigate = useNavigate();
   const [status, setStatus] = useState('verifying');
   const [errorMessage, setErrorMessage] = useState('');
-  const [countdown, setCountdown] = useState(5);
 
   useEffect(() => {
     const verifyToken = async () => {
       try {
         if (!token || token.length < 10) {
-          throw new Error('El token de verificación no es válido');
+          throw new Error('Token inválido');
         }
 
-        // Ruta corregida para la verificación
+        // Ajusta la ruta para producción
         const response = await api.get(`/api/auth/verify-email/${token}`);
         
         if (response.data.exito) {
           setStatus('success');
-          const timer = setInterval(() => {
-            setCountdown(prev => {
-              if (prev <= 1) {
-                clearInterval(timer);
-                navigate('/login', { 
-                  state: { message: 'Email verificado con éxito. Ya puedes iniciar sesión.' } 
-                });
-                return 0;
-              }
-              return prev - 1;
-            });
-          }, 1000);
+          setTimeout(() => navigate('/login?verified=true'), 3000);
         } else {
-          throw new Error(response.data.mensaje || 'Error al verificar el email');
+          throw new Error(response.data.mensaje || 'Error al verificar');
         }
       } catch (error) {
         console.error('Error verifying email:', error);
@@ -51,31 +37,39 @@ const VerifyEmail = () => {
         setErrorMessage(
           error.response?.data?.mensaje || 
           error.message || 
-          'Ocurrió un error al verificar tu email. Por favor intenta nuevamente.'
+          'Error al verificar el email. Por favor intenta nuevamente.'
         );
-        
-        const timer = setInterval(() => {
-          setCountdown(prev => {
-            if (prev <= 1) {
-              clearInterval(timer);
-              navigate('/register');
-              return 0;
-            }
-            return prev - 1;
-          });
-        }, 1000);
+        setTimeout(() => navigate('/register'), 5000);
       }
     };
 
     verifyToken();
-
-    return () => clearInterval(timer);
   }, [token, navigate]);
 
   return (
     <div className="verification-container">
-      <div className={`verification-card ${status}`}>
-        {/* ... (el resto del componente permanece igual) ... */}
+      <div className="verification-card">
+        {status === 'verifying' && (
+          <>
+            <h2 className="verification-title">Verificando tu email...</h2>
+            <p className="verification-text">Por favor espera mientras confirmamos tu dirección de correo.</p>
+          </>
+        )}
+        
+        {status === 'success' && (
+          <>
+            <h2 className="verification-success">¡Email verificado con éxito!</h2>
+            <p className="verification-text">Redirigiendo al inicio de sesión...</p>
+          </>
+        )}
+        
+        {status === 'error' && (
+          <>
+            <h2 className="verification-error">Error de verificación</h2>
+            <p className="verification-text">{errorMessage}</p>
+            <p className="verification-text">Serás redirigido al registro...</p>
+          </>
+        )}
       </div>
     </div>
   );
