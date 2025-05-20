@@ -4,7 +4,7 @@ import GimnasioCard from "../components/GimnasioCard";
 import Breadcrumbs from "../components/Breadcrumbs";
 import RegisterCallToAction from "../components/RegisterCallToAction";
 import ScrollToTop from "../components/ScrollToTop";
-import "../styles/gimnasios.css";
+import "../styles/modal.css";
 
 const Gimnasios = () => {
   const [gimnasios, setGimnasios] = useState([]);
