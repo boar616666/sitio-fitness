@@ -107,6 +107,27 @@ const Gimnasios = () => {
     }
   };
 
+  // Agregar esta función después de handleSubmit
+  const handleDeleteGym = async (id_gimnasio) => {
+    if (window.confirm("¿Estás seguro que deseas eliminar este gimnasio?")) {
+      try {
+        const response = await axios.delete(
+          `http://localhost:3000/gimnasios/eliminar/${id_gimnasio}`
+        );
+
+        if (response.data.exito) {
+          // Actualizar la lista de gimnasios después de eliminar
+          fetchGimnasios();
+        } else {
+          setError("No se pudo eliminar el gimnasio");
+        }
+      } catch (error) {
+        console.error("Error al eliminar el gimnasio:", error);
+        setError("Error al eliminar el gimnasio");
+      }
+    }
+  };
+
   return (
     <div className="gimnasios-container">
       <Breadcrumbs />
@@ -200,7 +221,12 @@ const Gimnasios = () => {
 
       <div className="gimnasios-list">
         {gimnasios.map((gimnasio) => (
-          <GimnasioCard key={gimnasio.id_gimnasio} gimnasio={gimnasio} />
+          <GimnasioCard
+            key={gimnasio.id_gimnasio}
+            gimnasio={gimnasio}
+            isAdmin={rolCliente === "admin"}
+            onDelete={handleDeleteGym}
+          />
         ))}
       </div>
 

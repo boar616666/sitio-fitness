@@ -2455,3 +2455,16 @@ button {
 .delete-comment-btn:hover {
   background-color: rgba(220, 53, 69, 0.1);
 }
+.delete-gym-btn {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+}
+
+.delete-gym-btn:hover {
+  background-color: #c82333;
+}

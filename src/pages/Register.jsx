@@ -307,13 +307,13 @@ function Register() {
           />
         </div> */}
 
-        <button 
-          type="submit" 
-          className="button" 
-          disabled={!captchaValue || isSubmitting}
-        >
-          {isSubmitting ? "Registrando..." : "Registrarse"}
-        </button>
+       <button 
+  type="submit" 
+  className="button" 
+  disabled={isSubmitting}
+>
+  {isSubmitting ? "Registrando..." : "Registrarse"}
+</button>
       </form>
 
       <p className="toggle-text">
