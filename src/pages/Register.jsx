@@ -80,25 +80,8 @@ function Register() {
     setError("");
     setIsSubmitting(true);
 
-    if (!captchaValue) {
-      setError("Por favor, completa el CAPTCHA.");
-      setIsSubmitting(false);
-      return;
-    }
-
     try {
-      // 1. Validar el CAPTCHA con la ruta correcta
-      const captchaResponse = await api.post("/auth/validar-captcha", {
-        captchaToken: captchaValue
-      });
-
-      if (!captchaResponse.data.success) {
-        setError("CAPTCHA inválido. Inténtalo de nuevo.");
-        setIsSubmitting(false);
-        return;
-      }
-
-      // 2. Preparar datos para el registro
+      // Eliminar la validación del captcha
       let endpoint, dataToSend;
 
       if (registerType === "usuario") {
@@ -124,7 +107,6 @@ function Register() {
         };
       }
 
-      // 3. Registrar el usuario/entrenador
       const response = await api.post(endpoint, dataToSend);
 
       if (response.data.exito) {
@@ -307,13 +289,13 @@ function Register() {
           />
         </div> */}
 
-       <button 
-  type="submit" 
-  className="button" 
-  disabled={isSubmitting}
->
-  {isSubmitting ? "Registrando..." : "Registrarse"}
-</button>
+        <button 
+          type="submit" 
+          className="button" 
+          disabled={isSubmitting} // Eliminar la validación del captchaValue
+        >
+          {isSubmitting ? "Registrando..." : "Registrarse"}
+        </button>
       </form>
 
       <p className="toggle-text">
