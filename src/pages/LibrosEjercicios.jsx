@@ -29,9 +29,9 @@ const LibrosEjercicios = () => {
     },
     {
       id: 3,
-      titulo: "Yoga y Estiramientos",
-      descripcion: "Mejora tu flexibilidad y relájate con estas rutinas de yoga y estiramientos.",
-      archivo: "/Libros/libro3.pdf",
+      titulo: "Entrenamiento de Fuerza, Estiramientos y Movilidad",
+      descripcion: "Una guía completa sobre ejercicios de fuerza, técnicas de estiramiento y movilidad articular.",
+      archivo: "https://www.sobrarbe.com/descargas/entrenamiento_fuerza_estiramientos_y_movilidad.pdf",
     },
   ];
 
