@@ -20,6 +20,7 @@ function getYoutubeId(url) {
 const Videos = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [videos, setVideos] = useState([]);
+  const [filteredVideos, setFilteredVideos] = useState([]);
   const [nuevoVideo, setNuevoVideo] = useState({ categoria: "", url: "" });
   const [publicando, setPublicando] = useState(false);
   const [mensaje, setMensaje] = useState("");
@@ -51,6 +52,7 @@ const Videos = () => {
 
         const videosData = videosResponse.data.datos;
         setVideos(videosData);
+        setFilteredVideos(videosData);
 
         const idsEntrenadores = [...new Set(videosData.map(v => v.id_entrenador))];
         const entrenadoresData = {};
@@ -81,13 +83,19 @@ const Videos = () => {
   }, []);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value.toLowerCase());
-  };
+    const query = e.target.value;
+    setSearchQuery(query);
+    
+    const filtered = videos.filter(video =>
+      video.categoria.toLowerCase().includes(query.toLowerCase())
+    );
 
-  const filteredVideos = videos.filter((video) =>
-    video.categoria?.toLowerCase().includes(searchQuery) ||
-    video.url?.toLowerCase().includes(searchQuery)
-  );
+    if (query && filtered.length === 0) {
+      navigate('/error');
+    } else {
+      setFilteredVideos(filtered);
+    }
+  };
 
   const handlePublicar = async (e) => {
     e.preventDefault();
@@ -112,6 +120,7 @@ const Videos = () => {
         const videosResponse = await api.get("/videos/todos");
         if (videosResponse.data.exito) {
           setVideos(videosResponse.data.datos);
+          setFilteredVideos(videosResponse.data.datos);
         }
       } else {
         throw new Error(response.data.mensaje || "Error al publicar el video");
@@ -133,6 +142,7 @@ const Videos = () => {
 
       if (response.data.exito) {
         setVideos(videos.filter(v => v.id_video !== id_video));
+        setFilteredVideos(filteredVideos.filter(v => v.id_video !== id_video));
         setMensaje("Video eliminado exitosamente");
       } else {
         throw new Error(response.data.mensaje || "No se pudo eliminar el video");
