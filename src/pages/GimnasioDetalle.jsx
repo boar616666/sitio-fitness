@@ -66,6 +66,7 @@ const GimnasioDetalle = () => {
     descripcion: "",
   });
   const [solicitudEnviada, setSolicitudEnviada] = useState(false);
+  const [tieneGimnasio, setTieneGimnasio] = useState(false);
 
   const idEntrenador = sessionStorage.getItem("idEntrenador");
   const rolCliente = sessionStorage.getItem("rolCliente");
@@ -167,10 +168,29 @@ const GimnasioDetalle = () => {
     }
   };
 
+  // Verifica si el entrenador ya tiene un gimnasio asignado
+  const verificarGimnasioEntrenador = async () => {
+    if (tipoUsuario === "entrenador" && idEntrenador) {
+      try {
+        const response = await api.get(`/entrenadores/${idEntrenador}`);
+        if (response.data.exito && response.data.datos) {
+          setTieneGimnasio(!!response.data.datos.id_gimnasio);
+        }
+      } catch (error) {
+        console.error("Error al verificar gimnasio del entrenador:", error);
+      }
+    }
+  };
+
   // Efecto para verificar solicitud existente cuando cambia el gimnasio
   useEffect(() => {
     if (gimnasio) verificarSolicitudExistente();
   }, [gimnasio]);
+
+  useEffect(() => {
+    verificarGimnasioEntrenador();
+    // eslint-disable-next-line
+  }, [idEntrenador]);
 
   // Efecto para actualizar el formulario cuando cambian los datos del gimnasio
   useEffect(() => {
@@ -471,12 +491,17 @@ const GimnasioDetalle = () => {
           </div>
         )}
 
-        {tipoUsuario === "entrenador" && !solicitudEnviada && (
+        {tipoUsuario === "entrenador" && !solicitudEnviada && !tieneGimnasio && (
           <button onClick={handleSolicitarIngreso} className="button">
             Solicitar ingreso a este gimnasio
           </button>
         )}
-        {tipoUsuario === "entrenador" && solicitudEnviada && (
+        {tipoUsuario === "entrenador" && tieneGimnasio && (
+          <p className="info-message">
+            Ya estás asignado a otro gimnasio.
+          </p>
+        )}
+        {tipoUsuario === "entrenador" && solicitudEnviada && !tieneGimnasio && (
           <p className="info-message">
             Ya has enviado una solicitud para este gimnasio. Espera la respuesta
             del administrador.
