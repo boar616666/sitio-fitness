@@ -72,5 +72,5 @@ export const cerrarSesion = () => {
   sessionStorage.clear();
   
   // Redirigir al login
-  window.location.href = '/login';
+  window.location.href = '/';
 };
