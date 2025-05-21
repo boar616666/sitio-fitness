@@ -6,7 +6,7 @@ import LibroCard from "../components/LibroCard";
 import "../styles/global.css";
 
 // Configuración correcta del worker de PDF.js
-pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;p
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;
 
 const LibrosEjercicios = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
