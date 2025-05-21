@@ -175,37 +175,58 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      // Preparar datos base
-      const registroData = {
-        nombre: formData.nombre,
-        correo: formData.correo,
-        contrasena: formData.contrasena,
-        'g-recaptcha-response': captchaValue
-      };
-
+      // Validar datos numéricos antes de enviar
       if (registerType === "entrenador") {
-        // Para entrenadores, asegurarse que todos los campos numéricos sean números
+        // Validaciones específicas para entrenador
+        if (isNaN(Number(formData.id_gimnasio)) || Number(formData.id_gimnasio) <= 0) {
+          throw new Error("ID de gimnasio inválido");
+        }
+        if (isNaN(Number(formData.edad)) || Number(formData.edad) < 18) {
+          throw new Error("Edad inválida");
+        }
+        if (isNaN(Number(formData.costo_sesion)) || Number(formData.costo_sesion) < 0) {
+          throw new Error("Costo por sesión inválido");
+        }
+        if (isNaN(Number(formData.costo_mensual)) || Number(formData.costo_mensual) < 0) {
+          throw new Error("Costo mensual inválido");
+        }
+
         const datosEntrenador = {
-          ...registroData,
-          id_gimnasio: Number(formData.id_gimnasio), // Usar Number en lugar de parseInt
-          foto: formData.foto,
+          nombre: formData.nombre.trim(),
+          correo: formData.correo.trim(),
+          contrasena: formData.contrasena,
+          id_gimnasio: Number(formData.id_gimnasio),
+          foto: formData.foto.trim(),
           edad: Number(formData.edad),
           costo_sesion: Number(formData.costo_sesion),
           costo_mensual: Number(formData.costo_mensual),
-          telefono: formData.telefono
+          telefono: formData.telefono.trim(),
+          captcha: captchaValue // Cambiamos el nombre del campo
         };
 
         console.log('Datos del entrenador a enviar:', datosEntrenador);
-        const response = await api.post('/entrenadores/crear', datosEntrenador);
+        const response = await api.post('/entrenadores/crear', datosEntrenador, {
+          headers: {
+            'Content-Type': 'application/json'
+          }
+        });
         
         if (response.data.exito) {
           alert('¡Registro exitoso como entrenador! Por favor inicia sesión.');
           resetForm();
           navigate("/login");
+        } else {
+          throw new Error(response.data.mensaje || "Error en el registro del entrenador");
         }
       } else {
         // Para usuarios normales
-        registroData.rol = 'cliente';
+        const registroData = {
+          nombre: formData.nombre,
+          correo: formData.correo,
+          contrasena: formData.contrasena,
+          'g-recaptcha-response': captchaValue,
+          rol: 'cliente'
+        };
         const response = await api.post('/usuarios/registrar', registroData);
         
         if (response.data.exito) {
@@ -215,11 +236,15 @@ function Register() {
         }
       }
     } catch (err) {
-      console.error("Error del servidor:", err.response?.data);
-      console.error("Detalles:", err.response?.data?.detalles);
+      console.error("Error completo:", err);
+      console.error("Datos del error:", {
+        mensaje: err.message,
+        response: err.response?.data,
+        status: err.response?.status
+      });
       setError(
+        err.message || 
         err.response?.data?.mensaje || 
-        err.response?.data?.detalles?.mensaje ||
         "Error en el registro. Por favor, intenta de nuevo."
       );
     } finally {
