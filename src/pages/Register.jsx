@@ -175,7 +175,6 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      // Validar datos numéricos antes de enviar
       if (registerType === "entrenador") {
         // Validaciones específicas para entrenador
         if (isNaN(Number(formData.id_gimnasio)) || Number(formData.id_gimnasio) <= 0) {
@@ -191,6 +190,7 @@ function Register() {
           throw new Error("Costo mensual inválido");
         }
 
+        // Crear objeto con solo los campos que espera el backend
         const datosEntrenador = {
           nombre: formData.nombre.trim(),
           correo: formData.correo.trim(),
@@ -200,16 +200,11 @@ function Register() {
           edad: Number(formData.edad),
           costo_sesion: Number(formData.costo_sesion),
           costo_mensual: Number(formData.costo_mensual),
-          telefono: formData.telefono.trim(),
-          captcha: captchaValue // Cambiamos el nombre del campo
+          telefono: formData.telefono.trim()
         };
 
         console.log('Datos del entrenador a enviar:', datosEntrenador);
-        const response = await api.post('/entrenadores/crear', datosEntrenador, {
-          headers: {
-            'Content-Type': 'application/json'
-          }
-        });
+        const response = await api.post('/entrenadores/crear', datosEntrenador);
         
         if (response.data.exito) {
           alert('¡Registro exitoso como entrenador! Por favor inicia sesión.');
@@ -237,14 +232,10 @@ function Register() {
       }
     } catch (err) {
       console.error("Error completo:", err);
-      console.error("Datos del error:", {
-        mensaje: err.message,
-        response: err.response?.data,
-        status: err.response?.status
-      });
       setError(
-        err.message || 
         err.response?.data?.mensaje || 
+        err.response?.data?.detalles || 
+        err.message || 
         "Error en el registro. Por favor, intenta de nuevo."
       );
     } finally {
