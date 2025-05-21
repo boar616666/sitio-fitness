@@ -5,7 +5,6 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import "../styles/global.css";
 import ScrollToTop from "../components/ScrollToTop";
 
-// Configuración de Axios con variables de entorno
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
   headers: {
@@ -13,7 +12,6 @@ const api = axios.create({
   }
 });
 
-// Función para extraer el ID de YouTube de la URL
 function getYoutubeId(url) {
   const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/))([\w-]{11})/);
   return match ? match[1] : null;
@@ -40,15 +38,13 @@ const Videos = () => {
 
   const navigate = useNavigate();
 
-  // Cargar todos los videos y entrenadores
   useEffect(() => {
     const fetchData = async () => {
       try {
         setLoading(true);
         setError(null);
-
-        // Obtener videos (ruta corregida)
         const videosResponse = await api.get("/videos/todos");
+        
         if (!videosResponse.data.exito) {
           throw new Error(videosResponse.data.mensaje || "Error al cargar videos");
         }
@@ -56,7 +52,6 @@ const Videos = () => {
         const videosData = videosResponse.data.datos;
         setVideos(videosData);
 
-        // Obtener datos de entrenadores
         const idsEntrenadores = [...new Set(videosData.map(v => v.id_entrenador))];
         const entrenadoresData = {};
 
@@ -86,18 +81,21 @@ const Videos = () => {
   }, []);
 
   const handleSearchChange = (e) => {
-    setSearchQuery(e.target.value);
+    setSearchQuery(e.target.value.toLowerCase());
   };
 
-  // Filtrar videos por categoría o URL
   const filteredVideos = videos.filter((video) =>
-    (video.categoria || "").toLowerCase().includes(searchQuery.toLowerCase()) ||
-    (video.url || "").toLowerCase().includes(searchQuery.toLowerCase())
+    video.categoria?.toLowerCase().includes(searchQuery) ||
+    video.url?.toLowerCase().includes(searchQuery)
   );
 
-  // Publicar un nuevo video
   const handlePublicar = async (e) => {
     e.preventDefault();
+    if (!nuevoVideo.url.includes('youtube.com') && !nuevoVideo.url.includes('youtu.be')) {
+      setMensaje("Por favor, ingresa una URL válida de YouTube");
+      return;
+    }
+
     setPublicando(true);
     setMensaje("");
 
@@ -111,7 +109,6 @@ const Videos = () => {
       if (response.data.exito) {
         setMensaje("¡Video publicado con éxito!");
         setNuevoVideo({ categoria: "", url: "" });
-        // Actualizar lista de videos
         const videosResponse = await api.get("/videos/todos");
         if (videosResponse.data.exito) {
           setVideos(videosResponse.data.datos);
@@ -120,16 +117,14 @@ const Videos = () => {
         throw new Error(response.data.mensaje || "Error al publicar el video");
       }
     } catch (err) {
-      setMensaje(err.response?.data?.mensaje || err.message);
-      console.error("Error al publicar video:", err);
+      setMensaje(err.response?.data?.mensaje || "Error al publicar el video");
     } finally {
       setPublicando(false);
     }
   };
 
-  // Eliminar video
   const handleEliminar = async (id_video) => {
-    if (!window.confirm("¿Seguro que deseas eliminar este video?")) return;
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este video?")) return;
     
     try {
       const response = await api.delete("/videos/eliminar", {
@@ -137,13 +132,13 @@ const Videos = () => {
       });
 
       if (response.data.exito) {
-        setVideos(prev => prev.filter(v => v.id_video !== id_video));
+        setVideos(videos.filter(v => v.id_video !== id_video));
+        setMensaje("Video eliminado exitosamente");
       } else {
         throw new Error(response.data.mensaje || "No se pudo eliminar el video");
       }
     } catch (err) {
-      alert(err.response?.data?.mensaje || "Error al eliminar el video");
-      console.error("Error al eliminar video:", err);
+      setMensaje(err.response?.data?.mensaje || "Error al eliminar el video");
     }
   };
 
@@ -152,6 +147,7 @@ const Videos = () => {
       <div className="content-container">
         <Breadcrumbs />
         <div className="loading-indicator">
+          <div className="spinner"></div>
           <p>Cargando videos...</p>
         </div>
       </div>
@@ -163,8 +159,10 @@ const Videos = () => {
       <div className="content-container">
         <Breadcrumbs />
         <div className="error-message">
-          <p>Error: {error}</p>
-          <button onClick={() => window.location.reload()}>Reintentar</button>
+          <p>{error}</p>
+          <button onClick={() => window.location.reload()}>
+            Intentar de nuevo
+          </button>
         </div>
       </div>
     );
@@ -173,50 +171,54 @@ const Videos = () => {
   return (
     <div className="content-container">
       <Breadcrumbs />
-      <h2>Videos de Entrenamiento</h2>
+      <div className="page-header">
+        <h2>Videos de Entrenamiento</h2>
+        <p>Explora nuestra colección de videos de ejercicios por categoría</p>
+      </div>
 
-      {/* Formulario para publicar video (solo entrenadores) */}
       {tipoUsuario === "entrenador" && (
         <form onSubmit={handlePublicar} className="publicar-video-form">
-          <h3>Publicar nuevo video</h3>
+          <h3>Compartir nuevo video</h3>
           <div className="form-row">
             <select
               value={nuevoVideo.categoria}
               onChange={e => setNuevoVideo({ ...nuevoVideo, categoria: e.target.value })}
               required
             >
-              <option value="">Selecciona una categoría</option>
+              <option value="">Selecciona categoría</option>
               {categorias.map(cat => (
                 <option key={cat} value={cat}>{cat}</option>
               ))}
             </select>
             <input
               type="url"
-              placeholder="URL de YouTube"
+              placeholder="URL del video de YouTube"
               value={nuevoVideo.url}
               onChange={e => setNuevoVideo({ ...nuevoVideo, url: e.target.value })}
               required
               pattern="https?://.+"
             />
-            <button type="submit" disabled={publicando}>
-              {publicando ? "Publicando..." : "Publicar"}
+            <button 
+              type="submit" 
+              disabled={publicando}
+              className={publicando ? 'btn-disabled' : ''}
+            >
+              {publicando ? "Publicando..." : "Compartir"}
             </button>
           </div>
           {mensaje && <div className="mensaje-publicar">{mensaje}</div>}
         </form>
       )}
 
-      {/* Barra de búsqueda */}
       <div className="search-box">
         <input
           type="text"
-          placeholder="Buscar videos por categoría o URL..."
+          placeholder="🔍 Buscar videos por categoría..."
           value={searchQuery}
           onChange={handleSearchChange}
         />
       </div>
 
-      {/* Lista de videos */}
       <div className="videos-grid">
         {filteredVideos.length > 0 ? (
           filteredVideos.map((video) => {
@@ -228,22 +230,34 @@ const Videos = () => {
 
             return (
               <div key={video.id_video} className="video-card">
-                <a href={video.url} target="_blank" rel="noopener noreferrer">
+                <a 
+                  href={video.url} 
+                  target="_blank" 
+                  rel="noopener noreferrer"
+                  className="video-link"
+                >
                   <div className="video-thumbnail">
                     {youtubeId ? (
                       <img
                         src={`https://img.youtube.com/vi/${youtubeId}/mqdefault.jpg`}
-                        alt={video.categoria}
+                        alt={`Video de ${video.categoria}`}
+                        loading="lazy"
                       />
                     ) : (
-                      <div className="video-placeholder"></div>
+                      <div className="video-placeholder">
+                        <span>Video no disponible</span>
+                      </div>
                     )}
                   </div>
                   <div className="video-info">
                     <h3>{video.categoria}</h3>
                     {entrenador && (
                       <div className="video-entrenador">
-                        <img src={entrenador.foto || "/default-profile.jpg"} alt={entrenador.nombre} />
+                        <img 
+                          src={entrenador.foto || "/default-profile.jpg"} 
+                          alt="Foto del entrenador"
+                          className="entrenador-avatar"
+                        />
                         <span>{entrenador.nombre}</span>
                       </div>
                     )}
@@ -253,6 +267,7 @@ const Videos = () => {
                   <button 
                     className="btn-eliminar"
                     onClick={() => handleEliminar(video.id_video)}
+                    aria-label="Eliminar video"
                   >
                     Eliminar
                   </button>
@@ -262,9 +277,9 @@ const Videos = () => {
           })
         ) : (
           <div className="no-results">
-            <p>No se encontraron videos con "{searchQuery}"</p>
+            <p>No se encontraron videos que coincidan con "{searchQuery}"</p>
             <button onClick={() => setSearchQuery("")}>
-              Mostrar todos los videos
+              Ver todos los videos
             </button>
           </div>
         )}
