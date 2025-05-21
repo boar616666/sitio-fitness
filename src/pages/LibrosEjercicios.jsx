@@ -5,11 +5,8 @@ import { Document, Page, pdfjs } from 'react-pdf';
 import LibroCard from "../components/LibroCard";
 import "../styles/global.css";
 
-// Importar el worker desde node_modules
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(
-  'pdfjs-dist/build/pdf.worker.min.js',
-  import.meta.url,
-).toString();
+// Configuración correcta del worker de PDF.js
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.min.js`;p
 
 const LibrosEjercicios = () => {
   const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -22,41 +19,53 @@ const LibrosEjercicios = () => {
       id: 1,
       titulo: "Rutinas de Cardio",
       descripcion: "Descubre las mejores rutinas de cardio para quemar grasa y mejorar tu resistencia.",
-      archivo: "/Libros/libro1.pdf", // Ruta en la carpeta public
+      archivo: "/Libros/libro1.pdf",
     },
     {
       id: 2,
       titulo: "Entrenamiento con Pesas",
       descripcion: "Aprende a realizar ejercicios con pesas para ganar fuerza y masa muscular.",
-      archivo: "/libros/libro2.pdf", // Ruta en la carpeta public
+      archivo: "/Libros/libro2.pdf",
     },
     {
       id: 3,
       titulo: "Yoga y Estiramientos",
       descripcion: "Mejora tu flexibilidad y relájate con estas rutinas de yoga y estiramientos.",
-      archivo: "/libros/libro3.pdf", // Ruta en la carpeta public
+      archivo: "/Libros/libro3.pdf",
     },
   ];
 
   const handlePdfClick = (archivo) => {
     setSelectedPdf(archivo);
     setModalIsOpen(true);
+    setPageNumber(1); // Resetear página al abrir nuevo PDF
   };
 
   const closeModal = () => {
     setModalIsOpen(false);
     setSelectedPdf(null);
+    setNumPages(null);
+    setPageNumber(1);
   };
 
-  function onDocumentLoadSuccess({ numPages }) {
+  const onDocumentLoadSuccess = ({ numPages }) => {
     setNumPages(numPages);
     setPageNumber(1);
-  }
+  };
+
+  const changePage = (offset) => {
+    setPageNumber(prevPageNumber => {
+      const nextPageNumber = prevPageNumber + offset;
+      if (nextPageNumber > 0 && nextPageNumber <= numPages) {
+        return nextPageNumber;
+      }
+      return prevPageNumber;
+    });
+  };
 
   return (
     <div className="libros-page-container">
       <div className="libros-box">
-        {/* Breadcrumb */}
         <div className="breadcrumb">
           <Link to="/">Inicio</Link>
           <span className="separator">&gt;</span>
@@ -65,10 +74,8 @@ const LibrosEjercicios = () => {
           <span>Libros de Ejercicios</span>
         </div>
 
-        {/* Título */}
         <h1>Libros de Ejercicios</h1>
 
-        {/* Lista de libros en una línea horizontal */}
         <div className="libros-list-horizontal">
           {libros.map((libro) => (
             <LibroCard 
@@ -79,30 +86,40 @@ const LibrosEjercicios = () => {
           ))}
         </div>
 
-        {/* Modal para mostrar el PDF */}
         {modalIsOpen && (
-          <div className="pdf-modal-overlay">
-            <div className="pdf-modal">
+          <div className="pdf-modal-overlay" onClick={closeModal}>
+            <div className="pdf-modal" onClick={e => e.stopPropagation()}>
               <button className="close-modal" onClick={closeModal}>×</button>
               <div className="pdf-container">
                 <Document
                   file={selectedPdf}
                   onLoadSuccess={onDocumentLoadSuccess}
+                  loading={<div>Cargando PDF...</div>}
+                  error={<div>Error al cargar el PDF. Por favor, inténtalo de nuevo.</div>}
                 >
-                  <Page pageNumber={pageNumber} />
+                  <Page 
+                    pageNumber={pageNumber} 
+                    scale={1.2}
+                    renderTextLayer={false}
+                    renderAnnotationLayer={false}
+                  />
                 </Document>
                 {numPages && (
                   <div className="pdf-controls">
                     <button 
-                      onClick={() => setPageNumber(pageNumber - 1)}
+                      onClick={() => changePage(-1)}
                       disabled={pageNumber <= 1}
+                      className="page-button"
                     >
                       Anterior
                     </button>
-                    <span>Página {pageNumber} de {numPages}</span>
+                    <span className="page-info">
+                      Página {pageNumber} de {numPages}
+                    </span>
                     <button 
-                      onClick={() => setPageNumber(pageNumber + 1)}
+                      onClick={() => changePage(1)}
                       disabled={pageNumber >= numPages}
+                      className="page-button"
                     >
                       Siguiente
                     </button>
