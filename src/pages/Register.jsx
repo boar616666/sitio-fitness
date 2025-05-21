@@ -162,6 +162,11 @@ function Register() {
     e.preventDefault();
     setError("");
     
+    if (!captchaValue) {
+      setError("Por favor completa el CAPTCHA");
+      return;
+    }
+
     if (!isFormValid()) {
       setError("Por favor completa todos los campos requeridos y asegúrate de que la contraseña sea segura");
       return;
@@ -170,17 +175,38 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      const endpoint = registerType === "usuario" ? "/usuarios/registrar" : "/entrenadores/crear";
-      
-      const response = await api.post(endpoint, {
-        ...formData,
-        ...(registerType === "entrenador" && {
+      // Primero validamos el captcha
+      const captchaResponse = await api.post('/auth/validar-captcha', {
+        token: captchaValue
+      });
+
+      if (!captchaResponse.data.exito) {
+        setError("Error en la validación del CAPTCHA");
+        return;
+      }
+
+      // Si el captcha es válido, procedemos con el registro
+      const registroData = {
+        nombre: formData.nombre,
+        correo: formData.correo,
+        contrasena: formData.contrasena,
+      };
+
+      if (registerType === "entrenador") {
+        Object.assign(registroData, {
           id_gimnasio: parseInt(formData.id_gimnasio),
+          foto: formData.foto,
           edad: parseInt(formData.edad),
           costo_sesion: parseFloat(formData.costo_sesion),
-          costo_mensual: parseFloat(formData.costo_mensual)
-        })
-      });
+          costo_mensual: parseFloat(formData.costo_mensual),
+          telefono: formData.telefono
+        });
+      } else {
+        registroData.rol = "cliente";
+      }
+
+      const endpoint = registerType === "usuario" ? "/usuarios/registrar" : "/entrenadores/crear";
+      const response = await api.post(endpoint, registroData);
 
       if (response.data.exito) {
         alert(`¡Registro exitoso como ${registerType}! Por favor inicia sesión.`);
@@ -190,9 +216,9 @@ function Register() {
         setError(response.data.mensaje || "Error en el registro");
       }
     } catch (err) {
-      console.error("Error:", err);
+      console.error("Error completo:", err);
       setError(
-        err.response?.data?.message ||
+        err.response?.data?.mensaje || 
         err.response?.data?.error ||
         "Error en la operación. Verifica tus datos."
       );
@@ -399,8 +425,18 @@ function Register() {
         <div className="form-group">
           <ReCAPTCHA
             sitekey={RECAPTCHA_SITE_KEY}
-            onChange={(token) => setCaptchaValue(token)}
-            onExpired={() => setCaptchaValue(null)}
+            onChange={(token) => {
+              setCaptchaValue(token);
+              setError("");
+            }}
+            onExpired={() => {
+              setCaptchaValue(null);
+              setError("El CAPTCHA ha expirado, verifica de nuevo");
+            }}
+            onErrored={() => {
+              setCaptchaValue(null);
+              setError("Error al cargar CAPTCHA, recarga la página");
+            }}
           />
         </div>
 
