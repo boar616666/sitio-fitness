@@ -6,7 +6,6 @@ const LibroCard = ({ libro, onPdfClick }) => {
   return (
     <div className="libro-card">
       <div className="libro-icon">
-        {/* Puedes usar un ícono o una imagen aquí */}
         <span role="img" aria-label="libro">📚</span>
       </div>
       <h2>{libro.titulo}</h2>
@@ -21,4 +20,4 @@ const LibroCard = ({ libro, onPdfClick }) => {
   );
 };
 
-export default LibroCard;
+export default LibroCard;
