@@ -1,5 +1,6 @@
 import { createRoot } from 'react-dom/client';
 import CustomAlert from '../components/CustomAlert';
+import React from 'react';
 
 let sessionTimer = null;
 //const SESSION_TIMEOUT = 5 * 60 * 1000;
@@ -32,19 +33,19 @@ const showSessionPrompt = () => {
     document.body.removeChild(alertContainer);
   };
 
-  // Renderizar la alerta personalizada
+  // Renderizar la alerta personalizada usando React.createElement
   root.render(
-    <CustomAlert
-      message="Tu sesión está por expirar. ¿Deseas mantenerla activa?"
-      onConfirm={() => {
+    React.createElement(CustomAlert, {
+      message: "Tu sesión está por expirar. ¿Deseas mantenerla activa?",
+      onConfirm: () => {
         cleanupAlert();
         resetSessionTimer();
-      }}
-      onCancel={() => {
+      },
+      onCancel: () => {
         cleanupAlert();
         cerrarSesion();
-      }}
-    />
+      }
+    })
   );
 
   // Si no hay respuesta después de 15 segundos, cerrar sesión
