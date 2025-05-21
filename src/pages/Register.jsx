@@ -175,37 +175,35 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      // Preparar los datos básicos
-      const registroData = new FormData();
-      registroData.append('nombre', formData.nombre);
-      registroData.append('correo', formData.correo);
-      registroData.append('contrasena', formData.contrasena);
-      registroData.append('g-recaptcha-response', captchaValue);
-
-      if (registerType === "entrenador") {
-        registroData.append('id_gimnasio', formData.id_gimnasio);
-        registroData.append('foto', formData.foto);
-        registroData.append('edad', formData.edad);
-        registroData.append('costo_sesion', formData.costo_sesion);
-        registroData.append('costo_mensual', formData.costo_mensual);
-        registroData.append('telefono', formData.telefono);
-      } else {
-        registroData.append('rol', 'cliente');
-      }
-
-      const endpoint = registerType === "usuario" ? "/usuarios/registrar" : "/entrenadores/crear";
-      
-      // Modificar la configuración de axios para este request específico
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      const registroData = {
+        nombre: formData.nombre,
+        correo: formData.correo,
+        contrasena: formData.contrasena,
+        'g-recaptcha-response': captchaValue
       };
 
-      console.log('Endpoint:', endpoint);
-      console.log('Datos a enviar:', Object.fromEntries(registroData));
+      if (registerType === "entrenador") {
+        Object.assign(registroData, {
+          id_gimnasio: parseInt(formData.id_gimnasio),
+          foto: formData.foto,
+          edad: parseInt(formData.edad),
+          costo_sesion: parseFloat(formData.costo_sesion),
+          costo_mensual: parseFloat(formData.costo_mensual),
+          telefono: formData.telefono
+        });
+      } else {
+        registroData.rol = 'cliente';
+      }
 
-      const response = await api.post(endpoint, registroData, config);
+      // Usar las rutas correctas del backend
+      const baseEndpoint = registerType === "usuario" ? "/usuarios" : "/entrenadores";
+      const actionEndpoint = registerType === "usuario" ? "/registrar" : "/crear";
+      const fullEndpoint = baseEndpoint + actionEndpoint;
+
+      console.log('Endpoint:', fullEndpoint);
+      console.log('Datos a enviar:', registroData);
+
+      const response = await api.post(fullEndpoint, registroData);
 
       if (response.data.exito) {
         alert(`¡Registro exitoso como ${registerType}! Por favor inicia sesión.`);
