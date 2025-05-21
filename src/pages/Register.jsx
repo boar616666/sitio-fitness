@@ -175,21 +175,11 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      // Primero validamos el captcha
-      const captchaResponse = await api.post('/auth/validar-captcha', {
-        token: captchaValue
-      });
-
-      if (!captchaResponse.data.exito) {
-        setError("Error en la validación del CAPTCHA");
-        return;
-      }
-
-      // Si el captcha es válido, procedemos con el registro
       const registroData = {
         nombre: formData.nombre,
         correo: formData.correo,
         contrasena: formData.contrasena,
+        captchaResponse: captchaValue // Cambiado de token a captchaResponse
       };
 
       if (registerType === "entrenador") {
@@ -206,6 +196,9 @@ function Register() {
       }
 
       const endpoint = registerType === "usuario" ? "/usuarios/registrar" : "/entrenadores/crear";
+      
+      console.log('Datos a enviar:', registroData); // Para debug
+
       const response = await api.post(endpoint, registroData);
 
       if (response.data.exito) {
@@ -213,14 +206,14 @@ function Register() {
         resetForm();
         navigate("/login");
       } else {
-        setError(response.data.mensaje || "Error en el registro");
+        throw new Error(response.data.mensaje || "Error en el registro");
       }
     } catch (err) {
       console.error("Error completo:", err);
+      console.error("Respuesta del servidor:", err.response?.data);
       setError(
         err.response?.data?.mensaje || 
-        err.response?.data?.error ||
-        "Error en la operación. Verifica tus datos."
+        "Error en el registro. Por favor, intenta de nuevo."
       );
     } finally {
       setIsSubmitting(false);
