@@ -161,58 +161,65 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-    
-    if (!captchaValue) {
-      setError("Por favor completa el CAPTCHA");
-      return;
-    }
-
-    if (!isFormValid()) {
-      setError("Por favor completa todos los campos requeridos y asegúrate de que la contraseña sea segura");
-      return;
-    }
-
     setIsSubmitting(true);
 
     try {
+      // Validar campos base
+      if (!formData.nombre || !formData.correo || !formData.contrasena) {
+        throw new Error("Todos los campos son obligatorios");
+      }
+
       if (registerType === "entrenador") {
-        // Validaciones específicas para entrenador
-        if (isNaN(Number(formData.id_gimnasio)) || Number(formData.id_gimnasio) <= 0) {
+        // Validar campos específicos de entrenador
+        const idGimnasio = Number(formData.id_gimnasio);
+        const edad = Number(formData.edad);
+        const costoSesion = Number(formData.costo_sesion);
+        const costoMensual = Number(formData.costo_mensual);
+
+        if (isNaN(idGimnasio) || idGimnasio <= 0) {
           throw new Error("ID de gimnasio inválido");
         }
-        if (isNaN(Number(formData.edad)) || Number(formData.edad) < 18) {
+        if (isNaN(edad) || edad < 18) {
           throw new Error("Edad inválida");
         }
-        if (isNaN(Number(formData.costo_sesion)) || Number(formData.costo_sesion) < 0) {
+        if (isNaN(costoSesion) || costoSesion < 0) {
           throw new Error("Costo por sesión inválido");
         }
-        if (isNaN(Number(formData.costo_mensual)) || Number(formData.costo_mensual) < 0) {
+        if (isNaN(costoMensual) || costoMensual < 0) {
           throw new Error("Costo mensual inválido");
         }
+        if (!formData.foto || !formData.telefono) {
+          throw new Error("La foto y el teléfono son obligatorios");
+        }
 
-        // Crear objeto con solo los campos que espera el backend
+        // Crear objeto de entrenador
         const datosEntrenador = {
           nombre: formData.nombre.trim(),
-          correo: formData.correo.trim(),
+          correo: formData.correo.trim().toLowerCase(),
           contrasena: formData.contrasena,
-          id_gimnasio: Number(formData.id_gimnasio),
+          id_gimnasio: idGimnasio,
           foto: formData.foto.trim(),
-          edad: Number(formData.edad),
-          costo_sesion: Number(formData.costo_sesion),
-          costo_mensual: Number(formData.costo_mensual),
+          edad: edad,
+          costo_sesion: costoSesion,
+          costo_mensual: costoMensual,
           telefono: formData.telefono.trim()
         };
 
-        console.log('Datos del entrenador a enviar:', datosEntrenador);
+        // Imprimir datos para debug
+        console.log('URL de la API:', api.defaults.baseURL);
+        console.log('Endpoint:', '/entrenadores/crear');
+        console.log('Datos a enviar:', JSON.stringify(datosEntrenador, null, 2));
+
+        // Intentar crear el entrenador
         const response = await api.post('/entrenadores/crear', datosEntrenador);
         
-        if (response.data.exito) {
-          alert('¡Registro exitoso como entrenador! Por favor inicia sesión.');
-          resetForm();
-          navigate("/login");
-        } else {
-          throw new Error(response.data.mensaje || "Error en el registro del entrenador");
+        if (!response.data.exito) {
+          throw new Error(response.data.mensaje || "Error en el registro");
         }
+
+        alert('¡Registro exitoso como entrenador! Por favor inicia sesión.');
+        resetForm();
+        navigate("/login");
       } else {
         // Para usuarios normales
         const registroData = {
@@ -231,7 +238,13 @@ function Register() {
         }
       }
     } catch (err) {
-      console.error("Error completo:", err);
+      console.error("Error detallado:", {
+        message: err.message,
+        response: err.response?.data,
+        status: err.response?.status,
+        data: err.response?.data
+      });
+      
       setError(
         err.response?.data?.mensaje || 
         err.response?.data?.detalles || 
