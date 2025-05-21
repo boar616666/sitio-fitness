@@ -175,6 +175,7 @@ function Register() {
     setIsSubmitting(true);
 
     try {
+      // Preparar datos base
       const registroData = {
         nombre: formData.nombre,
         correo: formData.correo,
@@ -183,40 +184,42 @@ function Register() {
       };
 
       if (registerType === "entrenador") {
-        Object.assign(registroData, {
-          id_gimnasio: parseInt(formData.id_gimnasio),
+        // Para entrenadores, asegurarse que todos los campos numéricos sean números
+        const datosEntrenador = {
+          ...registroData,
+          id_gimnasio: Number(formData.id_gimnasio), // Usar Number en lugar de parseInt
           foto: formData.foto,
-          edad: parseInt(formData.edad),
-          costo_sesion: parseFloat(formData.costo_sesion),
-          costo_mensual: parseFloat(formData.costo_mensual),
+          edad: Number(formData.edad),
+          costo_sesion: Number(formData.costo_sesion),
+          costo_mensual: Number(formData.costo_mensual),
           telefono: formData.telefono
-        });
+        };
+
+        console.log('Datos del entrenador a enviar:', datosEntrenador);
+        const response = await api.post('/entrenadores/crear', datosEntrenador);
+        
+        if (response.data.exito) {
+          alert('¡Registro exitoso como entrenador! Por favor inicia sesión.');
+          resetForm();
+          navigate("/login");
+        }
       } else {
+        // Para usuarios normales
         registroData.rol = 'cliente';
-      }
-
-      // Usar las rutas correctas del backend
-      const baseEndpoint = registerType === "usuario" ? "/usuarios" : "/entrenadores";
-      const actionEndpoint = registerType === "usuario" ? "/registrar" : "/crear";
-      const fullEndpoint = baseEndpoint + actionEndpoint;
-
-      console.log('Endpoint:', fullEndpoint);
-      console.log('Datos a enviar:', registroData);
-
-      const response = await api.post(fullEndpoint, registroData);
-
-      if (response.data.exito) {
-        alert(`¡Registro exitoso como ${registerType}! Por favor inicia sesión.`);
-        resetForm();
-        navigate("/login");
-      } else {
-        throw new Error(response.data.mensaje || "Error en el registro");
+        const response = await api.post('/usuarios/registrar', registroData);
+        
+        if (response.data.exito) {
+          alert('¡Registro exitoso! Por favor inicia sesión.');
+          resetForm();
+          navigate("/login");
+        }
       }
     } catch (err) {
-      console.error("Error completo:", err);
-      console.error("Respuesta del servidor:", err.response?.data);
+      console.error("Error del servidor:", err.response?.data);
+      console.error("Detalles:", err.response?.data?.detalles);
       setError(
         err.response?.data?.mensaje || 
+        err.response?.data?.detalles?.mensaje ||
         "Error en el registro. Por favor, intenta de nuevo."
       );
     } finally {
