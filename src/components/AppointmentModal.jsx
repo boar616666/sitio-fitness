@@ -3,10 +3,17 @@ import Modal from 'react-modal';
 import axios from 'axios';
 import '../styles/modal.css';
 
+// Configuración de Axios con variables de entorno
+const api = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
+  headers: {
+    'Content-Type': 'application/json'
+  }
+});
+
 Modal.setAppElement('#root');
 
 const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) => {
-  const API_URL = import.meta.env.VITE_API_URL; // Obtenemos la URL base del .env
   const [fechaHora, setFechaHora] = useState('');
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -17,36 +24,26 @@ const AppointmentModal = ({ isOpen, onRequestClose, idUsuario, idEntrenador }) =
       console.log('Props recibidas:');
       console.log('idUsuario:', idUsuario);
       console.log('idEntrenador:', idEntrenador);
-      console.log('API URL:', API_URL); // Verificamos la URL en consola
     }
-  }, [isOpen, idUsuario, idEntrenador, API_URL]);
+  }, [isOpen, idUsuario, idEntrenador]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
-    
+
     const datosEnviar = {
       id_usuario: idUsuario,
       id_entrenador: idEntrenador,
       fecha_hora: fechaHora,
     };
-    
-    console.log('Enviando a:', `${API_URL}/api/citas/crear`);
+
+    console.log('Enviando a: /citas/crear');
     console.log('Datos:', datosEnviar);
 
     try {
-      const response = await axios.post(
-        `${API_URL}/api/citas/crear`,
-        datosEnviar,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
-        }
-      );
-      
+      const response = await api.post('/citas/crear', datosEnviar);
+
       console.log('Respuesta:', response.data);
 
       if (response.data.exito) {
