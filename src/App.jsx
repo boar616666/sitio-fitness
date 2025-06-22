@@ -22,6 +22,8 @@ import Profile from "./pages/Profile";
 import MisCitas from "./pages/MisCitas";
 import SolicitudesAdmin from "./pages/SolicitudesAdmin";
 import RecuperarContraseña from "./pages/RecuperarContraseña";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsAndConditions from "./pages/TermsAndConditions";
 
 function App() {
   useEffect(() => {
@@ -38,6 +40,8 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/blog" element={<Blog />} />
+          <Route path="/politica-privacidad" element={<PrivacyPolicy />} />
+          <Route path="/terminos-condiciones" element={<TermsAndConditions />} />
 
           <Route path="/verify-email/:token" element={<VerifyEmail />} />
           <Route path="/resend-verification" element={<ResendVerification />} />
