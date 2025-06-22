@@ -22,8 +22,8 @@ import Profile from "./pages/Profile";
 import MisCitas from "./pages/MisCitas";
 import SolicitudesAdmin from "./pages/SolicitudesAdmin";
 import RecuperarContraseña from "./pages/RecuperarContraseña";
-import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsAndConditions from "./pages/TermsAndConditions";
+import PrivacyPolicy from "./pages/PrivacyPolicy.js";
+import TermsAndConditions from "./pages/TermsAndConditions.js";
 
 function App() {
   useEffect(() => {
