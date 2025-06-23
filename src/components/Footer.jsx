@@ -134,11 +134,11 @@ function Footer() {
       <div className="footer-bottom">
         <p>
           © 2025 FitnessPro. Todos los derechos reservados. |{" "}
-          <Link to="/privacidad" className="legal-link">
+          <Link to="/politica-privacidad" className="legal-link">
             Política de Privacidad
           </Link>{" "}
           |{" "}
-          <Link to="/terminos" className="legal-link">
+          <Link to="/terminos-condiciones"  className="legal-link">
             Términos y Condiciones
           </Link>
         </p>
