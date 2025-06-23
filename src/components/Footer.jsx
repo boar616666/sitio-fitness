@@ -31,6 +31,16 @@ function Footer() {
                       Gimnasios
                     </Link>
                   </li>
+                  <li>
+                    <Link to="/privacidad" onClick={() => setShowSiteMap(false)}>
+                      Política de Privacidad
+                    </Link>
+                  </li>
+                  <li>
+                    <Link to="/terminos" onClick={() => setShowSiteMap(false)}>
+                      Términos y Condiciones
+                    </Link>
+                  </li>
                 </ul>
               </div>
               {tipoUsuario === "cliente" && (
@@ -60,22 +70,21 @@ function Footer() {
           <h5>Enlaces Rápidos</h5>
           <ul>
             <li>
-              <Link to="/">Inicio</Link> {/* Enlace a la página de inicio */}
+              <Link to="/">Inicio</Link>
             </li>
             <li>
-              <Link to="/blog">Blog</Link> {/* Enlace a la página de blog */}
+              <Link to="/blog">Blog</Link>
             </li>
-
             {tipoUsuario === "cliente" && (
-              <>
-                <li>
-                  <Link to="/videos">Videos</Link>
-                </li>
-              </>
+              <li>
+                <Link to="/videos">Videos</Link>
+              </li>
             )}
             <li>
-              <Link to="/gimnasios">Gimnasios</Link>{" "}
-              {/* Enlace a la página de gimnasios */}
+              <Link to="/gimnasios">Gimnasios</Link>
+            </li>
+            <li>
+              <Link to="/privacidad">Política de Privacidad</Link>
             </li>
             <li>
               <button
@@ -123,7 +132,16 @@ function Footer() {
       </div>
 
       <div className="footer-bottom">
-        <p>&copy; 2025 FitnessPro. Todos los derechos reservados.</p>
+        <p>
+          © 2025 FitnessPro. Todos los derechos reservados. |{" "}
+          <Link to="/privacidad" className="legal-link">
+            Política de Privacidad
+          </Link>{" "}
+          |{" "}
+          <Link to="/terminos" className="legal-link">
+            Términos y Condiciones
+          </Link>
+        </p>
       </div>
     </footer>
   );
