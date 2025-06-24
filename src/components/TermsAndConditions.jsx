@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-
+import '../styles/legal.css'; // Asegúrate de tener un archivo CSS para estilos
 const TermsAndConditions = () => {
   return (
     <div className="legal-document">
