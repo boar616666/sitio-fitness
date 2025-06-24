@@ -5,7 +5,7 @@ const TermsAndConditions = () => {
   return (
     <div className="legal-document">
       <h1>Términos y Condiciones de FitnessPro</h1>
-      <p><strong>Última actualización:</strong> [Fecha]</p>
+      <p><strong>Última actualización:</strong> [2 de mayo de 2025] </p>
 
       {/* Secciones clave */}
       <section>
