@@ -82,7 +82,118 @@
 .privacy-section ul {
   padding-left: 20px;
 }
+/* Fondo general oscuro y texto claro */
+body, .legal-document, .privacy-policy-container {
+  background: #181c22 !important;
+  color: #f4f7fa !important;
+}
 
+/* Títulos principales */
+.legal-document h1,
+.privacy-title {
+  color: #4fc3f7 !important;
+  text-shadow: 0 2px 8px #0006;
+  font-size: 2.2rem;
+  margin-bottom: 0.5em;
+}
+
+/* Subtítulos */
+.legal-document h2,
+.privacy-section h2 {
+  color: #81d4fa !important;
+  border-bottom: 1px solid #374151;
+  padding-bottom: 6px;
+  font-size: 1.3em;
+  margin-top: 2em;
+  margin-bottom: 0.7em;
+}
+
+/* Texto normal */
+.legal-document,
+.privacy-policy-container,
+.privacy-section {
+  color: #e3eaf3 !important;
+  font-size: 1.08rem;
+}
+
+/* Listas */
+.legal-document ul,
+.privacy-section ul {
+  padding-left: 1.5rem;
+  color: #e3eaf3 !important;
+}
+
+/* Negritas y subtítulos */
+.legal-document strong,
+.privacy-section strong,
+.legal-document b {
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Links */
+.legal-document a,
+.privacy-policy-container a,
+a {
+  color: #4fc3f7 !important;
+  text-decoration: underline;
+  transition: color 0.2s;
+}
+.legal-document a:hover,
+.privacy-policy-container a:hover,
+a:hover {
+  color: #fff !important;
+  background: #4fc3f7;
+  text-decoration: none;
+  border-radius: 3px;
+  padding: 0 2px;
+}
+
+/* Secciones de contacto y footer */
+.privacy-contact,
+.legal-footer {
+  background: #23272f;
+  color: #b0bec5;
+  border-radius: 6px;
+  padding: 18px;
+  margin-top: 40px;
+  text-align: center;
+}
+
+/* Botón de regreso */
+.back-button {
+  background: #4fc3f7;
+  color: #181c22;
+  border: none;
+  border-radius: 4px;
+  padding: 0.6rem 1.2rem;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 2rem;
+  transition: background 0.2s, color 0.2s;
+}
+.back-button:hover {
+  background: #fff;
+  color: #4fc3f7;
+}
+
+/* Hint y fechas */
+.privacy-update,
+.legal-document .hint {
+  color: #b0bec5 !important;
+  font-size: 0.98em;
+  margin-bottom: 1.5em;
+  text-align: center;
+}
+
+/* Mejora contraste de secciones */
+.privacy-section {
+  background: #23272f;
+  border-radius: 6px;
+  padding: 18px 20px;
+  margin-bottom: 28px;
+  box-shadow: 0 2px 8px #0002;
+}
 .privacy-contact {
   margin-top: 40px;
   background: #f8f9fa;
