@@ -86,7 +86,16 @@ const PrivacyPolicy = () => {
         <p>Usamos medidas técnicas (encriptación, firewalls) y administrativas para proteger tu información. Sin embargo, ningún sistema es 100% invulnerable.</p>
       </div>
 
-      <div className="privacy-section">
+      <div className="privacy-section">      <div className="privacy-section">
+        <h2>10. Conservación y eliminación de datos (Principio de temporalidad)</h2>
+        <p>
+          Por motivos de seguridad y cumplimiento del principio de temporalidad, las cuentas de usuarios y entrenadores que permanezcan inactivas durante un periodo de 1 año serán eliminadas automáticamente junto con sus datos personales. 
+          <br />
+          Esta eliminación no es definitiva: si en el futuro deseas volver a utilizar nuestros servicios, podrás registrarte nuevamente con tus datos. 
+          <br />
+          Si tienes dudas sobre este proceso o deseas ejercer tus derechos, puedes contactarnos en cualquier momento.
+        </p>
+      </div>
         <h2>8. Cookies y tecnologías similares</h2>
         <p>Utilizamos cookies para:</p>
         <ul>
