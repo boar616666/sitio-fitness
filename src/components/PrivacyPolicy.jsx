@@ -78,7 +78,7 @@ const PrivacyPolicy = () => {
           <li>Cancelar tu cuenta.</li>
           <li>Oponerte al uso de tus datos para fines específicos.</li>
         </ul>
-        <p>Para ejercer estos derechos, escríbenos a: <a href="josueomarnunezgodinez@gmaiil.com">contacto@tusitio.com</a>.</p>
+        <p>Para ejercer estos derechos, escríbenos a: <a href="josueomarnunezgodinez@gmaiil.com">"josueomarnunezgodinez@gmaiil.com"</a>.</p>
       </div>
 
       <div className="privacy-section">
