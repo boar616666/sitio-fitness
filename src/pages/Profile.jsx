@@ -87,6 +87,10 @@ const Profile = () => {
     fetchUserData();
   }, [tipoUsuario]);
 
+  useEffect(() => {
+    setFormData({ ...user });
+  }, [user]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({
@@ -98,16 +102,22 @@ const Profile = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const endpoint = tipoUsuario === "entrenador" 
-        ? "/entrenadores/actualizar" 
-        : "/usuarios/actualizar";
-
-      const response = await api.put(endpoint, {
-        nombre: formData.name,
-        correo: formData.email,
-        costoMensual: formData.costoMensual,
-        costoSesion: formData.costoSesion
-      });
+      let response;
+      if (tipoUsuario === "entrenador") {
+        response = await api.put("/entrenadores/actualizar", {
+          id_entrenador: sessionStorage.getItem("idEntrenador"),
+          nombre: formData.name,
+          correo: formData.email,
+          costoMensual: formData.costoMensual,
+          costoSesion: formData.costoSesion
+        });
+      } else {
+        response = await api.put("/usuarios/actualizar", {
+          id_usuario: sessionStorage.getItem("idUsuario"),
+          nombre: formData.name,
+          correo: formData.email
+        });
+      }
 
       if (response.data.exito) {
         sessionStorage.setItem("nombre", formData.name);
@@ -116,7 +126,6 @@ const Profile = () => {
           sessionStorage.setItem("costoMensualEntrenador", formData.costoMensual);
           sessionStorage.setItem("costoSesionEntrenador", formData.costoSesion);
         }
-        
         setUser(formData);
         setIsEditing(false);
         alert("Perfil actualizado correctamente");
