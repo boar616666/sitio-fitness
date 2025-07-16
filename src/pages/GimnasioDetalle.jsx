@@ -90,11 +90,12 @@ const GimnasioDetalle = () => {
   const [solicitudEnviada, setSolicitudEnviada] = useState(false);
   const idEntrenador = sessionStorage.getItem("idEntrenador");
   const rolCliente = sessionStorage.getItem("rolCliente");
+
   const tipoUsuario = sessionStorage.getItem("tipoUsuario");
 
   // URL de imagen predeterminada en caso de que no exista
   const imagenPredeterminada =
-    "https://img.freepik.com/foto-gratis/gimnasio-luz-gimnasio-equipos-moderno_124507-14735.jpg";
+    "https://imgs.search.brave.com/ajaX39UVi9q7deza9ioaVvlvwYOYCYqIvD8smDbdcsw/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9zdGF0/aWMudmVjdGVlenku/Y29tL3N5c3RlbS9y/ZXNvdXJjZXMvdGh1/bWJuYWlscy8wMDUv/MzgzLzA3My9zbWFs/bC8zZC1yZW5kZXIt/bW9kZXJuLW1pbmlt/YWxpc3Qtb2YtZ3lt/LWludGVyaW9yLWRl/c2lnbi1jb25jZXB0/LW1vY2t1cC1mcmVl/LXBob3RvLmpwZw";
   const fotoPredeterminada =
     "https://img.freepik.com/foto-gratis/entrenador-guapo-gimnasio_144627-36228.jpg";
 
