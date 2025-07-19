@@ -5,7 +5,7 @@ import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/login.css";
 import { sanitizeInput, sanitizeUrl } from "../utils/sanitization";
 
-// Configuración de Axios con variables de entorno
+// Configuración de Axios
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL || "https://backend-gimnasio-lu0e.onrender.com",
   headers: {
@@ -103,7 +103,7 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    const sanitizedValue = sanitizeInput(value);
+    const sanitizedValue = name === "contrasena" ? value : sanitizeInput(value);
     
     setFormData({
       ...formData,
@@ -160,21 +160,31 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      if (!formData.nombre || !formData.correo || !formData.contrasena) {
+      // Validación básica de campos
+      if (!formData.nombre.trim() || !formData.correo.trim() || !formData.contrasena) {
         throw new Error("Todos los campos son obligatorios");
       }
 
+      // Sanitización adicional antes del envío
+      const finalData = {
+        ...formData,
+        nombre: sanitizeInput(formData.nombre.trim()),
+        correo: sanitizeInput(formData.correo.trim().toLowerCase()),
+        // No sanitizamos la contraseña para permitir caracteres especiales
+      };
+
       if (registerType === "entrenador") {
-        const idGimnasio = Number(formData.id_gimnasio);
-        const edad = Number(formData.edad);
-        const costoSesion = Number(formData.costo_sesion);
-        const costoMensual = Number(formData.costo_mensual);
+        // Validación de campos numéricos
+        const idGimnasio = Number(finalData.id_gimnasio);
+        const edad = Number(finalData.edad);
+        const costoSesion = Number(finalData.costo_sesion);
+        const costoMensual = Number(finalData.costo_mensual);
 
         if (isNaN(idGimnasio) || idGimnasio <= 0) {
           throw new Error("ID de gimnasio inválido");
         }
         if (isNaN(edad) || edad < 18) {
-          throw new Error("Edad inválida");
+          throw new Error("Edad inválida (mínimo 18 años)");
         }
         if (isNaN(costoSesion) || costoSesion < 0) {
           throw new Error("Costo por sesión inválido");
@@ -182,29 +192,17 @@ function Register() {
         if (isNaN(costoMensual) || costoMensual < 0) {
           throw new Error("Costo mensual inválido");
         }
-        if (!formData.foto || !formData.telefono) {
-          throw new Error("La foto y el teléfono son obligatorios");
-        }
 
-        // Sanitizar la URL de la foto
-        const fotoSanitizada = sanitizeUrl(formData.foto);
-        if (!fotoSanitizada) {
+        // Sanitización especial para la URL de la foto
+        finalData.foto = sanitizeUrl(finalData.foto);
+        if (!finalData.foto) {
           throw new Error("La URL de la foto no es válida");
         }
 
-        const datosEntrenador = {
-          nombre: sanitizeInput(formData.nombre.trim()),
-          correo: sanitizeInput(formData.correo.trim().toLowerCase()),
-          contrasena: formData.contrasena, // No sanitizar contraseña (podría contener caracteres especiales)
-          id_gimnasio: idGimnasio,
-          foto: fotoSanitizada,
-          edad: edad,
-          costo_sesion: costoSesion,
-          costo_mensual: costoMensual,
-          telefono: sanitizeInput(formData.telefono.trim())
-        };
+        // Sanitización del teléfono
+        finalData.telefono = sanitizeInput(finalData.telefono.trim());
 
-        const response = await api.post('/entrenadores/crear', datosEntrenador);
+        const response = await api.post('/entrenadores/crear', finalData);
         
         if (!response.data.exito) {
           throw new Error(response.data.mensaje || "Error en el registro");
@@ -214,15 +212,11 @@ function Register() {
         resetForm();
         navigate("/login");
       } else {
-        const registroData = {
-          nombre: sanitizeInput(formData.nombre),
-          correo: sanitizeInput(formData.correo),
-          contrasena: formData.contrasena,
-          'g-recaptcha-response': sanitizeInput(captchaValue),
+        const response = await api.post('/usuarios/registrar', {
+          ...finalData,
+          'g-recaptcha-response': captchaValue,
           rol: 'cliente'
-        };
-        
-        const response = await api.post('/usuarios/registrar', registroData);
+        });
         
         if (response.data.exito) {
           alert('¡Registro exitoso! Por favor inicia sesión.');
@@ -231,17 +225,11 @@ function Register() {
         }
       }
     } catch (err) {
-      console.error("Error detallado:", {
-        message: err.message,
-        response: err.response?.data,
-        status: err.response?.status,
-        data: err.response?.data
-      });
-      
+      console.error("Error en el registro:", err);
       setError(
         sanitizeInput(
           err.response?.data?.mensaje || 
-          err.response?.data?.detalles || 
+          err.response?.data?.error || 
           err.message || 
           "Error en el registro. Por favor, intenta de nuevo."
         )
@@ -335,6 +323,9 @@ function Register() {
                 onChange={handleChange}
                 required
               />
+              {formData.foto && !sanitizeUrl(formData.foto) && (
+                <p className="input-error">La URL no es válida</p>
+              )}
             </div>
 
             <div className="form-group">

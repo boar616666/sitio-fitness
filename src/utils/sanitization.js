@@ -1,28 +1,49 @@
-// utils/sanitization.js
+// utils/sanitization.js - Versión mejorada
 
-// Versión corregida - Elimina etiquetas HTML y caracteres peligrosos
+/**
+ * Elimina TODAS las formas de etiquetas HTML y caracteres peligrosos
+ * @param {string} input - Texto a sanitizar
+ * @returns {string} Texto seguro
+ */
 export const sanitizeInput = (input) => {
-    if (typeof input !== 'string') return input;
+    if (typeof input !== 'string') return '';
     
-    // Elimina todas las etiquetas HTML
-    let output = input.replace(/<[^>]*>/g, '');
+    // Patrón que detecta TODAS las variantes de etiquetas HTML
+    const htmlTagPattern = /<[^>]*>?/gm;
     
-    // Reemplaza caracteres especiales peligrosos
-    output = output.replace(/[&<>"']/g, '');
+    // Caracteres peligrosos a eliminar
+    const dangerousChars = /[&<>"'`=\\/]/g;
     
-    return output;
+    // Primero elimina etiquetas HTML
+    let cleanText = input.replace(htmlTagPattern, '');
+    
+    // Luego elimina caracteres peligrosos
+    cleanText = cleanText.replace(dangerousChars, '');
+    
+    return cleanText;
 };
 
-// Para URLs: bloquea javascript: y sanitiza
+/**
+ * Sanitiza URLs bloqueando javascript: y otros protocolos peligrosos
+ * @param {string} url - URL a verificar
+ * @returns {string} URL segura o cadena vacía si es peligrosa
+ */
 export const sanitizeUrl = (url) => {
     if (typeof url !== 'string') return '';
     
-    // Elimina etiquetas HTML
-    let clean = url.replace(/<[^>]*>/g, '');
+    // Sanitiza como input normal primero
+    let cleanUrl = sanitizeInput(url);
     
-    // Reemplaza caracteres especiales
-    clean = clean.replace(/[&<>"']/g, '');
+    // Bloquea URLs que comiencen con protocolos peligrosos
+    const dangerousProtocols = [
+        'javascript:', 'data:', 'vbscript:', 
+        'about:', 'file:', 'blob:'
+    ];
     
-    // Bloquea URLs que comiencen con javascript:
-    return clean.toLowerCase().startsWith('javascript:') ? '' : clean;
+    const lowerUrl = cleanUrl.toLowerCase();
+    if (dangerousProtocols.some(proto => lowerUrl.startsWith(proto))) {
+        return '';
+    }
+    
+    return cleanUrl;
 };
