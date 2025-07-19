@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import ReCAPTCHA from "react-google-recaptcha";
 import "../styles/login.css";
+import { sanitizeInput, sanitizeUrl } from "../utils/sanitization";
 
 // Configuración de Axios con variables de entorno
 const api = axios.create({
@@ -57,7 +58,7 @@ function Register() {
       }
     } catch (error) {
       console.error("Error al cargar gimnasios:", error);
-      setError("No se pudieron cargar los gimnasios. Intente más tarde.");
+      setError(sanitizeInput("No se pudieron cargar los gimnasios. Intente más tarde."));
     }
   };
 
@@ -65,27 +66,21 @@ function Register() {
     let strength = 0;
     let messages = [];
     
-    // Longitud mínima
     if (password.length >= 8) strength++;
     else messages.push("8 caracteres mínimo");
     
-    // Mayúsculas
     if (/[A-Z]/.test(password)) strength++;
     else messages.push("una mayúscula");
     
-    // Minúsculas
     if (/[a-z]/.test(password)) strength++;
     else messages.push("una minúscula");
     
-    // Números
     if (/\d/.test(password)) strength++;
     else messages.push("un número");
     
-    // Caracteres especiales
     if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) strength++;
     else messages.push("un carácter especial");
     
-    // Determinar nivel de fortaleza
     let level, message;
     if (strength >= 5) {
       level = 3;
@@ -101,21 +96,22 @@ function Register() {
     setPasswordStrength({
       level,
       message,
-      valid: strength >= 4, // Requerimos al menos 4 de 5 criterios
+      valid: strength >= 4,
       messages
     });
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    const sanitizedValue = sanitizeInput(value);
+    
     setFormData({
       ...formData,
-      [name]: value,
+      [name]: sanitizedValue,
     });
 
-    // Validar contraseña en tiempo real
     if (name === "contrasena") {
-      validatePassword(value);
+      validatePassword(sanitizedValue);
     }
   };
 
@@ -164,13 +160,11 @@ function Register() {
     setIsSubmitting(true);
 
     try {
-      // Validar campos base
       if (!formData.nombre || !formData.correo || !formData.contrasena) {
         throw new Error("Todos los campos son obligatorios");
       }
 
       if (registerType === "entrenador") {
-        // Validar campos específicos de entrenador
         const idGimnasio = Number(formData.id_gimnasio);
         const edad = Number(formData.edad);
         const costoSesion = Number(formData.costo_sesion);
@@ -192,25 +186,24 @@ function Register() {
           throw new Error("La foto y el teléfono son obligatorios");
         }
 
-        // Crear objeto de entrenador
+        // Sanitizar la URL de la foto
+        const fotoSanitizada = sanitizeUrl(formData.foto);
+        if (!fotoSanitizada) {
+          throw new Error("La URL de la foto no es válida");
+        }
+
         const datosEntrenador = {
-          nombre: formData.nombre.trim(),
-          correo: formData.correo.trim().toLowerCase(),
-          contrasena: formData.contrasena,
+          nombre: sanitizeInput(formData.nombre.trim()),
+          correo: sanitizeInput(formData.correo.trim().toLowerCase()),
+          contrasena: formData.contrasena, // No sanitizar contraseña (podría contener caracteres especiales)
           id_gimnasio: idGimnasio,
-          foto: formData.foto.trim(),
+          foto: fotoSanitizada,
           edad: edad,
           costo_sesion: costoSesion,
           costo_mensual: costoMensual,
-          telefono: formData.telefono.trim()
+          telefono: sanitizeInput(formData.telefono.trim())
         };
 
-        // Imprimir datos para debug
-        console.log('URL de la API:', api.defaults.baseURL);
-        console.log('Endpoint:', '/entrenadores/crear');
-        console.log('Datos a enviar:', JSON.stringify(datosEntrenador, null, 2));
-
-        // Intentar crear el entrenador
         const response = await api.post('/entrenadores/crear', datosEntrenador);
         
         if (!response.data.exito) {
@@ -221,14 +214,14 @@ function Register() {
         resetForm();
         navigate("/login");
       } else {
-        // Para usuarios normales
         const registroData = {
-          nombre: formData.nombre,
-          correo: formData.correo,
+          nombre: sanitizeInput(formData.nombre),
+          correo: sanitizeInput(formData.correo),
           contrasena: formData.contrasena,
-          'g-recaptcha-response': captchaValue,
+          'g-recaptcha-response': sanitizeInput(captchaValue),
           rol: 'cliente'
         };
+        
         const response = await api.post('/usuarios/registrar', registroData);
         
         if (response.data.exito) {
@@ -246,23 +239,24 @@ function Register() {
       });
       
       setError(
-        err.response?.data?.mensaje || 
-        err.response?.data?.detalles || 
-        err.message || 
-        "Error en el registro. Por favor, intenta de nuevo."
+        sanitizeInput(
+          err.response?.data?.mensaje || 
+          err.response?.data?.detalles || 
+          err.message || 
+          "Error en el registro. Por favor, intenta de nuevo."
+        )
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Estilos para la barra de fortaleza de contraseña
   const getStrengthColor = () => {
     switch(passwordStrength.level) {
-      case 1: return "#ff4d4d"; // Rojo (débil)
-      case 2: return "#ffcc00"; // Amarillo (media)
-      case 3: return "#4CAF50"; // Verde (fuerte)
-      default: return "#e0e0e0"; // Gris (sin datos)
+      case 1: return "#ff4d4d";
+      case 2: return "#ffcc00";
+      case 3: return "#4CAF50";
+      default: return "#e0e0e0";
     }
   };
 
@@ -325,7 +319,7 @@ function Register() {
                 <option value="">Seleccione un gimnasio</option>
                 {gimnasios.map((gym) => (
                   <option key={gym.id_gimnasio} value={gym.id_gimnasio}>
-                    {gym.nombre}
+                    {sanitizeInput(gym.nombre)}
                   </option>
                 ))}
               </select>
@@ -422,7 +416,6 @@ function Register() {
             minLength="8"
           />
           
-          {/* Visualización de fortaleza de contraseña */}
           {formData.contrasena && (
             <div className="password-strength-container">
               <div className="password-strength-bar">
